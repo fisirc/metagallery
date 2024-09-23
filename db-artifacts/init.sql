@@ -39,7 +39,6 @@ CREATE TABLE IF NOT EXISTS "Billing" (
 CREATE TABLE IF NOT EXISTS "Multimedia" (
 	"id" serial NOT NULL UNIQUE,
 	"estado_multimedia" bigint NOT NULL,
-	"galeria" bigint NOT NULL,
 	"tamaño" bigint NOT NULL,
 	"url" varchar(255) NOT NULL,
 	"extension" varchar(255) NOT NULL,
@@ -72,6 +71,13 @@ CREATE TABLE IF NOT EXISTS "EstadoMultimedia" (
 	PRIMARY KEY ("id")
 );
 
+CREATE TABLE IF NOT EXISTS "multimedia-galeria" (
+	"id" serial NOT NULL UNIQUE,
+	"multimedia" bigint NOT NULL,
+	"galeria" bigint NOT NULL,
+	PRIMARY KEY ("id")
+);
+
 ALTER TABLE "Usuario" ADD CONSTRAINT "Usuario_fk1" FOREIGN KEY ("estado_mora") REFERENCES "EstadoDeMora"("id");
 
 ALTER TABLE "Usuario" ADD CONSTRAINT "Usuario_fk2" FOREIGN KEY ("plan") REFERENCES "PlanSuscripción"("id");
@@ -86,7 +92,9 @@ ALTER TABLE "Billing" ADD CONSTRAINT "Billing_fk1" FOREIGN KEY ("plan") REFERENC
 ALTER TABLE "Billing" ADD CONSTRAINT "Billing_fk2" FOREIGN KEY ("usuario") REFERENCES "Usuario"("id");
 ALTER TABLE "Multimedia" ADD CONSTRAINT "Multimedia_fk1" FOREIGN KEY ("estado_multimedia") REFERENCES "EstadoMultimedia"("id");
 
-ALTER TABLE "Multimedia" ADD CONSTRAINT "Multimedia_fk2" FOREIGN KEY ("galeria") REFERENCES "Galeria"("id");
 
 
 
+ALTER TABLE "multimedia-galeria" ADD CONSTRAINT "multimedia-galeria_fk1" FOREIGN KEY ("multimedia") REFERENCES "Multimedia"("id");
+
+ALTER TABLE "multimedia-galeria" ADD CONSTRAINT "multimedia-galeria_fk2" FOREIGN KEY ("galeria") REFERENCES "Galeria"("id");
