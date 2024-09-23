@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS "Galeria" (
 	PRIMARY KEY ("id")
 );
 
-CREATE TABLE IF NOT EXISTS "Billing" (
+CREATE TABLE IF NOT EXISTS "Factura" (
 	"id" serial NOT NULL UNIQUE,
 	"plan" bigint NOT NULL,
 	"usuario" bigint NOT NULL,
@@ -87,9 +87,9 @@ ALTER TABLE "Galeria" ADD CONSTRAINT "Galeria_fk1" FOREIGN KEY ("estado_desplieg
 ALTER TABLE "Galeria" ADD CONSTRAINT "Galeria_fk2" FOREIGN KEY ("usuario") REFERENCES "Usuario"("id");
 
 ALTER TABLE "Galeria" ADD CONSTRAINT "Galeria_fk3" FOREIGN KEY ("insight") REFERENCES "Insight"("id");
-ALTER TABLE "Billing" ADD CONSTRAINT "Billing_fk1" FOREIGN KEY ("plan") REFERENCES "PlanSuscripción"("id");
+ALTER TABLE "Factura" ADD CONSTRAINT "Factura_fk1" FOREIGN KEY ("plan") REFERENCES "PlanSuscripción"("id");
 
-ALTER TABLE "Billing" ADD CONSTRAINT "Billing_fk2" FOREIGN KEY ("usuario") REFERENCES "Usuario"("id");
+ALTER TABLE "Factura" ADD CONSTRAINT "Factura_fk2" FOREIGN KEY ("usuario") REFERENCES "Usuario"("id");
 ALTER TABLE "Multimedia" ADD CONSTRAINT "Multimedia_fk1" FOREIGN KEY ("estado_multimedia") REFERENCES "EstadoMultimedia"("id");
 
 
