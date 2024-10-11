@@ -1,0 +1,17 @@
+.root {
+  &[data-variant='primary'] {
+    @mixin light {
+      background-color: black;
+      color: white;
+      border: none;
+    }
+  }
+
+  &[data-variant='secondary'] {
+    @mixin light {
+      background-color: white;
+      color: black;
+      border: 1px solid var(--mantine-color-dark-0);
+    }
+  }
+}
