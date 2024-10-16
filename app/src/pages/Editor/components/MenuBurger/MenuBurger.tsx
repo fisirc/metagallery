@@ -1,21 +1,43 @@
 import { Burger, Menu } from '@mantine/core';
 
-const MenuBurger = () => (
-  <Menu
-    position="bottom-start"
-  >
-    <Menu.Target>
-      <Burger
-        size="xs"
-        title="Menu"
-      />
-    </Menu.Target>
-    <Menu.Dropdown>
-      <Menu.Item>
-        hola
-      </Menu.Item>
-    </Menu.Dropdown>
-  </Menu>
-);
+import {
+  IconLayout,
+} from '@tabler/icons-react';
+
+import { primaryIconProps } from '@/constants';
+
+const MenuBurger = () => {
+  const options = [
+    {
+      Icon: <IconLayout {...primaryIconProps} />,
+      label: 'Ver plantillas',
+    },
+  ];
+
+  return (
+    <Menu
+      position="bottom-start"
+    >
+      <Menu.Target>
+        <Burger
+          size="xs"
+          title="Menu"
+        />
+      </Menu.Target>
+      <Menu.Dropdown>
+      {
+        options.map(option => (
+          <Menu.Item
+            key={option.label}
+            leftSection={option.Icon}
+          >
+            {option.label}
+          </Menu.Item>
+        ))
+      }
+      </Menu.Dropdown>
+    </Menu>
+  );
+};
 
 export default MenuBurger;
