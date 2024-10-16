@@ -17,6 +17,7 @@ const MenuBurger = () => {
   return (
     <Menu
       position="bottom-start"
+      offset={15}
     >
       <Menu.Target>
         <Burger
