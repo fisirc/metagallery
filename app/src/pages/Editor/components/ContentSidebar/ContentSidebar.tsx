@@ -11,7 +11,7 @@ import {
 } from '@/constants';
 
 const ContentSidebar = () => (
-  <Stack h="100%" gap="sm" flex={1}>
+  <Stack h="100%" gap="sm" flex={1} miw={300}>
     <Group>
       <TextInput
         variant="transparent"

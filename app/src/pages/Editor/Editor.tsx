@@ -13,7 +13,7 @@ import Canvas from './components/Canvas';
 
 const Editor = () => (
   <>
-    <Stack p="xl" h="100%" gap="xl">
+    <Stack p="xl" h="100%" gap="xl" miw={800}>
       <Group justify="space-between">
         <Group>
           <MenuBurger />
