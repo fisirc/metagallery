@@ -11,4 +11,5 @@ export const theme = createTheme({
   colors,
   headings,
   components,
+  fontFamily: 'Inter',
 });

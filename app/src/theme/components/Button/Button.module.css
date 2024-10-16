@@ -1,4 +1,10 @@
 .root {
+  &[data-size='xs'] { height: calc(2.136rem * var(--mantine-scale)); }
+  &[data-size='sm'] { height: calc(2.563rem * var(--mantine-scale)); }
+  &[data-size='md'] { height: calc(2.99rem * var(--mantine-scale)); }
+  &[data-size='lg'] { height: calc(3.6rem * var(--mantine-scale)); }
+  &[data-size='xl'] { height: calc(4.272rem * var(--mantine-scale)); }
+
   &[data-variant='primary'] {
     @mixin light {
       background-color: black;
@@ -11,7 +17,11 @@
     @mixin light {
       background-color: white;
       color: black;
-      border: 1px solid var(--mantine-color-dark-0);
+      border: 1px solid var(--mantine-color-gray-3);
     }
   }
+}
+
+.label {
+  font-weight: 500;
 }

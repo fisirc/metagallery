@@ -4,17 +4,19 @@ import pages from '@/pages';
 
 const App = () => {
   return (
-    <Switch>
-    {
-      pages.map(page => (
-        <Route
-          key={page.href}
-          path={page.href}
-          component={page.component}
-        />
-      ))
-    }
-    </Switch>
+    <div style={{ height: '100vh' }}>
+      <Switch>
+      {
+        pages.map(page => (
+          <Route
+            key={page.href}
+            path={page.href}
+            component={page.component}
+          />
+        ))
+      }
+      </Switch>
+    </div>
   );
 };
 

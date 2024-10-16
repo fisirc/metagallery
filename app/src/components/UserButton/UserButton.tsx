@@ -44,7 +44,7 @@ const UserButton = () => {
 
   return (
     <Menu
-      position="right-end"
+      position="bottom-end"
       offset={15}
     >
       <Menu.Target>

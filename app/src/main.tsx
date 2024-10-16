@@ -4,6 +4,7 @@ import { theme } from '@/theme/index';
 import App from './App';
 
 import '@mantine/core/styles.css';
+import './main.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <MantineProvider

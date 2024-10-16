@@ -1,38 +1,34 @@
 import {
-  Burger,
-  Button,
   Group,
   Stack,
   Text,
 } from '@mantine/core';
 
+import MenuBurger from './components/MenuBurger';
+import MainButtons from './components/MainButtons';
 import UserButton from '@/components/UserButton';
+
+import ContentSidebar from './components/ContentSidebar';
+import Canvas from './components/Canvas';
 
 const Editor = () => (
   <>
-    <Stack
-      p="xl"
-    >
+    <Stack p="xl" h="100%" gap="xl">
       <Group justify="space-between">
         <Group>
-          <Burger
-            size="xs"
-          />
+          <MenuBurger />
           <Text>
             Nueva galería
           </Text>
         </Group>
         <Group gap="lg">
-          <Group gap="xs">
-            <Button>
-              Compartir
-            </Button>
-            <Button variant="primary">
-              Visualizar
-            </Button>
-          </Group>
+          <MainButtons />
           <UserButton />
         </Group>
+      </Group>
+      <Group grow preventGrowOverflow={false} flex={1} gap="sm">
+        <ContentSidebar />
+        <Canvas />
       </Group>
     </Stack>
   </>

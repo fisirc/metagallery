@@ -9,6 +9,7 @@ const Component: MantineThemeComponent = {
   ...Button.extend({ classNames: classes }),
   defaultProps: {
     variant: 'secondary',
+    size: 'sm',
   },
 };
 
