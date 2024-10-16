@@ -7,6 +7,7 @@ const MenuBurger = () => (
     <Menu.Target>
       <Burger
         size="xs"
+        title="Menu"
       />
     </Menu.Target>
     <Menu.Dropdown>
