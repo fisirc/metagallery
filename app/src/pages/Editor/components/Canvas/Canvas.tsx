@@ -2,7 +2,7 @@ import { Box } from '@mantine/core';
 
 const Canvas = () => (
   <Box
-    flex={4}
+    flex={5}
     bd="1px solid var(--mantine-color-gray-3)"
     h="100%"
     style={{
