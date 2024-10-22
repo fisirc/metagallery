@@ -1,6 +1,6 @@
 const Home = () => (
   <>
-    hola
+    Metagallery landing page
   </>
 );
 

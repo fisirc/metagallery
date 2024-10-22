@@ -1,9 +1,5 @@
-import {
-  Group,
-  Stack,
-} from '@mantine/core';
-
 import { useState } from 'react';
+import { Group, Stack } from '@mantine/core';
 import MenuBurger from './components/MenuBurger';
 import MainButtons from './components/MainButtons';
 import UserButton from '@/components/UserButton';
@@ -28,7 +24,7 @@ const Editor = () => {
             <UserButton />
           </Group>
         </Group>
-        <Group grow preventGrowOverflow={false} flex={1} gap="sm">
+        <Group gap="sm" h="100%">
           <ContentSidebar />
           <Canvas />
         </Group>

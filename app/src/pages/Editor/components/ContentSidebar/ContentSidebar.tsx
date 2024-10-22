@@ -1,44 +1,56 @@
-import { Button, Group, ScrollArea, Stack, TextInput } from '@mantine/core';
+import { useState } from 'react';
+import { Button, Group, ScrollArea, Stack, TextInput, Drawer } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
+import { IconSearch, IconUpload } from '@tabler/icons-react';
+import { primaryIconProps, secondaryIconProps } from '@/constants';
 
-import {
-  IconSearch,
-  IconUpload,
-} from '@tabler/icons-react';
+const ContentSidebar = () => {
+  const [opened, setOpened] = useState(false);
+  const isLargeScreen = useMediaQuery('(min-width: 900px)');
 
-import {
-  primaryIconProps,
-  secondaryIconProps,
-} from '@/constants';
+  return (
+    <>
+      {isLargeScreen ? (
+        <Stack h="100%" gap="sm" flex={1} miw={300}>
+          <SidebarContent />
+        </Stack>
+      ) : (
+        <Drawer
+          opened={opened}
+          onClose={() => setOpened(false)}
+          padding="md"
+          size={300}
+          withCloseButton={false}
+          opacity={0.2}
+          zIndex={2000}
+        >
+          <SidebarContent />
+        </Drawer>
+      )}
+    </>
+  );
+};
 
-const ContentSidebar = () => (
-  <Stack h="100%" gap="sm" flex={1} miw={300}>
+// Sidebar content extracted for reusability
+const SidebarContent = () => (
+  <>
     <Group>
       <TextInput
         variant="transparent"
         placeholder="¿Qué estás buscando?"
         size="xs"
-        leftSection={(
-          <IconSearch {...secondaryIconProps} />
-        )}
+        leftSection={<IconSearch {...secondaryIconProps} />}
       />
     </Group>
     <ScrollArea
       flex={1}
       bg="gray.1"
-      style={{
-        borderRadius: 'var(--mantine-radius-md)',
-      }}
-    >
-    </ScrollArea>
-    <Button
-      size="sm"
-      leftSection={(
-        <IconUpload {...primaryIconProps} />
-      )}
-    >
+      style={{ borderRadius: 'var(--mantine-radius-md)' }}
+    />
+    <Button size="sm" leftSection={<IconUpload {...primaryIconProps} />}>
       Añadir contenido
     </Button>
-  </Stack>
+  </>
 );
 
 export default ContentSidebar;
