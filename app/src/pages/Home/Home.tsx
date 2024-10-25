@@ -1,7 +1,5 @@
-const Home = () => (
+export const Home = () => (
   <>
     Metagallery landing page
   </>
 );
-
-export default Home;

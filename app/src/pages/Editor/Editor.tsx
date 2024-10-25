@@ -8,7 +8,7 @@ import ContentSidebar from './components/ContentSidebar';
 import Canvas from './components/Canvas';
 import DynamicText from '@/components/DynamicText';
 
-const Editor = () => {
+export const Editor = () => {
   const [projectName, setProjectName] = useState('Nueva galería');
 
   return (
@@ -32,5 +32,3 @@ const Editor = () => {
     </>
   );
 };
-
-export default Editor;
