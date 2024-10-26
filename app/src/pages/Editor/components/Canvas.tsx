@@ -1,122 +1,127 @@
 import { Box } from '@mantine/core';
-import { useEffect, useState } from 'react';
-import { Layer, Stage, Text } from 'react-konva';
+import { useEffect, useMemo, useState } from 'react';
+import { Layer, Rect, Stage } from 'react-konva';
+import { WallBlock } from './blocks/WallBlock';
+import { Model3DBlock } from './blocks/Model3DBlock';
+import { DoorBlock } from './blocks/DoorBlock';
+import { DIR_TOP, DIR_RIGHT, DIR_BOTTOM, DIR_LEFT, ZOOM_FACTOR, UNIT } from './constants';
+import { PictureSlot } from './blocks/PictureSlot';
 
 // TRBL -> 0123
 
+type GenericGalleryBlock = {
+  type: 'wall' | 'model3d' | 'door',
+  pos: [number, number],
+  props: {
+    size?: number,
+    dir?: 0 | 1 | 2 | 3,
+    res?: string | null,
+  },
+};
+
+// Until we have the backend, we mock
+const mockedResponse = [
+  {
+    type: 'wall',
+    pos: [0, 0],
+    props: {
+      size: 2,
+      dir: DIR_RIGHT,
+      res: 'https://static.wikia.nocookie.net/punpun/images/3/3c/Aiko_c1p5.PNG',
+    },
+  },
+  {
+    type: 'wall',
+    pos: [0, 1],
+    props: {
+      size: 1,
+      dir: DIR_TOP,
+      res: 'https://i.ytimg.com/vi/ljV7yI6UbOA/maxresdefault.jpg',
+    },
+  },
+  {
+    type: 'wall',
+    pos: [2, 0],
+    props: {
+      size: 2,
+      dir: DIR_LEFT,
+      res: null,
+    },
+  },
+  {
+    type: 'wall',
+    pos: [2, 0],
+    props: {
+      size: 2,
+      dir: DIR_BOTTOM,
+      res: 'https://www.bnews.com.br/media/uploads/junho_2024/imagem_materia_-_2024-06-12t151221.715.jpg',
+    },
+  },
+  {
+    type: 'wall',
+    pos: [2, 0],
+    props: {
+      size: 1,
+      dir: DIR_BOTTOM,
+      res: null,
+    },
+  },
+  {
+    type: 'wall',
+    pos: [0, 2],
+    props: {
+      size: 2,
+      dir: DIR_TOP,
+      res: null,
+    },
+  },
+  {
+    type: 'wall',
+    pos: [2, 2],
+    props: {
+      size: 1,
+      dir: DIR_LEFT,
+      res: 'https://wallpapercat.com/w/full/1/6/d/138467-3840x2160-desktop-4k-spirited-away-wallpaper-image.jpg',
+    },
+  },
+  {
+    type: 'wall',
+    pos: [0, 2],
+    props: {
+      size: 2,
+      dir: DIR_RIGHT,
+      res: null,
+    },
+  },
+  {
+    type: 'model3d',
+    pos: [0.5, 1.5],
+    props: {
+      res: 'https://makerworld.bblmw.com/makerworld/model/US28978010208f6c/58313790/instance/plate_1.png',
+    },
+  },
+  {
+    type: 'door',
+    pos: [0, 1],
+    props: {
+      dir: DIR_RIGHT,
+      size: 1,
+    },
+  },
+  {
+    type: 'door',
+    pos: [1, 2],
+    props: {
+      dir: DIR_TOP,
+      size: 1,
+    },
+  },
+] satisfies Array<GenericGalleryBlock>;
+
 export const Canvas = () => {
-  const mockedResponse = [
-    {
-      type: 'wall',
-      pos: [0, 0],
-      props: {
-        size: 2,
-        dir: 0,
-        res: '<url>',
-      },
-    },
-    {
-      type: 'wall',
-      pos: [0, 0],
-      props: {
-        size: 1,
-        dir: 1,
-        res: '<url>',
-      },
-    },
-    {
-      type: 'wall',
-      pos: [1, 2],
-      props: {
-        size: 1,
-        dir: 3,
-        res: '<url>',
-      },
-    },
-    {
-      type: 'wall',
-      pos: [1, 2],
-      props: {
-        size: 1,
-        dir: 1,
-        res: '<url>',
-      },
-    },
-    {
-      type: 'wall',
-      pos: [2, 2],
-      props: {
-        size: 1,
-        dir: 2,
-        res: '<url>',
-      },
-    },
-    {
-      type: 'wall',
-      pos: [2, 1],
-      props: {
-        size: 1,
-        dir: 0,
-        res: '<url>',
-      },
-    },
-    {
-      type: 'wall',
-      pos: [2, 0],
-      props: {
-        size: 1,
-        dir: 3,
-        res: '<url>',
-      },
-    },
-    {
-      type: 'wall',
-      pos: [2, 0],
-      props: {
-        size: 1,
-        dir: 0,
-        res: '<url>',
-      },
-    },
-    {
-      type: 'wall',
-      pos: [0, 0],
-      props: {
-        size: 2,
-        dir: 0,
-        res: '<url>',
-      },
-    },
-    {
-      type: 'model',
-      pos: [1.5, 1.5],
-      props: {
-        res: '<url>',
-      },
-    },
-    {
-      type: 'door',
-      pos: [0, 1],
-      props: {
-        dir: 1,
-      },
-    },
-    {
-      type: 'door',
-      pos: [1, 0],
-      props: {
-        dir: 0,
-      },
-    },
-  ];
-
-  const [cstate, setCstate] = useState({
-    isDragging: false,
-    x: 50,
-    y: 50,
-  });
-
   const [viewport, setViewport] = useState({ x: 0, y: 0 });
+  const [scale, setScale] = useState(1);
+  const [pos, setPos] = useState([0, 0]);
 
   useEffect(() => {
     handleViewportResize();
@@ -126,6 +131,46 @@ export const Canvas = () => {
     };
   }, []);
 
+  // We calculate minXY and maxXY just to define the gallery boundaries
+  const minXY = useMemo(() => {
+    let x = 0;
+    let y = 0;
+
+    for (const item of mockedResponse) {
+      x = Math.min(x, item.pos[0]);
+      y = Math.min(y, item.pos[1]);
+
+      if (item.props.dir === DIR_TOP) {
+        y = Math.min(y, item.pos[1] - item.props.size);
+      }
+      if (item.props.dir === DIR_LEFT) {
+        x = Math.min(x, item.pos[0] - item.props.size);
+      }
+    }
+
+    return [x, y];
+  }, [mockedResponse]);
+
+  const maxXY = useMemo(() => {
+    let x = 0;
+    let y = 0;
+
+    for (const item of mockedResponse) {
+      x = Math.max(x, item.pos[0]);
+      y = Math.max(y, item.pos[1]);
+
+      if (item.props.dir === DIR_BOTTOM) {
+        y = Math.max(y, item.pos[1] + item.props.size);
+      }
+      if (item.props.dir === DIR_RIGHT) {
+        x = Math.max(x, item.pos[0] + item.props.size);
+      }
+    }
+
+    return [x - 1, y - 1];
+  }, [mockedResponse]);
+
+  // For dynamic canvas resizing
   const handleViewportResize = () => {
     const bounds = document.getElementById('canvas')?.getBoundingClientRect();
 
@@ -137,7 +182,6 @@ export const Canvas = () => {
     }
   };
 
-  // NOTE: couldn't achieve a responsive canvas
   return (
     <Box
       id="canvas"
@@ -145,34 +189,85 @@ export const Canvas = () => {
       mb="16px"
       mih="100%"
       bd="1px solid var(--mantine-color-gray-4)"
+      bg="#f1f3f5"
       style={{
         borderRadius: 'var(--mantine-radius-md)',
         overflow: 'hidden',
       }}
     >
-      <Stage width={viewport.x} height={viewport.y}>
+      <Stage
+        width={viewport.x}
+        height={viewport.y}
+        scale={{ x: scale, y: scale }}
+        x={pos[0]}
+        y={pos[1]}
+        draggable
+        onDragMove={(e) => {
+          setPos([e.target.x(), e.target.y()]);
+        }}
+        onWheel={(e) => {
+          e.evt.preventDefault();
+          const oldScale = scale;
+          const newScale = e.evt.deltaY > 0 ? oldScale / ZOOM_FACTOR : oldScale * ZOOM_FACTOR;
+
+          const newPos = [
+            pos[0] - ((e.evt.offsetX - pos[0]) * (newScale - oldScale)) / oldScale,
+            pos[1] - ((e.evt.offsetY - pos[1]) * (newScale - oldScale)) / oldScale,
+          ];
+          setScale(newScale);
+          setPos(newPos);
+        }}
+      >
+        { /* White boundary background base */}
         <Layer>
-          <Text
-            text="Draggable Text"
-            x={cstate.x}
-            y={cstate.y}
-            draggable
-            fill={cstate.isDragging ? 'green' : 'black'}
-            onDragStart={() => {
-              setCstate({
-                isDragging: true,
-                x: cstate.x,
-                y: cstate.y,
-              });
-            }}
-            onDragEnd={(e) => {
-              setCstate({
-                isDragging: false,
-                x: e.target.x(),
-                y: e.target.y(),
-              });
-            }}
+          <Rect
+            x={minXY[0] * UNIT}
+            y={minXY[1] * UNIT}
+            width={(maxXY[0] - minXY[0] + 1) * UNIT}
+            height={(maxXY[1] - minXY[1] + 1) * UNIT}
+            fill="white"
           />
+        </Layer>
+        { /* First layer of walls and doors */}
+        <Layer>
+          {
+            mockedResponse.map((item, index) => {
+              switch (item.type) {
+                case 'wall':
+                  return (
+                    <WallBlock key={index} pos={item.pos} props={item.props} />
+                  );
+                case 'door':
+                  return (
+                    <DoorBlock key={index} pos={item.pos} props={item.props} />
+                  );
+                default:
+                  return null;
+              }
+            })
+          }
+        </Layer>
+        { /* Top layer of image and model slots */}
+        <Layer>
+          {
+            mockedResponse.map((item, index) => {
+              switch (item.type) {
+                case 'wall':
+                  if (!item.props.res) {
+                    return null;
+                  }
+                  return (
+                    <PictureSlot key={index} pos={item.pos} props={item.props} />
+                  );
+                case 'model3d':
+                  return (
+                    <Model3DBlock key={index} pos={item.pos} props={item.props} />
+                  );
+                default:
+                  return null;
+              }
+            })
+          }
         </Layer>
       </Stage>
     </Box>
