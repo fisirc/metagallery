@@ -19,7 +19,7 @@ export const DynamicText = ({ value, setValue }: {
   };
 
   return (
-    <Group ref={ref}>
+    <Group ref={ref} wrap="nowrap">
       {
         editing
           ? <TextInput
@@ -29,11 +29,11 @@ export const DynamicText = ({ value, setValue }: {
               size="md"
               onBlur={() => save(internalValue)}
               onKeyDown={(e) => e.key === 'Enter' && save(internalValue)}
-              w={200}
+              w={180}
           />
           : <Text
               onDoubleClick={() => setEditing(true)}
-              w={200}
+              w={180}
               truncate
           >
             {value}

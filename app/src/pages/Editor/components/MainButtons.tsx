@@ -11,7 +11,7 @@ import {
 import { primaryIconProps } from '@/constants';
 
 export const MainButtons = () => (
-  <Group gap="xs">
+  <Group gap="xs" wrap="nowrap">
     <Button
       leftSection={(
         <IconShare {...primaryIconProps} />
