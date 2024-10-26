@@ -7,6 +7,7 @@ import { Model3DBlock } from './blocks/Model3DBlock';
 import { DoorBlock } from './blocks/DoorBlock';
 import { DIR_TOP, DIR_RIGHT, DIR_BOTTOM, DIR_LEFT, ZOOM_FACTOR, UNIT } from './constants';
 import { PictureSlot } from './blocks/PictureSlot';
+import { useEditorStore } from '@/stores/editorAction';
 
 // TRBL -> 0123
 
@@ -122,10 +123,14 @@ const mockedResponse = [
 export const Canvas = () => {
   const [viewport, setViewport] = useState({ x: 0, y: 0 });
   const stageRef = useRef<Konva.Stage>(null);
+  const draggingElem = useEditorStore((state) => state.draggingFile);
 
   useEffect(() => {
     handleViewportResize();
     window.addEventListener('resize', handleViewportResize);
+
+    stageRef.current?.scale({ x: 1.5, y: 1.5 });
+
     return () => {
       window.removeEventListener('resize', handleViewportResize);
     };
@@ -189,7 +194,7 @@ export const Canvas = () => {
       mb="16px"
       mih="100%"
       bd="1px solid var(--mantine-color-gray-4)"
-      bg="#e4e4e4"
+      bg={draggingElem ? '#d8d8d8' : '#e4e4e4'}
       style={{
         borderRadius: 'var(--mantine-radius-md)',
         overflow: 'hidden',
@@ -200,8 +205,10 @@ export const Canvas = () => {
         ref={stageRef}
         width={viewport.x}
         height={viewport.y}
-        scale={{ x: 1, y: 1 }}
+        x={100}
+        y={100}
         draggable
+        onDragMove={() => { }}
         onWheel={(e) => {
           e.evt.preventDefault();
           const oldScale = stageRef.current?.scaleX() || 1;

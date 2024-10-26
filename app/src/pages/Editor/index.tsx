@@ -5,12 +5,14 @@ import { Canvas } from './components/Canvas';
 import { MenuBurger } from './components/MenuBurger';
 import { MainButtons } from './components/MainButtons';
 import { EditorSidebar } from './components/ContentSidebar';
+import { DRAG_PORTAL_ID } from './components/constants';
 
 export const Editor = () => {
   const [projectName, setProjectName] = useState('Nueva galería');
 
   return (
-    <div style={{ paddingLeft: '16px', paddingRight: '16px', minWidth: '420px' }}>
+    <section style={{ paddingLeft: '16px', paddingRight: '16px', minWidth: '420px', position: 'relative', overflow: 'hidden' }}>
+      <div id={DRAG_PORTAL_ID} style={{ position: 'absolute' }}></div>
       <div style={{ display: 'flex', justifyContent: 'space-between', minHeight: '70px', maxHeight: '70px' }}>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', flexWrap: 'nowrap' }}>
           <MenuBurger />
@@ -25,6 +27,6 @@ export const Editor = () => {
         <EditorSidebar />
         <Canvas />
       </div>
-    </div>
+    </section>
   );
 };

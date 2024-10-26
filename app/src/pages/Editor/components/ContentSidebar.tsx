@@ -1,25 +1,27 @@
-import { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Masonry from 'react-responsive-masonry';
-import { Button, Group, ScrollArea, Stack, TextInput, Drawer, Card, Image, Text } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
-import { IconSearch, IconUpload } from '@tabler/icons-react';
-import { primaryIconProps, secondaryIconProps } from '@/constants';
+import { Button, Group, ScrollArea, Stack, TextInput, Drawer, Card, Image, Text, Menu, rem, Portal } from '@mantine/core';
+import { useHover, useMediaQuery, useMouse } from '@mantine/hooks';
+import { IconDots, IconEdit, IconSearch, IconTrash, IconUpload } from '@tabler/icons-react';
+import { primaryIconProps, secondaryIconProps, smallIconProps } from '@/constants';
 import { UserContentFileElement } from '@/types';
+import { useEditorStore } from '@/stores/editorAction';
+import { DRAG_PORTAL_ID } from './constants';
 
 const mockedResponse = [
   {
     id: 1,
     type: 'image',
-    title: 'Grace en internet',
-    description: 'Está en internet',
+    title: 'Aiko Tanaka',
+    description: 'Lorem punpuns',
     url: 'https://static.wikia.nocookie.net/punpun/images/3/3c/Aiko_c1p5.PNG',
   },
   {
     id: 2,
     type: 'model3d',
     title: 'Grace en 3d',
-    description: 'Está en 3d',
-    url: 'https://i.ytimg.com/vi/ljV7yI6UbOA/maxresdefault.jpg',
+    description: 'Modelo 3d no implementado',
+    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQotvtzcG9uFLEowJX7EEgYqLmuRSVaUZJyFtbPQHhwdQTq8whaphJQRPqkHshupqkx8lU&usqp=CAU',
   },
   {
     id: 3,
@@ -33,6 +35,20 @@ const mockedResponse = [
 export const EditorSidebar = () => {
   const [opened, setOpened] = useState(false);
   const isLargeScreen = useMediaQuery('(min-width: 900px)');
+
+  const onDragEnd = () => {
+    useEditorStore.getState().dropFile();
+  };
+
+  useEffect(() => {
+    document.addEventListener('mouseup', onDragEnd);
+    document.addEventListener('touchend', onDragEnd);
+
+    return () => {
+      document.removeEventListener('mouseup', onDragEnd);
+      document.removeEventListener('touchend', onDragEnd);
+    };
+  }, []);
 
   return (
     <>
@@ -57,15 +73,77 @@ export const EditorSidebar = () => {
   );
 };
 
+/**
+ * A user content media element in the sidebar
+ */
 const UserContentSidebarElement = ({ element }: { element: UserContentFileElement }) => {
+  const { hovered, ref } = useHover();
+  const { x, y } = useMouse();
+  const [opened, setOpened] = useState(false);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const draggingElem = useEditorStore((state) => state.draggingFile);
+
   return (
-    <Card p="xs">
-      <Card.Section>
-        <Image m={0} src={element.url} alt={element.title} style={{ width: '100%', display: 'block' }} />
-      </Card.Section>
-      <Text size="xs" fw={700} mt={4}>{element.title}</Text>
-      <Text size="xs">{element.description}</Text>
-    </Card>
+    <>
+      {
+        draggingElem === element && (
+          <Portal target={`#${DRAG_PORTAL_ID}`}>
+            <div
+              style={{
+                position: 'absolute',
+                pointerEvents: 'none',
+                top: y - 20,
+                left: x - 40,
+                zIndex: 6969,
+                opacity: 0.8,
+                width: imageRef.current?.width,
+                height: imageRef.current?.height,
+              }}
+            >
+              <Image m={0} src={element.url} alt={element.title} radius={5} />
+            </div>
+          </Portal>
+        )
+      }
+      <Card
+        ref={ref}
+        p="xs"
+        opacity={draggingElem === element ? 0.4 : 1}
+        style={{ userSelect: 'none', position: 'relative', cursor: 'pointer' }}
+        draggable
+        onDragStart={(e) => {
+          e.preventDefault();
+          useEditorStore.getState().startDragging(element);
+        }}
+      >
+        <Card.Section>
+          <Image ref={imageRef} m={0} src={element.url} alt={element.title} style={{ height: '100%', display: 'block' }} />
+        </Card.Section>
+        <Text size="xs" fw={700} mt={8}>{element.title}</Text>
+        <Text size="xs" mt={4}>{element.description}</Text>
+        {
+          (opened || hovered) && (
+            <div style={{ position: 'absolute', top: '2px', right: '2px' }}>
+              <Menu position="bottom-start" onOpen={() => setOpened(true)} onClose={() => setOpened(false)} openDelay={0}>
+                <Menu.Target>
+                  <Button size="compact-xs">
+                    <IconDots {...smallIconProps} />
+                  </Button>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Item leftSection={<IconEdit style={{ width: rem(14), height: rem(14) }} />}>
+                    Editar
+                  </Menu.Item>
+                  <Menu.Item color="red" leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}>
+                    Delete
+                  </Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+            </div>
+          )
+        }
+      </Card>
+    </>
   );
 };
 
