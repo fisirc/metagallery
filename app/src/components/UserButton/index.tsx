@@ -51,6 +51,7 @@ export const UserButton = () => {
         <Avatar
           src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
           radius="xl"
+          style={{ cursor: 'pointer' }}
           size={30}
         />
       </Menu.Target>
