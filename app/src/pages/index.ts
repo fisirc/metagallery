@@ -1,5 +1,5 @@
-import { Home } from './Home/Home';
-import { Editor } from './Editor/Editor';
+import { Home } from './Home';
+import { Editor } from './Editor';
 
 export default [
   {

@@ -10,7 +10,7 @@ import {
 
 import { primaryIconProps } from '@/constants';
 
-const MainButtons = () => (
+export const MainButtons = () => (
   <Group gap="xs">
     <Button
       leftSection={(
@@ -29,5 +29,3 @@ const MainButtons = () => (
     </Button>
   </Group>
 );
-
-export default MainButtons;

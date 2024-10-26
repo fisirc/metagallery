@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Group, Stack } from '@mantine/core';
-import MenuBurger from './components/MenuBurger';
-import MainButtons from './components/MainButtons';
-import UserButton from '@/components/UserButton';
+import { MenuBurger } from './components/MenuBurger';
+import { MainButtons } from './components/MainButtons';
+import { UserButton } from '@/components/UserButton';
 
-import ContentSidebar from './components/ContentSidebar';
-import Canvas from './components/Canvas';
-import DynamicText from '@/components/DynamicText';
+import { ContentSidebar } from './components/ContentSidebar';
+import { Canvas } from './components/Canvas';
+import { DynamicText } from '@/components/DynamicText';
 
 export const Editor = () => {
   const [projectName, setProjectName] = useState('Nueva galería');
