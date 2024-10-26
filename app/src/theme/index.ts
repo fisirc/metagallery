@@ -1,4 +1,4 @@
-'use client';
+'use slop';
 
 import { createTheme } from '@mantine/core';
 
@@ -11,5 +11,6 @@ export const theme = createTheme({
   colors,
   headings,
   components,
-  fontFamily: 'Inter',
+  fontFamily: 'Inter, Verdana, sans-serif',
+  fontFamilyMonospace: 'Monaco, Courier, monospace',
 });
