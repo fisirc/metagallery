@@ -1,5 +1,6 @@
+import Konva from 'konva';
 import { Box } from '@mantine/core';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Layer, Rect, Stage } from 'react-konva';
 import { WallBlock } from './blocks/WallBlock';
 import { Model3DBlock } from './blocks/Model3DBlock';
@@ -120,8 +121,7 @@ const mockedResponse = [
 
 export const Canvas = () => {
   const [viewport, setViewport] = useState({ x: 0, y: 0 });
-  const [scale, setScale] = useState(1);
-  const [pos, setPos] = useState([0, 0]);
+  const stageRef = useRef<Konva.Stage>(null);
 
   useEffect(() => {
     handleViewportResize();
@@ -189,33 +189,34 @@ export const Canvas = () => {
       mb="16px"
       mih="100%"
       bd="1px solid var(--mantine-color-gray-4)"
-      bg="#f1f3f5"
+      bg="#e4e4e4"
       style={{
         borderRadius: 'var(--mantine-radius-md)',
         overflow: 'hidden',
+        cursor: 'move',
       }}
     >
       <Stage
+        ref={stageRef}
         width={viewport.x}
         height={viewport.y}
-        scale={{ x: scale, y: scale }}
-        x={pos[0]}
-        y={pos[1]}
+        scale={{ x: 1, y: 1 }}
         draggable
-        onDragMove={(e) => {
-          setPos([e.target.x(), e.target.y()]);
-        }}
         onWheel={(e) => {
           e.evt.preventDefault();
-          const oldScale = scale;
+          const oldScale = stageRef.current?.scaleX() || 1;
           const newScale = e.evt.deltaY > 0 ? oldScale / ZOOM_FACTOR : oldScale * ZOOM_FACTOR;
 
+          const oldPos = stageRef.current?.position() || { x: 0, y: 0 };
           const newPos = [
-            pos[0] - ((e.evt.offsetX - pos[0]) * (newScale - oldScale)) / oldScale,
-            pos[1] - ((e.evt.offsetY - pos[1]) * (newScale - oldScale)) / oldScale,
+            oldPos.x - ((e.evt.offsetX - oldPos.x) * (newScale - oldScale)) / oldScale,
+            oldPos.y - ((e.evt.offsetY - oldPos.y) * (newScale - oldScale)) / oldScale,
           ];
-          setScale(newScale);
-          setPos(newPos);
+          stageRef.current?.scale({ x: newScale, y: newScale });
+          stageRef.current?.setPosition({
+            x: newPos[0],
+            y: newPos[1],
+          });
         }}
       >
         { /* White boundary background base */}

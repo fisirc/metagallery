@@ -107,6 +107,9 @@ export const PictureSlot = ({ pos, props }: PictureSlotProps) => {
   return (
     <>
       <Rect
+        cornerRadius={5}
+        dash={[1, 2, 4]}
+        draggable
         x={x}
         y={y}
         fill="#f1f3f5"

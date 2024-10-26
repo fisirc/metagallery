@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "use-image": "^1.1.1"
+    "use-image": "^1.1.1",
+    "zustand": "^5.0.0"
   }
 }
