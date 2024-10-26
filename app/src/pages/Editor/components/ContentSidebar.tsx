@@ -4,14 +4,14 @@ import { useMediaQuery } from '@mantine/hooks';
 import { IconSearch, IconUpload } from '@tabler/icons-react';
 import { primaryIconProps, secondaryIconProps } from '@/constants';
 
-export const ContentSidebar = () => {
+export const EditorSidebar = () => {
   const [opened, setOpened] = useState(false);
   const isLargeScreen = useMediaQuery('(min-width: 900px)');
 
   return (
     <>
       {isLargeScreen ? (
-        <Stack h="100%" gap="sm" flex={1} miw={300}>
+        <Stack mih="100%" gap="sm" mb="16px" miw={300}>
           <SidebarContent />
         </Stack>
       ) : (

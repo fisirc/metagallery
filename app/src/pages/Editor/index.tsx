@@ -1,34 +1,30 @@
 import { useState } from 'react';
-import { Group, Stack } from '@mantine/core';
+import { UserButton } from '@/components/UserButton';
+import { DynamicText } from '@/components/DynamicText';
+import { Canvas } from './components/Canvas';
 import { MenuBurger } from './components/MenuBurger';
 import { MainButtons } from './components/MainButtons';
-import { UserButton } from '@/components/UserButton';
-
-import { ContentSidebar } from './components/ContentSidebar';
-import { Canvas } from './components/Canvas';
-import { DynamicText } from '@/components/DynamicText';
+import { EditorSidebar } from './components/ContentSidebar';
 
 export const Editor = () => {
   const [projectName, setProjectName] = useState('Nueva galería');
 
   return (
-    <>
-      <Stack p="xl" h="100%" gap="xl" miw={800}>
-        <Group justify="space-between">
-          <Group gap="md">
-            <MenuBurger />
-            <DynamicText value={projectName} setValue={setProjectName} />
-          </Group>
-          <Group gap="lg">
-            <MainButtons />
-            <UserButton />
-          </Group>
-        </Group>
-        <Group gap="sm" h="100%">
-          <ContentSidebar />
-          <Canvas />
-        </Group>
-      </Stack>
-    </>
+    <div style={{ paddingLeft: '16px', paddingRight: '16px', minWidth: '420px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', minHeight: '70px', maxHeight: '70px' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', flexWrap: 'nowrap' }}>
+          <MenuBurger />
+          <DynamicText value={projectName} setValue={setProjectName} />
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px' }}>
+          <MainButtons />
+          <UserButton />
+        </div>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', minHeight: 'calc(100vh - 70px)', maxHeight: 'calc(100vh - 70px)' }}>
+        <EditorSidebar />
+        <Canvas />
+      </div>
+    </div>
   );
 };

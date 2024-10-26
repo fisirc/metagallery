@@ -141,11 +141,10 @@ export const Canvas = () => {
   return (
     <Box
       id="canvas"
-      flex={5}
-      bd="1px solid var(--mantine-color-gray-4)"
-      h="100%"
       w="100%"
-      mah="100%"
+      mb="16px"
+      mih="100%"
+      bd="1px solid var(--mantine-color-gray-4)"
       style={{
         borderRadius: 'var(--mantine-radius-md)',
         overflow: 'hidden',
