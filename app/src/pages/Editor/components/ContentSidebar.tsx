@@ -4,7 +4,7 @@ import { useMediaQuery } from '@mantine/hooks';
 import { IconSearch, IconUpload } from '@tabler/icons-react';
 import { primaryIconProps, secondaryIconProps } from '@/constants';
 
-const ContentSidebar = () => {
+export const ContentSidebar = () => {
   const [opened, setOpened] = useState(false);
   const isLargeScreen = useMediaQuery('(min-width: 900px)');
 
@@ -52,5 +52,3 @@ const SidebarContent = () => (
     </Button>
   </>
 );
-
-export default ContentSidebar;

@@ -4,7 +4,7 @@ import { Layer, Stage, Text } from 'react-konva';
 
 // TRBL -> 0123
 
-const Canvas = () => {
+export const Canvas = () => {
   const mockedResponse = [
     {
       type: 'wall',
@@ -179,5 +179,3 @@ const Canvas = () => {
     </Box>
   );
 };
-
-export default Canvas;

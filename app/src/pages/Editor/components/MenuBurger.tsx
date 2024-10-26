@@ -6,7 +6,7 @@ import {
 
 import { primaryIconProps } from '@/constants';
 
-const MenuBurger = () => {
+export const MenuBurger = () => {
   const options = [
     {
       Icon: <IconLayout {...primaryIconProps} />,
@@ -40,5 +40,3 @@ const MenuBurger = () => {
     </Menu>
   );
 };
-
-export default MenuBurger;
