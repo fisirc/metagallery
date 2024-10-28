@@ -12,7 +12,7 @@ func GenericLog(err error, msg_fmt string, args ...any) {
     }
 
     if len(args) == 0 {
-        log.Printf("[ error ]", msg_fmt)
+        log.Printf("[ error ] err{%s}\n", msg_fmt)
         return
     }
 
@@ -20,7 +20,7 @@ func GenericLog(err error, msg_fmt string, args ...any) {
 }
 
 
-func ReqErrorLog(err error, msg string, status int, res *http.ResponseWriter) bool {
+func RequestLog(err error, msg string, status int, res *http.ResponseWriter) bool {
     if err == nil {
         return false
     }

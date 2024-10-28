@@ -5,19 +5,12 @@ import (
 	"os"
 )
 
-type File struct {
-    Path   string
-    Type   string
-    Ext    string
-    Hashed bool
-}
-
-func FileNotExist(path string) bool {
+func FileExists(path string) bool {
     _, err := os.Stat(path)
     if err == nil {
-        return false
+        return true
     }
 
-    return errors.Is(err, os.ErrNotExist)
+    return !errors.Is(err, os.ErrNotExist)
 }
 

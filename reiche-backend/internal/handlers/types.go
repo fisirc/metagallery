@@ -23,3 +23,10 @@ const (
     Unreachable
 )
 
+type ReicheFile struct {
+    Path   string
+    Type   string
+    Ext    string
+    Hashed bool
+}
+
