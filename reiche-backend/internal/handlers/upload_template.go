@@ -2,29 +2,22 @@ package handlers
 
 import (
 	"encoding/binary"
+	"errors"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"reiche"
+	"reiche/internal/fsutils"
 	"reiche/internal/inthash"
+	"strconv"
 
 	"github.com/cespare/xxhash"
+	jsonexp "github.com/go-json-experiment/json"
 	"github.com/julienschmidt/httprouter"
 )
 
 const BUFSIZE = 512
-
-var ReicheTypes = map[string]struct{}{
-    "3d-object": {},
-    "image": {},
-    "video": {},
-}
-
-var BoolMap = map[string]bool {
-    "true": true,
-    "false": false,
-}
 
 func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     filename := r.Header.Get("reiche-name")
@@ -33,76 +26,97 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
+    log.Printf("[incoming file] filename{%s}\n", filename)
+
     hashed_filename := inthash.HashStrStr(filename)
     abs_path := reiche.ReicheConfig.FilesPath + hashed_filename;
+    log.Printf("[incoming file] abs_path{%s}\n", abs_path)
+    if !fsutils.FileNotExist(abs_path) {
+        w.WriteHeader(http.StatusUnprocessableEntity)
+        abs_path_err := ReqErr{
+            Msg: "file hash already exists, try another name",
+            Ctx: HashAlreadyExists,
+        }
 
-    filetype := r.Header.Get("reiche-type")
-    if len(filetype) == 0 {
+        log.Printf("[ error ] err{%s}\n", ReqErrCodeStr[abs_path_err.Ctx])
+        jsonexp.MarshalWrite(w, abs_path_err, jsonexp.DefaultOptionsV2())
+        return
+    }
+
+    filetype_str := r.Header.Get("reiche-type")
+    if len(filetype_str) == 0 {
         w.WriteHeader(http.StatusNotAcceptable)
         return
     }
 
-    if _, ok := ReicheTypes[filetype]; !ok {
-        w.WriteHeader(http.StatusNotAcceptable)
+    filetype, filetype_err := strconv.ParseUint(filetype_str, 10, 8)
+    if ReqErrorLog(filetype_err, "", http.StatusNotAcceptable, &w) {
         return
     }
+
+    log.Printf("[incoming file] filetype{%d}\n", filetype)
 
     filehash_str := r.Header.Get("reiche-hash")
-    if len(filetype) == 0 {
+    if len(filehash_str) != 1 {
+        GenericLog(nil, "invalid hash '%s' expected 0|1", filehash_str)
         w.WriteHeader(http.StatusNotAcceptable)
         return
     }
 
-    var hashed_writer *os.File
-    var hashed_writer_err error
-    hashed_flag, ok := BoolMap[filehash_str];
-    if !ok {
+    var hashed_flag bool
+    switch filehash_str {
+    case "1":
+        hashed_flag = true
+    case "0":
+        hashed_flag = false
+    default:
+        GenericLog(nil, "invalid hash '%s' expected 0|1", filehash_str)
         w.WriteHeader(http.StatusNotAcceptable)
         return
     }
 
     writer, open_err := os.Create(abs_path)
-    defer writer.Close()
-    if open_err != nil {
-        log.Println("[ 😥 ] open_err:", open_err)
-        w.WriteHeader(http.StatusInternalServerError)
+    if ReqErrorLog(open_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
+    defer writer.Close()
+
+    var hashed_writer *os.File
+    var hashed_writer_err error
     if (hashed_flag) {
         hashed_writer, hashed_writer_err = os.Create(abs_path + ".hash")
-        if hashed_writer_err != nil {
-            log.Println("[ 😥 ] hashed_writer_err:", hashed_writer_err)
-            w.WriteHeader(http.StatusInternalServerError)
+        if ReqErrorLog(hashed_writer_err, "", http.StatusInternalServerError, &w) {
             return
         }
     }
 
-    byte_buf := make([]byte, BUFSIZE)
+    var byte_buf_mem [BUFSIZE]byte
+    byte_buf := byte_buf_mem[:]
     for {
         size, read_err := r.Body.Read(byte_buf)
+        if errors.Is(read_err, io.EOF) {
+            break
+        } else if ReqErrorLog(read_err, "", http.StatusInternalServerError, &w) {
+            return
+        }
+
         if size == 0 {
             break
         } else if size != BUFSIZE {
-            byte_buf = byte_buf[0:size]
-        }
-
-        if read_err == io.EOF {
-            break
-        } else if read_err != nil {
-            log.Println("[ 😥 ] read_err:", read_err)
-            w.WriteHeader(http.StatusInternalServerError)
-            return
+            byte_buf = byte_buf[:size]
+            log.Println("read of size", size)
+            log.Println("len of slice", len(byte_buf))
         }
 
         _, write_regular_err := writer.Write(byte_buf)
-        if write_regular_err != nil {
-            log.Println("[ 😥 ] write_regular_err:", write_regular_err)
-            w.WriteHeader(http.StatusInternalServerError)
+        if ReqErrorLog(write_regular_err, "", http.StatusInternalServerError, &w) {
             return
         }
 
+
         if (!hashed_flag) {
+            byte_buf = byte_buf[:cap(byte_buf)]
             continue
         }
 
@@ -110,11 +124,11 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         binary.NativeEndian.PutUint64(hashedbuf, xxhash.Sum64(byte_buf))
 
         _, write_hashed_err := hashed_writer.Write(hashedbuf)
-        if write_hashed_err != nil {
-            log.Println("[ 😥 ] write_hashed_err:", write_hashed_err)
-            w.WriteHeader(http.StatusInternalServerError)
+        if ReqErrorLog(write_hashed_err, "", http.StatusInternalServerError, &w) {
             return
         }
+
+        byte_buf = byte_buf[:cap(byte_buf)]
     }
 }
 
