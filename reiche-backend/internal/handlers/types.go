@@ -25,7 +25,7 @@ const (
 
 type ReicheFile struct {
     Path   string
-    Type   string
+    Type   ReicheFileType
     Ext    string
     Hashed bool
 }
