@@ -1,8 +1,9 @@
-import { Image, Rect } from 'react-konva';
 import useImage from 'use-image';
 import { useState } from 'react';
-import { DIR_TOP, DIR_RIGHT, DIR_BOTTOM, DIR_LEFT, UNIT, WALL_THICKNESS, PICTURE_SLOT_UNIT } from '../constants';
+import { Image, Rect } from 'react-konva';
+import { setCursor } from '@/utils';
 import { useEditorStore } from '@/stores/editorAction';
+import { DIR_TOP, DIR_RIGHT, DIR_BOTTOM, DIR_LEFT, UNIT, WALL_THICKNESS, PICTURE_SLOT_UNIT } from '../constants';
 
 export type PictureSlotProps = {
   pos: [number, number],
@@ -18,8 +19,8 @@ const WALL_PADDING = 0.1;
 
 export const PictureSlot = ({ pos, props }: PictureSlotProps) => {
   const [image] = useImage(props.res);
-  const draggingElem = useEditorStore((state) => state.draggingFile);
   const [hovering, setHovering] = useState(false);
+  const draggingElem = useEditorStore((state) => state.draggingFile);
 
   const scaledPosX = pos[0] * UNIT - HALF_THICKNESS;
   const scaledPosY = pos[1] * UNIT - HALF_THICKNESS;
@@ -30,7 +31,7 @@ export const PictureSlot = ({ pos, props }: PictureSlotProps) => {
     return null;
   }
 
-  const aboutToDrop = hovering && draggingElem !== null;
+  const dragging = draggingElem !== null;
 
   const ratio = image.width / image.height;
   let x: number;
@@ -117,7 +118,7 @@ export const PictureSlot = ({ pos, props }: PictureSlotProps) => {
         cornerRadius={5}
         x={x}
         y={y}
-        fill={aboutToDrop ? '#e1e3e5' : '#f1f3f5'}
+        fill={hovering ? (dragging ? '#fcf3de' : '#e1e3e5') : '#f1f3f5'}
         width={w}
         height={h}
       />
@@ -138,14 +139,14 @@ export const PictureSlot = ({ pos, props }: PictureSlotProps) => {
         width={w}
         height={h}
         listening
-        stroke={aboutToDrop ? '#b0b0b0' : '#e1e3e5'}
-        onMouseMove={() => {
-          if (draggingElem !== null) {
-            setHovering(true);
-          }
+        stroke={hovering ? (dragging ? '#e8bb74' : '#b0b0b0') : '#e1e3e5'}
+        onMouseEnter={() => {
+          setHovering(true);
+          setCursor('pointer');
         }}
         onMouseLeave={() => {
           setHovering(false);
+          setCursor(null);
         }}
       />
     </>

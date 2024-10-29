@@ -1,13 +1,5 @@
-import {
-  Avatar,
-  Menu,
-} from '@mantine/core';
-
-import {
-  IconLogout,
-  IconSettings,
-} from '@tabler/icons-react';
-
+import { Avatar, Menu } from '@mantine/core';
+import { IconLogout, IconSettings } from '@tabler/icons-react';
 import { useLocation } from 'wouter';
 
 interface MenuItemProps {
@@ -52,7 +44,6 @@ export const UserButton = () => {
           src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
           radius="xl"
           style={{ cursor: 'pointer' }}
-          size={30}
         />
       </Menu.Target>
       <Menu.Dropdown>
