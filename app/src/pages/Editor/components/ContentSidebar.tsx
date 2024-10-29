@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Masonry from 'react-responsive-masonry';
 import { Button, Group, ScrollArea, Stack, TextInput, Drawer, Card, Image, Text, Menu, rem, Portal } from '@mantine/core';
 import { useHover, useMediaQuery, useMouse } from '@mantine/hooks';
-import { IconDots, IconEdit, IconSearch, IconTrash, IconUpload } from '@tabler/icons-react';
+import { IconDots, IconDownload, IconEdit, IconSearch, IconTrash, IconUpload } from '@tabler/icons-react';
 import { primaryIconProps, secondaryIconProps, smallIconProps } from '@/constants';
 import { UserContentFileElement } from '@/types';
 import { useEditorStore } from '@/stores/editorAction';
@@ -131,11 +131,14 @@ const UserContentSidebarElement = ({ element }: { element: UserContentFileElemen
                   </Button>
                 </Menu.Target>
                 <Menu.Dropdown>
-                  <Menu.Item leftSection={<IconEdit style={{ width: rem(14), height: rem(14) }} />}>
+                  <Menu.Item leftSection={<IconEdit style={{ width: rem(14) }} />}>
                     Editar
                   </Menu.Item>
-                  <Menu.Item color="red" leftSection={<IconTrash style={{ width: rem(14), height: rem(14) }} />}>
-                    Delete
+                  <Menu.Item leftSection={<IconDownload style={{ width: rem(14) }} />}>
+                    Descargar
+                  </Menu.Item>
+                  <Menu.Item color="red" leftSection={<IconTrash style={{ width: rem(14) }} />}>
+                    Eliminar
                   </Menu.Item>
                 </Menu.Dropdown>
               </Menu>

@@ -8,6 +8,7 @@ import { DoorBlock } from './blocks/DoorBlock';
 import { DIR_TOP, DIR_RIGHT, DIR_BOTTOM, DIR_LEFT, ZOOM_FACTOR, UNIT } from './constants';
 import { PictureSlot } from './blocks/PictureSlot';
 import { useEditorStore } from '@/stores/editorAction';
+import { setCursor } from '@/utils';
 
 // TRBL -> 0123
 
@@ -22,7 +23,7 @@ type GenericGalleryBlock = {
 };
 
 // Until we have the backend, we mock
-const mockedResponse = [
+const mockedResponse = ([
   {
     type: 'wall',
     pos: [0, 0],
@@ -100,6 +101,7 @@ const mockedResponse = [
     pos: [0.5, 1.5],
     props: {
       res: 'https://makerworld.bblmw.com/makerworld/model/US28978010208f6c/58313790/instance/plate_1.png',
+      size: 1,
     },
   },
   {
@@ -118,7 +120,7 @@ const mockedResponse = [
       size: 1,
     },
   },
-] satisfies Array<GenericGalleryBlock>;
+] satisfies Array<GenericGalleryBlock>).toSorted((a, b) => b.props.size - a.props.size);
 
 export const Canvas = () => {
   const [viewport, setViewport] = useState({ x: 0, y: 0 });
@@ -198,7 +200,6 @@ export const Canvas = () => {
       style={{
         borderRadius: 'var(--mantine-radius-md)',
         overflow: 'hidden',
-        cursor: 'move',
       }}
     >
       <Stage
@@ -208,6 +209,8 @@ export const Canvas = () => {
         x={100}
         y={100}
         draggable
+        onMouseEnter={() => { setCursor('move'); }}
+        onMouseLeave={() => { setCursor(null); }}
         onDragMove={() => { }}
         onWheel={(e) => {
           e.evt.preventDefault();

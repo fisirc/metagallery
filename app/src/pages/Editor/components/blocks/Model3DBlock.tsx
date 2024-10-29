@@ -1,6 +1,7 @@
-import { Image, Rect } from 'react-konva';
 import useImage from 'use-image';
 import { useState } from 'react';
+import { Image, Rect } from 'react-konva';
+import { setCursor } from '@/utils';
 import { UNIT } from '../constants';
 import { useEditorStore } from '@/stores/editorAction';
 
@@ -15,14 +16,14 @@ export type Model3DBlockProps = {
 
 export const Model3DBlock = ({ pos, props }: Model3DBlockProps) => {
   const [image] = useImage(props.res);
+  const [hovering, setHovering] = useState(false);
   const draggingElem = useEditorStore((state) => state.draggingFile);
-  const [hovering, sethovering] = useState(false);
 
   const x = (pos[0] - 0.3) * UNIT;
   const y = (pos[1] - 0.3) * UNIT;
   const size = UNIT * 0.6;
 
-  const aboutToDrop = hovering && draggingElem !== null;
+  const dragging = draggingElem !== null;
 
   return (
     <>
@@ -31,7 +32,7 @@ export const Model3DBlock = ({ pos, props }: Model3DBlockProps) => {
         y={y}
         width={size}
         height={size}
-        fill={aboutToDrop ? '#e1e3e5' : '#f1f3f5'}
+        fill={hovering ? (dragging ? '#fcf3de' : '#e1e3e5') : '#f1f3f5'}
         cornerRadius={5}
       />
       <Image
@@ -46,15 +47,15 @@ export const Model3DBlock = ({ pos, props }: Model3DBlockProps) => {
         y={y}
         width={size}
         height={size}
-        stroke={aboutToDrop && draggingElem !== null ? '#b0b0b0' : '#e1e3e5'}
+        stroke={hovering ? (dragging ? '#e8bb74' : '#b0b0b0') : '#e1e3e5'}
         cornerRadius={5}
-        onMouseMove={() => {
-          if (draggingElem !== null) {
-            sethovering(true);
-          }
+        onMouseEnter={() => {
+          setHovering(true);
+          setCursor('pointer');
         }}
         onMouseLeave={() => {
-          sethovering(false);
+          setHovering(false);
+          setCursor(null);
         }}
       />
     </>
