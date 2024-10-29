@@ -1,4 +1,4 @@
-package upload
+package handlers
 
 import (
 	"bufio"
@@ -10,14 +10,16 @@ import (
 	"os"
 	"path/filepath"
 	"reiche"
+	"reiche/internal/db"
 	"reiche/internal/fsutils"
-	"reiche/internal/handlers"
+	"reiche/internal/handlers/handleutils"
 	"reiche/internal/inthash"
 	"strconv"
 
 	"github.com/cespare/xxhash"
 	jsonexp "github.com/go-json-experiment/json"
 	"github.com/julienschmidt/httprouter"
+	"zombiezen.com/go/sqlite"
 )
 
 const BUFSIZE = 512
@@ -55,12 +57,12 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     }
 
     if filetype > math.MaxUint8 {
-        handlers.GenericLog(nil, "invalid filetype, 0 < ft < %d", handlers.Unreachable)
+        handlers.GenericLog(nil, "invalid filetype, 0 < ft < %d", db.Unreachable)
         return
     }
 
-    if handlers.ReicheFileType(filetype) >= handlers.Unreachable {
-        handlers.GenericLog(nil, "invalid filetype, 0 < ft < %d", handlers.Unreachable)
+    if db.ReicheFileType(filetype) >= db.Unreachable {
+        handlers.GenericLog(nil, "invalid filetype, 0 < ft < %d", db.Unreachable)
         return
     }
 
@@ -102,12 +104,19 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         defer hashed_writer.Close()
     }
 
-    new_file := handlers.ReicheFile{
+    new_file := db.ReicheFile{
         Path: abs_path,
         Ext: filepath.Ext(filename),
-        Type: handlers.ReicheFileType(filetype),
+        Type: db.ReicheFileType(filetype),
         Hashed: hashed_flag,
     }
+
+    new_dbconn, dbconn_err := sqlite.OpenConn(reiche.ReicheConfig.DBPath)
+    if handlers.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
+
+    new_dbconn.Prep("insert into file")
 
     var normal_buf_mem [BUFSIZE]byte
     normal_buf := normal_buf_mem[:]
