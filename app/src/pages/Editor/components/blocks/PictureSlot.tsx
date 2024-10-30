@@ -34,6 +34,7 @@ export const PictureSlot = ({ pos, props }: PictureSlotProps) => {
   const dragging = draggingElem !== null;
 
   const ratio = image.width / image.height;
+
   let x: number;
   let y: number;
   let w: number;
@@ -44,6 +45,8 @@ export const PictureSlot = ({ pos, props }: PictureSlotProps) => {
   let iw: number;
   let ih: number;
 
+  let corners: number[];
+
   let irotation: number;
 
   switch (props.dir) {
@@ -51,24 +54,28 @@ export const PictureSlot = ({ pos, props }: PictureSlotProps) => {
       x = scaledPosX - scaledSize + 0.1 * scaledSize;
       y = scaledPosY - PICTURE_SLOT_UNIT;
       irotation = 0;
+      corners = [5, 5, 0, 0];
       break;
     }
     case DIR_RIGHT: {
       x = scaledPosX + 0.1 * scaledSize;
       y = scaledPosY + WALL_THICKNESS;
       irotation = 0;
+      corners = [0, 0, 5, 5];
       break;
     }
     case DIR_BOTTOM: {
       x = pos[0] * UNIT - PICTURE_SLOT_UNIT - HALF_THICKNESS;
       y = scaledPosY + 0.1 * scaledSize;
       irotation = 90;
+      corners = [5, 0, 0, 5];
       break;
     }
     case DIR_TOP: {
       x = scaledPosX + WALL_THICKNESS;
       y = scaledPosY - scaledSize + 0.1 * scaledSize;
       irotation = -90;
+      corners = [0, 5, 5, 0];
       break;
     }
   }
@@ -115,7 +122,7 @@ export const PictureSlot = ({ pos, props }: PictureSlotProps) => {
     <>
       { /* Base */}
       <Rect
-        cornerRadius={5}
+        cornerRadius={corners}
         x={x}
         y={y}
         fill={hovering ? (dragging ? '#fcf3de' : '#e1e3e5') : '#f1f3f5'}
@@ -133,20 +140,22 @@ export const PictureSlot = ({ pos, props }: PictureSlotProps) => {
       />
       { /* Border */}
       <Rect
-        cornerRadius={5}
+        cornerRadius={corners}
         x={x}
         y={y}
         width={w}
         height={h}
         listening
         stroke={hovering ? (dragging ? '#e8bb74' : '#b0b0b0') : '#e1e3e5'}
-        onMouseEnter={() => {
+        onMouseEnter={(e) => {
           setHovering(true);
           setCursor('pointer');
+          e.target.moveToTop();
         }}
-        onMouseLeave={() => {
+        onMouseLeave={(e) => {
           setHovering(false);
           setCursor(null);
+          e.target.moveToBottom();
         }}
       />
     </>
