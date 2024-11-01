@@ -14,21 +14,21 @@ const mockedResponse = [
     type: 'image',
     title: 'Aiko Tanaka',
     description: 'Lorem punpuns',
-    url: 'https://static.wikia.nocookie.net/punpun/images/3/3c/Aiko_c1p5.PNG',
+    url: 'https://www.grupoeducar.cl/wp-content/uploads/2023/06/Arte-Revista-Educar-Julio-2023-edicion-274.png',
   },
   {
     id: 2,
     type: 'model3d',
     title: 'Grace en 3d',
     description: 'Modelo 3d no implementado',
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQotvtzcG9uFLEowJX7EEgYqLmuRSVaUZJyFtbPQHhwdQTq8whaphJQRPqkHshupqkx8lU&usqp=CAU',
+    url: 'https://diario.global/wp-content/uploads/2022/02/C2015014-TOTS-SOM-EUROPA-UNIDA.jpg',
   },
   {
     id: 3,
     type: 'image',
     title: 'Xiao Pang',
     description: 'Le gusta mirar fijamente a cosas cotidianas',
-    url: 'https://www.bnews.com.br/media/uploads/junho_2024/imagem_materia_-_2024-06-12t151221.715.jpg',
+    url: 'https://unidadlatina.org/wp-content/uploads/2024/04/arte-contemporaneo-latinoamerica.jpg',
   },
 ] satisfies Array<UserContentFileElement>;
 

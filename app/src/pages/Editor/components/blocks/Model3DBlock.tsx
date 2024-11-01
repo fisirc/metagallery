@@ -19,9 +19,9 @@ export const Model3DBlock = ({ pos, props }: Model3DBlockProps) => {
   const [hovering, setHovering] = useState(false);
   const draggingElem = useEditorStore((state) => state.draggingFile);
 
-  const x = (pos[0] - 0.3) * UNIT;
-  const y = (pos[1] - 0.3) * UNIT;
-  const size = UNIT * 0.6;
+  const x = (pos[0] - 0.2) * UNIT;
+  const y = (pos[1] - 0.2) * UNIT;
+  const size = UNIT * 0.4;
 
   const dragging = draggingElem !== null;
 
