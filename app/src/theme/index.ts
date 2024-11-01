@@ -1,5 +1,3 @@
-'use slop';
-
 import { createTheme } from '@mantine/core';
 
 import colors from './colors';
