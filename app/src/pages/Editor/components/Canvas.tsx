@@ -30,7 +30,7 @@ const mockedResponse = ([
     props: {
       size: 2,
       dir: DIR_RIGHT,
-      res: 'https://static.wikia.nocookie.net/punpun/images/3/3c/Aiko_c1p5.PNG',
+      res: 'https://patrimoniocultural.bogota.unal.edu.co/wp-content/uploads/2023/galeria-arte-contemp/1903_1-scaled.jpg',
     },
   },
   {
@@ -39,7 +39,7 @@ const mockedResponse = ([
     props: {
       size: 1,
       dir: DIR_TOP,
-      res: 'https://i.ytimg.com/vi/ljV7yI6UbOA/maxresdefault.jpg',
+      res: 'https://e00-elmundo.uecdn.es/assets/multimedia/imagenes/2017/02/24/14879498132987.jpg',
     },
   },
   {
@@ -57,7 +57,7 @@ const mockedResponse = ([
     props: {
       size: 2,
       dir: DIR_BOTTOM,
-      res: 'https://www.bnews.com.br/media/uploads/junho_2024/imagem_materia_-_2024-06-12t151221.715.jpg',
+      res: 'https://ibizartguide.com/que-es-arte-contemporaneo/picasso-guernica/',
     },
   },
   {
@@ -84,7 +84,7 @@ const mockedResponse = ([
     props: {
       size: 1,
       dir: DIR_LEFT,
-      res: 'https://wallpapercat.com/w/full/1/6/d/138467-3840x2160-desktop-4k-spirited-away-wallpaper-image.jpg',
+      res: 'https://www.grupoeducar.cl/wp-content/uploads/2023/09/Arte-Revista-Educar-octubre-2023-edicion-277.jpg',
     },
   },
   {
@@ -100,8 +100,8 @@ const mockedResponse = ([
     type: 'model3d',
     pos: [0.5, 1.5],
     props: {
-      res: 'https://makerworld.bblmw.com/makerworld/model/US28978010208f6c/58313790/instance/plate_1.png',
-      size: 1,
+      res: 'https://cdn3d.iconscout.com/3d/premium/thumb/balloon-dog-3d-illustration-download-in-png-blend-fbx-gltf-file-formats--birthday-party-pack-celebration-illustrations-4712928.png?f=webp',
+      size: 0.6,
     },
   },
   {
