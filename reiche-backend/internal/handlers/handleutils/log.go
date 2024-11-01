@@ -5,6 +5,21 @@ import (
 	"net/http"
 )
 
+// Error types
+type ReqErrCode uint8
+const (
+    HashAlreadyExists ReqErrCode = iota
+)
+
+var ReqErrCodeStr = [...]string{
+    "HashAlreadyExists",
+}
+
+type ReqErr struct {
+    Msg string `json:"msg"`
+    Ctx ReqErrCode `json:"ctx"`
+}
+
 func GenericLog(err error, msg_fmt string, args ...any) {
     if err != nil {
         log.Printf("[ error ] err{%v}\n", err)
