@@ -147,15 +147,13 @@ export const PictureSlot = ({ pos, props }: PictureSlotProps) => {
         height={h}
         listening
         stroke={hovering ? (dragging ? '#e8bb74' : '#b0b0b0') : '#e1e3e5'}
-        onMouseEnter={(e) => {
+        onMouseEnter={() => {
           setHovering(true);
           setCursor('pointer');
-          e.target.moveToTop();
         }}
-        onMouseLeave={(e) => {
+        onMouseLeave={() => {
           setHovering(false);
           setCursor(null);
-          e.target.moveToBottom();
         }}
       />
     </>
