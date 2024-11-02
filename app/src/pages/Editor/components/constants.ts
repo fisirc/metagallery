@@ -12,3 +12,4 @@ export const ZOOM_FACTOR = 1.08;
 export const WALL_COLOR = '#c0c0c0';
 
 export const DRAG_PORTAL_ID = 'drag-portal';
+export const MODAL_PORTAL_ID = 'modal-portal';
