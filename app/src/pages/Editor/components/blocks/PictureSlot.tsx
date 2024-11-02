@@ -27,13 +27,9 @@ export const PictureSlot = ({ pos, props }: PictureSlotProps) => {
   const scaledSize = props.size * UNIT;
   const scaledSizeWithoutPadding = scaledSize * (1 - 2 * WALL_PADDING);
 
-  if (!image) {
-    return null;
-  }
-
   const dragging = draggingElem !== null;
 
-  const ratio = image.width / image.height;
+  const ratio = image ? image.width / image.height : 1;
 
   let x: number;
   let y: number;
