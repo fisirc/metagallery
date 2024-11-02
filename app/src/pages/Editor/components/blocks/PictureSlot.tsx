@@ -1,9 +1,11 @@
 import useImage from 'use-image';
 import { useState } from 'react';
+import { Text } from '@mantine/core';
 import { Image, Rect } from 'react-konva';
 import { setCursor } from '@/utils';
 import { useEditorStore } from '@/stores/editorAction';
 import { DIR_TOP, DIR_RIGHT, DIR_BOTTOM, DIR_LEFT, UNIT, WALL_THICKNESS, PICTURE_SLOT_UNIT } from '../constants';
+import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
 
 export type PictureSlotProps = {
   pos: [number, number],
@@ -143,6 +145,11 @@ export const PictureSlot = ({ pos, props }: PictureSlotProps) => {
         height={h}
         listening
         stroke={hovering ? (dragging ? '#e8bb74' : '#b0b0b0') : '#e1e3e5'}
+        onClick={() => {
+          useMetagalleryStore.getState().openModal(
+            <Text>Hawk tuah!</Text>
+          );
+        }}
         onMouseEnter={() => {
           setHovering(true);
           setCursor('pointer');
