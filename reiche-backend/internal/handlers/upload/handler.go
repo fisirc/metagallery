@@ -64,7 +64,7 @@ func pushNewFile(fileptr *db.StillerFile) (int, error) {
     return query_id_res, nil
 }
 
-func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     type ResPayload struct {
         Id int `json:"id"`
     }
@@ -78,12 +78,12 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     abs_path := stiller.StillerConfig.FilesPath + strconv.Itoa(temporalUSERID) + "/" + filename;
 
     file_exists, file_err := fsutils.FileExists(abs_path)
-    if handlers.RequestLog(file_err, "", http.StatusInternalServerError, &w) {
+    if handleutils.RequestLog(file_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
     if file_exists {
-        handlers.RequestLog(ErrFileExists, "", http.StatusUnprocessableEntity, &w)
+        handleutils.RequestLog(ErrFileExists, "", http.StatusUnprocessableEntity, &w)
         return
     }
 
@@ -94,24 +94,24 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     }
 
     filetype, filetype_err := strconv.ParseUint(filetype_str, 10, 8)
-    if handlers.RequestLog(filetype_err, "", http.StatusNotAcceptable, &w) {
+    if handleutils.RequestLog(filetype_err, "", http.StatusNotAcceptable, &w) {
         return
     }
 
     if filetype > math.MaxUint8 {
-        handlers.GenericLog(nil, "invalid filetype, 0 < ft < %d", db.Unreachable)
+        handleutils.GenericLog(nil, "invalid filetype, 0 < ft < %d", db.Unreachable)
         return
     }
 
     if db.StillerFileType(filetype) >= db.Unreachable {
-        handlers.GenericLog(nil, "invalid filetype, 0 < ft < %d", db.Unreachable)
+        handleutils.GenericLog(nil, "invalid filetype, 0 < ft < %d", db.Unreachable)
         return
     }
 
 
     ishashed_str := r.Header.Get("stiller-hash")
     if len(ishashed_str) != 1 {
-        handlers.GenericLog(nil, "invalid hash '%s' expected 0|1", ishashed_str)
+        handleutils.GenericLog(nil, "invalid hash '%s' expected 0|1", ishashed_str)
         w.WriteHeader(http.StatusNotAcceptable)
         return
     }
@@ -123,13 +123,13 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     case "0":
         ishashed_flag = false
     default:
-        handlers.GenericLog(nil, "invalid hash '%s' expected 0|1", ishashed_str)
+        handleutils.GenericLog(nil, "invalid hash '%s' expected 0|1", ishashed_str)
         w.WriteHeader(http.StatusNotAcceptable)
         return
     }
 
     writer, open_err := os.Create(abs_path)
-    if handlers.RequestLog(open_err, "", http.StatusInternalServerError, &w) {
+    if handleutils.RequestLog(open_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
@@ -139,7 +139,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     var hashed_writer_err error
     if (ishashed_flag) {
         hashed_writer, hashed_writer_err = os.Create(abs_path + ".xxhash")
-        if handlers.RequestLog(hashed_writer_err, "", http.StatusInternalServerError, &w) {
+        if handleutils.RequestLog(hashed_writer_err, "", http.StatusInternalServerError, &w) {
             return
         }
 
@@ -171,7 +171,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         size, read_err := body_reader.Read(normal_buf)
         if errors.Is(read_err, io.EOF) {
             break
-        } else if handlers.RequestLog(read_err, "", http.StatusInternalServerError, &w) {
+        } else if handleutils.RequestLog(read_err, "", http.StatusInternalServerError, &w) {
             return
         }
 
@@ -183,7 +183,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
         new_file.Size += size
         _, write_regular_err := writer.Write(normal_buf)
-        if handlers.RequestLog(write_regular_err, "", http.StatusInternalServerError, &w) {
+        if handleutils.RequestLog(write_regular_err, "", http.StatusInternalServerError, &w) {
             return
         }
 
@@ -194,7 +194,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
         binary.NativeEndian.PutUint64(hashed_buf, xxhash.Sum64(normal_buf))
         _, write_hashed_err := hashed_writer.Write(hashed_buf)
-        if handlers.RequestLog(write_hashed_err, "", http.StatusInternalServerError, &w) {
+        if handleutils.RequestLog(write_hashed_err, "", http.StatusInternalServerError, &w) {
             return
         }
 
@@ -202,7 +202,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     }
 
     id, push_err := pushNewFile(&new_file)
-    if handlers.RequestLog(push_err, "", http.StatusInternalServerError, &w) {
+    if handleutils.RequestLog(push_err, "", http.StatusInternalServerError, &w) {
         return
     }
 

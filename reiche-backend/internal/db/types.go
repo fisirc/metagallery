@@ -8,22 +8,6 @@ const (
     Unreachable
 )
 
-/*
-create table file (
-    id integer unique primary key not null,
-    owner integer not null references user (id),
-    type integer not null references filetype (code),
-    path text unique not null,
-    ogname text not null,
-    title text not null,
-    description text not null,
-    ext text not null,
-    hashed integer not null,
-    size real not null,
-    deleted integer not null
-);
-*/
-
 type StillerFile struct {
     Id          int            `json:"id"`
     OwnerId     int            `json:"ownerid"`
@@ -36,5 +20,15 @@ type StillerFile struct {
     Hashed      bool           `json:"hashed"`
     Size        int            `json:"size"`
     Deleted     bool           `json:"deleted"`
+}
+
+type StillerUser struct {
+    Id          int    `json:"id"`
+    AvatarId    int    `json:"avatarid"`
+    TierId      int    `json:"tierid"`
+    Displayname string `json:"displayname"`
+    Username    string `json:"username"`
+    Mail        string `json:"mail"`
+    Bpasswd     string `json:"bpasswd"`
 }
 

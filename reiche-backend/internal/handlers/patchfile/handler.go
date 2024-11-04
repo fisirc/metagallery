@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"stiller"
 	"stiller/internal/db"
-	handlers "stiller/internal/handlers/handleutils"
+	"stiller/internal/handlers/handleutils"
 
 	jsonexp "github.com/go-json-experiment/json"
 	"github.com/julienschmidt/httprouter"
@@ -12,7 +12,7 @@ import (
 	"zombiezen.com/go/sqlite/sqlitex"
 )
 
-func PatchFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     type ReqPayload struct {
         Id          int    `json:"id"`
         Title       string `json:"title"`
@@ -21,12 +21,12 @@ func PatchFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
     rpayload := ReqPayload{}
     unmarshal_err := jsonexp.UnmarshalRead(r.Body, &rpayload, jsonexp.DefaultOptionsV2())
-    if handlers.RequestLog(unmarshal_err, "", http.StatusNotFound, &w) {
+    if handleutils.RequestLog(unmarshal_err, "", http.StatusNotFound, &w) {
         return
     }
 
     new_dbconn, dbconn_err := sqlite.OpenConn(stiller.StillerConfig.DBPath)
-    if handlers.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
+    if handleutils.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
@@ -60,7 +60,7 @@ func PatchFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         },
     })
 
-    if handlers.RequestLog(exec_err, "", http.StatusInternalServerError, &w) {
+    if handleutils.RequestLog(exec_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
