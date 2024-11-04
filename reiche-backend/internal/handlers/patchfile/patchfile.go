@@ -2,9 +2,9 @@ package patchfile
 
 import (
 	"net/http"
-	"reiche"
-	"reiche/internal/db"
-	handlers "reiche/internal/handlers/handleutils"
+	"stiller"
+	"stiller/internal/db"
+	handlers "stiller/internal/handlers/handleutils"
 
 	jsonexp "github.com/go-json-experiment/json"
 	"github.com/julienschmidt/httprouter"
@@ -25,7 +25,7 @@ func PatchFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    new_dbconn, dbconn_err := sqlite.OpenConn(reiche.ReicheConfig.DBPath)
+    new_dbconn, dbconn_err := sqlite.OpenConn(stiller.StillerConfig.DBPath)
     if handlers.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
         return
     }
@@ -34,7 +34,7 @@ func PatchFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
     query := `update file set title=?1, description=?2 where id = ?3 returning *;`
 
-    new_file := db.ReicheFile{}
+    new_file := db.StillerFile{}
     exec_err := sqlitex.ExecuteTransient(new_dbconn, query, &sqlitex.ExecOptions{
         Args: []any{
             rpayload.Title,
@@ -42,10 +42,10 @@ func PatchFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
             rpayload.Id,
         },
         ResultFunc: func(stmt *sqlite.Stmt) error {
-            new_file = db.ReicheFile{
+            new_file = db.StillerFile{
                 Id: int(stmt.GetInt64("id")),
                 OwnerId: int(stmt.GetInt64("owner")),
-                Typeof: db.ReicheFileType(stmt.GetInt64("type")),
+                Typeof: db.StillerFileType(stmt.GetInt64("type")),
                 Path: stmt.GetText("path"),
                 Filename: stmt.GetText("filename"),
                 Title: stmt.GetText("title"),

@@ -1,8 +1,8 @@
 package db
 
-type ReicheFileType uint8
+type StillerFileType uint8
 const (
-    Image ReicheFileType = iota
+    Image StillerFileType = iota
     Video
     Object3D
     Unreachable
@@ -24,10 +24,10 @@ create table file (
 );
 */
 
-type ReicheFile struct {
+type StillerFile struct {
     Id          int            `json:"id"`
     OwnerId     int            `json:"ownerid"`
-    Typeof      ReicheFileType `json:"typeof"`
+    Typeof      StillerFileType `json:"typeof"`
     Path        string         `json:"path"`
     Filename    string         `json:"filename"`
     Title       string         `json:"title"`

@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
-	"reiche/internal/router"
+	"stiller/internal/router"
 )
 
 func main() {

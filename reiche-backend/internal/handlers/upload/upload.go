@@ -9,10 +9,10 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"reiche"
-	"reiche/internal/db"
-	"reiche/internal/fsutils"
-	"reiche/internal/handlers/handleutils"
+	"stiller"
+	"stiller/internal/db"
+	"stiller/internal/fsutils"
+	"stiller/internal/handlers/handleutils"
 	"strconv"
 
 	"github.com/cespare/xxhash"
@@ -29,8 +29,8 @@ var (
     ErrFileExists = errors.New("filename already exists, try another name")
 )
 
-func pushNewFile(fileptr *db.ReicheFile) (int, error) {
-    new_dbconn, dbconn_err := sqlite.OpenConn(reiche.ReicheConfig.DBPath)
+func pushNewFile(fileptr *db.StillerFile) (int, error) {
+    new_dbconn, dbconn_err := sqlite.OpenConn(stiller.StillerConfig.DBPath)
     if dbconn_err != nil {
         return 0, dbconn_err
     }
@@ -69,13 +69,13 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         Id int `json:"id"`
     }
 
-    filename := r.Header.Get("reiche-name")
+    filename := r.Header.Get("stiller-name")
     if len(filename) == 0 {
         w.WriteHeader(http.StatusNotAcceptable)
         return
     }
 
-    abs_path := reiche.ReicheConfig.FilesPath + strconv.Itoa(temporalUSERID) + "/" + filename;
+    abs_path := stiller.StillerConfig.FilesPath + strconv.Itoa(temporalUSERID) + "/" + filename;
 
     file_exists, file_err := fsutils.FileExists(abs_path)
     if handlers.RequestLog(file_err, "", http.StatusInternalServerError, &w) {
@@ -87,7 +87,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    filetype_str := r.Header.Get("reiche-type")
+    filetype_str := r.Header.Get("stiller-type")
     if len(filetype_str) == 0 {
         w.WriteHeader(http.StatusNotAcceptable)
         return
@@ -103,13 +103,13 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    if db.ReicheFileType(filetype) >= db.Unreachable {
+    if db.StillerFileType(filetype) >= db.Unreachable {
         handlers.GenericLog(nil, "invalid filetype, 0 < ft < %d", db.Unreachable)
         return
     }
 
 
-    ishashed_str := r.Header.Get("reiche-hash")
+    ishashed_str := r.Header.Get("stiller-hash")
     if len(ishashed_str) != 1 {
         handlers.GenericLog(nil, "invalid hash '%s' expected 0|1", ishashed_str)
         w.WriteHeader(http.StatusNotAcceptable)
@@ -146,9 +146,9 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         defer hashed_writer.Close()
     }
 
-    new_file := db.ReicheFile{
+    new_file := db.StillerFile{
         OwnerId: temporalUSERID,
-        Typeof: db.ReicheFileType(filetype),
+        Typeof: db.StillerFileType(filetype),
         Path: abs_path,
         Filename: filename,
         Ext: filepath.Ext(filename),

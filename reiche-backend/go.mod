@@ -1,4 +1,4 @@
-module reiche
+module stiller
 
 go 1.23.2
 

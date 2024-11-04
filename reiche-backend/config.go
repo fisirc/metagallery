@@ -1,4 +1,4 @@
-package reiche
+package stiller
 
 type ConfigType struct {
     // local directory where to retrieve/store data from/to
@@ -6,7 +6,7 @@ type ConfigType struct {
     DBPath    string
 }
 
-var ReicheConfig = ConfigType{
+var StillerConfig = ConfigType{
     FilesPath: "static/",
     DBPath: "db/metagallery.db",
 }

@@ -1,8 +1,8 @@
 package router
 
 import (
-	"reiche/internal/handlers/patchfile"
-	"reiche/internal/handlers/upload"
+	"stiller/internal/handlers/patchfile"
+	"stiller/internal/handlers/upload"
 
 	"github.com/julienschmidt/httprouter"
 )
