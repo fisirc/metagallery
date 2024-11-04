@@ -5,12 +5,16 @@ import (
 	"os"
 )
 
-func FileExists(path string) bool {
+func FileExists(path string) (bool, error) {
     _, err := os.Stat(path)
     if err == nil {
-        return true
+        return true, nil
     }
 
-    return !errors.Is(err, os.ErrNotExist)
+    if errors.Is(err, os.ErrNotExist) {
+        return false, nil
+    }
+
+    return false, err
 }
 

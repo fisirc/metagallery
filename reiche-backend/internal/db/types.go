@@ -8,10 +8,33 @@ const (
     Unreachable
 )
 
+/*
+create table file (
+    id integer unique primary key not null,
+    owner integer not null references user (id),
+    type integer not null references filetype (code),
+    path text unique not null,
+    ogname text not null,
+    title text not null,
+    description text not null,
+    ext text not null,
+    hashed integer not null,
+    size real not null,
+    deleted integer not null
+);
+*/
+
 type ReicheFile struct {
-    Path   string
-    Type   ReicheFileType
-    Ext    string
-    Hashed bool
+    Id          int            `json:"id"`
+    OwnerId     int            `json:"ownerid"`
+    Typeof      ReicheFileType `json:"typeof"`
+    Path        string         `json:"path"`
+    Filename    string         `json:"filename"`
+    Title       string         `json:"title"`
+    Description string         `json:"description"`
+    Ext         string         `json:"ext"`
+    Hashed      bool           `json:"hashed"`
+    Size        int            `json:"size"`
+    Deleted     bool           `json:"deleted"`
 }
 

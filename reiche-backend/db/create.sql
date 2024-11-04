@@ -19,13 +19,13 @@ create table filetype (
 );
 
 create table file (
-    id integer unique primary key not null,
+    id integer unique primary key autoincrement not null,
     owner integer not null references user (id),
     type integer not null references filetype (code),
     path text unique not null,
-    ogname text not null,
-    title text not null,
-    description text not null,
+    filename text not null,
+    title text,
+    description text,
     ext text not null,
     hashed integer not null,
     size real not null,
@@ -33,7 +33,7 @@ create table file (
 );
 
 create table gallery (
-    id integer unique primary key not null,
+    id integer unique primary key autoincrement not null,
     owner integer not null references user (id),
     title text not null,
     description text,
@@ -42,14 +42,14 @@ create table gallery (
 );
 
 create table template (
-    id integer unique primary key not null,
+    id integer unique primary key autoincrement not null,
     tier integer not null references tier (id),
     title text not null,
     description text
 );
 
 create table templateblock (
-    id integer unique primary key not null,
+    id integer unique primary key autoincrement not null,
     template integer references template (id),
     gallery integer references gallery (id),
     res integer references file (id),
@@ -61,4 +61,16 @@ create table templateblock (
     scale real not null,
     direction integer not null
 );
+
+insert INTO filetype VALUES
+	(0, 'image'),
+    (1, 'video'),
+    (2, 'object3d');
+
+insert into tier values
+	(0, 'free'),
+    (1, 'van gogh'),
+    (2, 'picasso');
+
+insert into user VALUES (0, null, 0, 'admin', 'admin', '', '');
 

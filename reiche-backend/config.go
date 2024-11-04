@@ -8,7 +8,7 @@ type ConfigType struct {
 
 var ReicheConfig = ConfigType{
     FilesPath: "static/",
-    DBPath: "db/metagallerydb.db",
+    DBPath: "db/metagallery.db",
 }
 
 

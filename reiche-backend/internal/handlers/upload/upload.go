@@ -1,4 +1,4 @@
-package handlers
+package upload
 
 import (
 	"bufio"
@@ -13,35 +13,77 @@ import (
 	"reiche/internal/db"
 	"reiche/internal/fsutils"
 	"reiche/internal/handlers/handleutils"
-	"reiche/internal/inthash"
 	"strconv"
 
 	"github.com/cespare/xxhash"
 	jsonexp "github.com/go-json-experiment/json"
 	"github.com/julienschmidt/httprouter"
 	"zombiezen.com/go/sqlite"
+	"zombiezen.com/go/sqlite/sqlitex"
 )
 
 const BUFSIZE = 512
+const temporalUSERID = 0
+
+var (
+    ErrFileExists = errors.New("filename already exists, try another name")
+)
+
+func pushNewFile(fileptr *db.ReicheFile) (int, error) {
+    new_dbconn, dbconn_err := sqlite.OpenConn(reiche.ReicheConfig.DBPath)
+    if dbconn_err != nil {
+        return 0, dbconn_err
+    }
+
+    defer new_dbconn.Close()
+
+    query := `insert into file (owner, type, path, filename, ext, hashed, size, deleted) values (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8) returning id;`
+    query_id_res := int(0)
+
+    exec_err := sqlitex.ExecuteTransient(new_dbconn, query, &sqlitex.ExecOptions{
+        Args: []any{
+            fileptr.OwnerId,
+            fileptr.Typeof,
+            fileptr.Path,
+            fileptr.Filename,
+            fileptr.Ext,
+            fileptr.Hashed,
+            fileptr.Size,
+            fileptr.Deleted,
+        },
+        ResultFunc: func(stmt *sqlite.Stmt) error {
+            query_id_res = int(stmt.ColumnInt64(0))
+            return nil
+        },
+    })
+
+    if exec_err != nil {
+        return 0, exec_err
+    }
+
+    return query_id_res, nil
+}
 
 func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+    type ResPayload struct {
+        Id int `json:"id"`
+    }
+
     filename := r.Header.Get("reiche-name")
     if len(filename) == 0 {
         w.WriteHeader(http.StatusNotAcceptable)
         return
     }
 
-    hashed_filename := inthash.HashStrStr(filename)
-    abs_path := reiche.ReicheConfig.FilesPath + hashed_filename;
-    if fsutils.FileExists(abs_path) {
-        w.WriteHeader(http.StatusUnprocessableEntity)
-        abs_path_err := handlers.ReqErr{
-            Msg: "file hash already exists, try another name",
-            Ctx: handlers.HashAlreadyExists,
-        }
+    abs_path := reiche.ReicheConfig.FilesPath + strconv.Itoa(temporalUSERID) + "/" + filename;
 
-        handlers.GenericLog(nil, "[ error ] err{%s}\n", handlers.ReqErrCodeStr[abs_path_err.Ctx])
-        jsonexp.MarshalWrite(w, abs_path_err, jsonexp.DefaultOptionsV2())
+    file_exists, file_err := fsutils.FileExists(abs_path)
+    if handlers.RequestLog(file_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
+
+    if file_exists {
+        handlers.RequestLog(ErrFileExists, "", http.StatusUnprocessableEntity, &w)
         return
     }
 
@@ -67,21 +109,21 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     }
 
 
-    filehash_str := r.Header.Get("reiche-hash")
-    if len(filehash_str) != 1 {
-        handlers.GenericLog(nil, "invalid hash '%s' expected 0|1", filehash_str)
+    ishashed_str := r.Header.Get("reiche-hash")
+    if len(ishashed_str) != 1 {
+        handlers.GenericLog(nil, "invalid hash '%s' expected 0|1", ishashed_str)
         w.WriteHeader(http.StatusNotAcceptable)
         return
     }
 
-    var hashed_flag bool
-    switch filehash_str {
+    var ishashed_flag bool
+    switch ishashed_str {
     case "1":
-        hashed_flag = true
+        ishashed_flag = true
     case "0":
-        hashed_flag = false
+        ishashed_flag = false
     default:
-        handlers.GenericLog(nil, "invalid hash '%s' expected 0|1", filehash_str)
+        handlers.GenericLog(nil, "invalid hash '%s' expected 0|1", ishashed_str)
         w.WriteHeader(http.StatusNotAcceptable)
         return
     }
@@ -95,8 +137,8 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
     var hashed_writer *os.File
     var hashed_writer_err error
-    if (hashed_flag) {
-        hashed_writer, hashed_writer_err = os.Create(abs_path + ".hash")
+    if (ishashed_flag) {
+        hashed_writer, hashed_writer_err = os.Create(abs_path + ".xxhash")
         if handlers.RequestLog(hashed_writer_err, "", http.StatusInternalServerError, &w) {
             return
         }
@@ -105,18 +147,14 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     }
 
     new_file := db.ReicheFile{
+        OwnerId: temporalUSERID,
+        Typeof: db.ReicheFileType(filetype),
         Path: abs_path,
+        Filename: filename,
         Ext: filepath.Ext(filename),
-        Type: db.ReicheFileType(filetype),
-        Hashed: hashed_flag,
+        Hashed: ishashed_flag,
+        Size: 0,
     }
-
-    new_dbconn, dbconn_err := sqlite.OpenConn(reiche.ReicheConfig.DBPath)
-    if handlers.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
-        return
-    }
-
-    new_dbconn.Prep("insert into file")
 
     var normal_buf_mem [BUFSIZE]byte
     normal_buf := normal_buf_mem[:]
@@ -143,12 +181,13 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
             normal_buf = normal_buf[:size]
         }
 
+        new_file.Size += size
         _, write_regular_err := writer.Write(normal_buf)
         if handlers.RequestLog(write_regular_err, "", http.StatusInternalServerError, &w) {
             return
         }
 
-        if (!hashed_flag) {
+        if (!ishashed_flag) {
             normal_buf = normal_buf[:cap(normal_buf)]
             continue
         }
@@ -161,6 +200,18 @@ func UploadFile(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
         normal_buf = normal_buf[:cap(normal_buf)]
     }
+
+    id, push_err := pushNewFile(&new_file)
+    if handlers.RequestLog(push_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
+
+    payload := ResPayload{
+        Id: id,
+    }
+
+    w.WriteHeader(http.StatusOK)
+    jsonexp.MarshalWrite(w, payload, jsonexp.DefaultOptionsV2())
 }
 
 
