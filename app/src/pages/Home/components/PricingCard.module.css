@@ -1,0 +1,54 @@
+.card {
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  width: 300px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.price {
+  font-size: 1.80rem;
+  font-weight: 700;
+  margin: 0.2rem 0;
+}
+
+.features {
+  font-size: 0.5rem;
+  list-style-type: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.feature {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.button {
+  margin-top: auto;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  align-self: flex-end;
+  width: auto;
+}
+
+.button:hover {
+  background-color: #333;
+}
