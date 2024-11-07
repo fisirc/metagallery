@@ -3,9 +3,11 @@ package newuser
 import (
 	"errors"
 	"net/http"
+	"os"
 	"stiller"
 	"stiller/internal/dbutils"
 	"stiller/internal/handlers/handleutils"
+	"strconv"
 
 	jsonexp "github.com/go-json-experiment/json"
 	"github.com/julienschmidt/httprouter"
@@ -19,7 +21,7 @@ var (
     ErrNotEnoughArgs = errors.New("not enough args in query")
 )
 
-func scalarFn(ctx sqlite.Context, args []sqlite.Value) (sqlite.Value, error){
+func newuserScalarFn(ctx sqlite.Context, args []sqlite.Value) (sqlite.Value, error){
     db_conn := ctx.Conn()
 
     if len(args) != 5 {
@@ -41,7 +43,9 @@ func scalarFn(ctx sqlite.Context, args []sqlite.Value) (sqlite.Value, error){
         Bpasswd:     string(bcrypt_pwd),
     }
 
-    query := `insert into user (avatar, tier, displayname, username, mail, bpasswd)
+    query := `
+        insert into
+            user (avatar, tier, displayname, username, mail, bpasswd)
         values
             (?1, ?2, ?3, ?4, ?5, ?6)
         returning
@@ -100,7 +104,7 @@ func Nethandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     create_fn_err := new_dbconn.CreateFunction("newuser", &sqlite.FunctionImpl{
         NArgs: 5,
         Deterministic: true,
-        Scalar: scalarFn,
+        Scalar: newuserScalarFn,
     })
 
     if handleutils.RequestLog(create_fn_err, "", http.StatusInternalServerError, &w) {
@@ -128,6 +132,12 @@ func Nethandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     if new_id == -1 {
         handleutils.GenericLog(nil, "no new user was created")
         w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+
+    new_dir := strconv.Itoa(new_id)
+    mkdir_err := os.MkdirAll(stiller.StillerConfig.FilesPath + new_dir, os.ModePerm)
+    if handleutils.RequestLog(mkdir_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
