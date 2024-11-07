@@ -3,7 +3,7 @@ package fileretrieve
 import (
 	"net/http"
 	"stiller"
-	"stiller/internal/db"
+	"stiller/internal/dbutils"
 	"stiller/internal/handlers/handleutils"
 
 	jsonexp "github.com/go-json-experiment/json"
@@ -68,16 +68,16 @@ func Nethandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
     query = ""
     query = `select * from file where (owner=?1);`
 
-    files := make([]db.StillerFile, 0, row_len)
+    files := make([]dbutils.StillerFile, 0, row_len)
     exec_err := sqlitex.ExecuteTransient(
         new_dbconn,
         query,
         &sqlitex.ExecOptions{
             ResultFunc: func(stmt *sqlite.Stmt) error {
-                tmp_newf := db.StillerFile{
+                tmp_newf := dbutils.StillerFile{
                     Id: int(stmt.GetInt64("id")),
                     OwnerId: int(stmt.GetInt64("owner")),
-                    Typeof: db.StillerFileType(stmt.GetInt64("type")),
+                    Typeof: dbutils.StillerFileType(stmt.GetInt64("type")),
                     Path: stmt.GetText("path"),
                     Filename: stmt.GetText("filename"),
                     Title: stmt.GetText("title"),

@@ -2,10 +2,9 @@ package newuser
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"stiller"
-	"stiller/internal/db"
+	"stiller/internal/dbutils"
 	"stiller/internal/handlers/handleutils"
 
 	jsonexp "github.com/go-json-experiment/json"
@@ -33,7 +32,7 @@ func scalarFn(ctx sqlite.Context, args []sqlite.Value) (sqlite.Value, error){
         return sqlite.Value{}, bcrypt_err
     }
 
-    new_user := db.StillerUser{
+    new_user := dbutils.StillerUser{
         AvatarId:    args[0].Int(),
         TierId:      args[1].Int(),
         Username:    args[2].Text(),
@@ -91,10 +90,12 @@ func Nethandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    new_dbconn, dbconn_err := sqlite.OpenConn(stiller.StillerConfig.DBPath)
+    new_dbconn, dbconn_err := dbutils.NewConn()
     if handleutils.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
         return
     }
+
+    defer dbutils.CloseConn(new_dbconn)
 
     create_fn_err := new_dbconn.CreateFunction("newuser", &sqlite.FunctionImpl{
         NArgs: 5,
@@ -102,12 +103,9 @@ func Nethandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         Scalar: scalarFn,
     })
 
-    if create_fn_err != nil {
-        log.Println(create_fn_err)
+    if handleutils.RequestLog(create_fn_err, "", http.StatusInternalServerError, &w) {
         return
     }
-
-    defer new_dbconn.Close()
 
     query := `select newuser(?1, ?2, ?3, ?4, ?5);`
 

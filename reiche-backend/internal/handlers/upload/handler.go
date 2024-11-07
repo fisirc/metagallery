@@ -10,7 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"stiller"
-	"stiller/internal/db"
+	"stiller/internal/dbutils"
 	"stiller/internal/fsutils"
 	"stiller/internal/handlers/handleutils"
 	"strconv"
@@ -29,13 +29,13 @@ var (
     ErrFileExists = errors.New("filename already exists, try another name")
 )
 
-func pushNewFile(fileptr *db.StillerFile) (int, error) {
-    new_dbconn, dbconn_err := sqlite.OpenConn(stiller.StillerConfig.DBPath)
+func pushNewFile(fileptr *dbutils.StillerFile) (int, error) {
+    new_dbconn, dbconn_err := dbutils.NewConn()
     if dbconn_err != nil {
         return 0, dbconn_err
     }
 
-    defer new_dbconn.Close()
+    defer dbutils.CloseConn(new_dbconn)
 
     query := `insert into file (owner, type, path, filename, ext, hashed, size, deleted) values (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8) returning id;`
     query_id_res := int(0)
@@ -99,12 +99,12 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     }
 
     if filetype > math.MaxUint8 {
-        handleutils.GenericLog(nil, "invalid filetype, 0 < ft < %d", db.Unreachable)
+        handleutils.GenericLog(nil, "invalid filetype, 0 < ft < %d", dbutils.Unreachable)
         return
     }
 
-    if db.StillerFileType(filetype) >= db.Unreachable {
-        handleutils.GenericLog(nil, "invalid filetype, 0 < ft < %d", db.Unreachable)
+    if dbutils.StillerFileType(filetype) >= dbutils.Unreachable {
+        handleutils.GenericLog(nil, "invalid filetype, 0 < ft < %d", dbutils.Unreachable)
         return
     }
 
@@ -146,9 +146,9 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         defer hashed_writer.Close()
     }
 
-    new_file := db.StillerFile{
+    new_file := dbutils.StillerFile{
         OwnerId: temporalUSERID,
-        Typeof: db.StillerFileType(filetype),
+        Typeof: dbutils.StillerFileType(filetype),
         Path: abs_path,
         Filename: filename,
         Ext: filepath.Ext(filename),

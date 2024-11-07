@@ -1,4 +1,4 @@
-package db
+package dbutils
 
 type StillerFileType uint8
 const (

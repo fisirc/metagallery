@@ -25,7 +25,7 @@ go.work
 go.work.sum
 
 # config file
-config.go
+.env
 
 static/
 tmp/

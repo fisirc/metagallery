@@ -2,8 +2,7 @@ package patchfile
 
 import (
 	"net/http"
-	"stiller"
-	"stiller/internal/db"
+	"stiller/internal/dbutils"
 	"stiller/internal/handlers/handleutils"
 
 	jsonexp "github.com/go-json-experiment/json"
@@ -25,16 +24,16 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    new_dbconn, dbconn_err := sqlite.OpenConn(stiller.StillerConfig.DBPath)
+    new_dbconn, dbconn_err := dbutils.NewConn()
     if handleutils.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
-    defer new_dbconn.Close()
+    defer dbutils.CloseConn(new_dbconn)
 
     query := `update file set title=?1, description=?2 where id = ?3 returning *;`
 
-    new_file := db.StillerFile{}
+    new_file := dbutils.StillerFile{}
     exec_err := sqlitex.ExecuteTransient(new_dbconn, query, &sqlitex.ExecOptions{
         Args: []any{
             rpayload.Title,
@@ -42,10 +41,10 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
             rpayload.Id,
         },
         ResultFunc: func(stmt *sqlite.Stmt) error {
-            new_file = db.StillerFile{
+            new_file = dbutils.StillerFile{
                 Id: int(stmt.GetInt64("id")),
                 OwnerId: int(stmt.GetInt64("owner")),
-                Typeof: db.StillerFileType(stmt.GetInt64("type")),
+                Typeof: dbutils.StillerFileType(stmt.GetInt64("type")),
                 Path: stmt.GetText("path"),
                 Filename: stmt.GetText("filename"),
                 Title: stmt.GetText("title"),
