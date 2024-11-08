@@ -6,5 +6,9 @@ jobs:
     steps:
       - run: sudo apt-get update
       - run: sudo apt install openssh-client
-      - run: echo hola
-
+      - name: connect
+        env:
+          SSH_CONFIG: ${{ secrets.SSH_CONFIG }}
+        run: |
+          mkdir -p ~/.ssh/
+          echo $SSH_CONFIG
