@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-    new_router := router.NewReicheRouter()
+    new_router := router.NewStillerRouter()
     if new_router == nil {
         log.Fatalln("[ ❌ ] invalid router, exiting...")
     }

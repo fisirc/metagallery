@@ -1,0 +1,8 @@
+name: Deploy Action
+on: [ push ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo hola
+

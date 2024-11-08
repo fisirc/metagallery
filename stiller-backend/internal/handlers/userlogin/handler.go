@@ -3,12 +3,11 @@ package userlogin
 import (
 	"log"
 	"net/http"
-	"stiller"
 	"stiller/internal/dbutils"
 	"stiller/internal/handlers/handleutils"
+	"stiller/internal/jwtutils"
 
 	jsonexp "github.com/go-json-experiment/json"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/crypto/bcrypt"
 	"zombiezen.com/go/sqlite"
@@ -28,7 +27,10 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    user_id := int(-1)
+    new_tk := jwtutils.Token{
+        UserId: 0,
+    }
+
     user_bpwd := string("")
     amount := int(0)
     query := `select id, bpasswd from user where username=?1;`
@@ -43,7 +45,7 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     sqlitex.ExecuteTransient(new_dbconn, query, &sqlitex.ExecOptions{
         ResultFunc: func(stmt *sqlite.Stmt) error {
             amount++
-            user_id = int(stmt.GetInt64("id"))
+            new_tk.UserId = int(stmt.GetInt64("id"))
             user_bpwd = stmt.GetText("bpasswd")
             return nil
         },
@@ -58,7 +60,7 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    log.Println("uid:", user_id)
+    log.Println("uid:", new_tk.UserId)
     log.Println("pwd:", user_bpwd)
 
     cmp_err := bcrypt.CompareHashAndPassword([]byte(user_bpwd), []byte(payload.Pwd))
@@ -66,12 +68,12 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    token, sign_err := jwt.New(jwt.SigningMethodHS256).SignedString([]byte(stiller.StillerConfig.Secret))
+    sign_encoded, sign_err := new_tk.Encode()
     if handleutils.RequestLog(sign_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
-    w.Write([]byte(token))
+    w.Write(sign_encoded)
     w.WriteHeader(http.StatusOK)
 }
 

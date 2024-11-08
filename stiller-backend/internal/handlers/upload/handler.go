@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"errors"
 	"io"
-	"math"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,6 +12,7 @@ import (
 	"stiller/internal/dbutils"
 	"stiller/internal/fsutils"
 	"stiller/internal/handlers/handleutils"
+	"stiller/internal/jwtutils"
 	"strconv"
 
 	"github.com/cespare/xxhash"
@@ -23,7 +23,12 @@ import (
 )
 
 const BUFSIZE = 512
-const temporalUSERID = 0
+
+const (
+    KB = 1024
+    MB = KB * 1024
+    GB = MB * 1024
+)
 
 var (
     ErrFileExists = errors.New("filename already exists, try another name")
@@ -69,13 +74,26 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         Id int `json:"id"`
     }
 
-    filename := r.Header.Get("stiller-name")
+    user_token := r.Header.Get("token")
+    user_tk, token_decode_err := jwtutils.Decode(user_token)
+    if handleutils.RequestLog(token_decode_err, "", http.StatusUnauthorized, &w) {
+        return
+    }
+
+    user_id := user_tk.UserId
+
+    multform_err := r.ParseMultipartForm(100 * MB)
+    if handleutils.RequestLog(multform_err, "", http.StatusBadRequest, &w) {
+        return
+    }
+
+    filename := r.FormValue("stiller-name")
     if len(filename) == 0 {
         w.WriteHeader(http.StatusNotAcceptable)
         return
     }
 
-    abs_path := stiller.StillerConfig.FilesPath + strconv.Itoa(temporalUSERID) + "/" + filename;
+    abs_path := stiller.StillerConfig.FilesPath + strconv.Itoa(user_id) + "/" + filename;
 
     file_exists, file_err := fsutils.FileExists(abs_path)
     if handleutils.RequestLog(file_err, "", http.StatusInternalServerError, &w) {
@@ -87,7 +105,7 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    filetype_str := r.Header.Get("stiller-type")
+    filetype_str := r.FormValue("stiller-type")
     if len(filetype_str) == 0 {
         w.WriteHeader(http.StatusNotAcceptable)
         return
@@ -98,18 +116,12 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    if filetype > math.MaxUint8 {
-        handleutils.GenericLog(nil, "invalid filetype, 0 < ft < %d", dbutils.Unreachable)
-        return
-    }
-
     if dbutils.StillerFileType(filetype) >= dbutils.Unreachable {
         handleutils.GenericLog(nil, "invalid filetype, 0 < ft < %d", dbutils.Unreachable)
         return
     }
 
-
-    ishashed_str := r.Header.Get("stiller-hash")
+    ishashed_str := r.FormValue("stiller-hash")
     if len(ishashed_str) != 1 {
         handleutils.GenericLog(nil, "invalid hash '%s' expected 0|1", ishashed_str)
         w.WriteHeader(http.StatusNotAcceptable)
@@ -128,12 +140,24 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    writer, open_err := os.Create(abs_path)
+    form_file, _, form_file_err := r.FormFile("stiller-file")
+    if handleutils.RequestLog(form_file_err, "", http.StatusBadRequest, &w) {
+        return
+    }
+
+    defer form_file.Close()
+
+    body_reader := bufio.NewReader(form_file)
+    if body_reader == nil {
+        return
+    }
+
+    local_writer, open_err := os.Create(abs_path)
     if handleutils.RequestLog(open_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
-    defer writer.Close()
+    defer local_writer.Close()
 
     var hashed_writer *os.File
     var hashed_writer_err error
@@ -147,7 +171,7 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     }
 
     new_file := dbutils.StillerFile{
-        OwnerId: temporalUSERID,
+        OwnerId: user_id,
         Typeof: dbutils.StillerFileType(filetype),
         Path: abs_path,
         Filename: filename,
@@ -161,11 +185,6 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
     var hashed_buf_mem [8]byte
     hashed_buf := hashed_buf_mem[:]
-
-    body_reader := bufio.NewReader(r.Body)
-    if body_reader == nil {
-        return
-    }
 
     for {
         size, read_err := body_reader.Read(normal_buf)
@@ -182,7 +201,7 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         }
 
         new_file.Size += size
-        _, write_regular_err := writer.Write(normal_buf)
+        _, write_regular_err := local_writer.Write(normal_buf)
         if handleutils.RequestLog(write_regular_err, "", http.StatusInternalServerError, &w) {
             return
         }

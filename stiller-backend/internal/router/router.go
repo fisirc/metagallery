@@ -11,7 +11,7 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func NewReicheRouter() *httprouter.Router {
+func NewStillerRouter() *httprouter.Router {
     new_router := httprouter.New()
     new_router.POST("/file/upload", upload.NetHandler)
     new_router.PATCH("/file/update", patchfile.NetHandler)

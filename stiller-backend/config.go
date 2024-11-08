@@ -6,7 +6,7 @@ type ConfigType struct {
     // local directory where to retrieve/store data from/to
     FilesPath  string
     DBPath     string
-    Secret     string
+    Secret     []byte
     BCryptCost int
 }
 
@@ -16,7 +16,7 @@ func newConfig() *ConfigType {
     return &ConfigType{
         FilesPath: dotenv.GetString("FilesPath"),
         DBPath: dotenv.GetString("DBPath"),
-        Secret: dotenv.GetString("Secret"),
+        Secret: []byte(dotenv.GetString("Secret")),
         BCryptCost: dotenv.GetInt("BCryptCost"),
     }
 }

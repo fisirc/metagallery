@@ -7,6 +7,7 @@ import (
 	"stiller"
 	"stiller/internal/dbutils"
 	"stiller/internal/handlers/handleutils"
+	"stiller/internal/jwtutils"
 	"strconv"
 
 	jsonexp "github.com/go-json-experiment/json"
@@ -113,10 +114,13 @@ func Nethandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
     query := `select newuser(?1, ?2, ?3, ?4, ?5);`
 
-    new_id := int(-1)
+    new_tk := jwtutils.Token{
+        UserId: -1,
+    }
+
     sqlitex.ExecuteTransient(new_dbconn, query, &sqlitex.ExecOptions{
         ResultFunc: func(stmt *sqlite.Stmt) error {
-            new_id = stmt.ColumnInt(0)
+            new_tk.UserId = stmt.ColumnInt(0)
             return nil
         },
 
@@ -129,24 +133,25 @@ func Nethandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         },
     })
 
-    if new_id == -1 {
+    if new_tk.UserId == -1 {
         handleutils.GenericLog(nil, "no new user was created")
         w.WriteHeader(http.StatusInternalServerError)
         return
     }
 
-    new_dir := strconv.Itoa(new_id)
+    new_dir := strconv.Itoa(new_tk.UserId)
     mkdir_err := os.MkdirAll(stiller.StillerConfig.FilesPath + new_dir, os.ModePerm)
     if handleutils.RequestLog(mkdir_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
-    respayload := ResPayload{
-        NewId: new_id,
+    sign_encoded, sign_err := new_tk.Encode()
+    if handleutils.RequestLog(sign_err, "", http.StatusInternalServerError, &w) {
+        return
     }
 
     w.WriteHeader(http.StatusOK)
-    jsonexp.MarshalWrite(w, respayload, jsonexp.DefaultOptionsV2())
+    w.Write(sign_encoded)
 }
 
 
