@@ -16,5 +16,4 @@ jobs:
           ssh-keyscan -H "${{ secrets.SSH_IP }}" >> ~/.ssh/known_hosts
       - name: test file creation
         run: |
-          ssh "bauer@${{ secrets.SSH_IP }}"
-          echo hola>hola
+          ssh "bauer@${{ secrets.SSH_IP }}" "echo hola>hola"
