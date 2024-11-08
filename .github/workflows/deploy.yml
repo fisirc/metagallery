@@ -4,6 +4,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - run: sudo apt update && sudo apt upgrade
+      - run: sudo apt-get update
+      - run: sudo apt install openssh-client
       - run: echo hola
 
