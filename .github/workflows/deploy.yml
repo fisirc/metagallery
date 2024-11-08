@@ -4,6 +4,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - run: apt update && apt upgrade
+      - run: sudo apt update && sudo apt upgrade
       - run: echo hola
 
