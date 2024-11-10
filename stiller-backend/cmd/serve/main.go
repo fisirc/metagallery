@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"stiller"
 	"stiller/internal/router"
 )
 
@@ -14,7 +15,7 @@ func main() {
 
     log.Println("[ ✅ ] server started")
 
-    log.Fatalln(http.ListenAndServe(":6969", new_router))
+    log.Fatalln(http.ListenAndServe(stiller.StillerConfig.Port, new_router))
 }
 
 
