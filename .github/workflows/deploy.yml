@@ -19,5 +19,5 @@ jobs:
           ssh-add -vvv
           ls ~/.ssh/
           ssh-keyscan -H "${{ secrets.SSH_IP }}" >> ~/.ssh/known_hosts
-          ssh -vvvT "bauer@${{ secrets.SSH_IP }}" "echo hola>hola"
-
+      - name: deploy
+        run: ssh -vT "bauer@${{ secrets.SSH_IP }}" "cd ~/clones/metagallery/stiller-backend && git pull && go run ./cmd/serve"
