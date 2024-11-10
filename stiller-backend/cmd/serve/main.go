@@ -13,7 +13,7 @@ func main() {
         log.Fatalln("[ ❌ ] invalid router, exiting...")
     }
 
-    log.Println("[ ✅ ] server started")
+    log.Println("[ ✅ ] server started at port", stiller.StillerConfig.Port)
 
     log.Fatalln(http.ListenAndServe(stiller.StillerConfig.Port, new_router))
 }
