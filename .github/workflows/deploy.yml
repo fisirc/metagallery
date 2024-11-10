@@ -11,7 +11,8 @@ jobs:
         run: |
           mkdir -p ~/.ssh/
           eval "$(ssh-agent -s)"
-          echo "${{ secrets.SSH_PRIVKEY }}" | tr -d '\r' | ssh-add -vvv -
+          echo "${{ secrets.SSH_PRIVKEY }}" | tr -d '\r' > ~/.ssh/id_rsa
+          ssh-add -vvv
           ls ~/.ssh/
           ssh-keyscan -H "${{ secrets.SSH_IP }}" >> ~/.ssh/known_hosts
       - name: test file creation
