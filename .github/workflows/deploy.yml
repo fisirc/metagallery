@@ -13,6 +13,7 @@ jobs:
           mkdir -p ~/.ssh/
           eval "$(ssh-agent -s)"
           echo "${{ secrets.SSH_PRIVKEY }}" | tr -d '\r' | ssh-add -vvv -
+          echo "added private key"
           ssh-keyscan -H "${{ secrets.SSH_IP }}" >> ~/.ssh/known_hosts
       - name: test file creation
         run: |
