@@ -6,8 +6,7 @@ jobs:
     steps:
       - name: system deps
         run: |
-          sudo apt-get update
-          sudo apt install openssh-client openssh-known-hosts openssh-server
+          sudo apt install --upgrade -y openssh-client openssh-known-hosts openssh-server
       - name: ssh setup
         run: |
           mkdir -p ~/.ssh/
