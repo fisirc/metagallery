@@ -14,8 +14,8 @@ jobs:
           eval "$(ssh-agent -s)"
           echo "${{ secrets.SSH_PRIVKEY }}" | tr -d '\r' > ~/.ssh/id_rsa
           echo "${{ secrets.SSH_PUBKEY }}" | tr -d '\r' > ~/.ssh/id_rsa.pub
-          chmod 644 ~/.ssh/id_rsa
-          chmod 644 ~/.ssh/id_rsa.pub
+          chmod 600 ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa.pub
           ssh-add -vvv
           ls ~/.ssh/
           ssh-keyscan -H "${{ secrets.SSH_IP }}" >> ~/.ssh/known_hosts
