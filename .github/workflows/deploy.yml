@@ -20,4 +20,4 @@ jobs:
           ls ~/.ssh/
           ssh-keyscan -H "${{ secrets.SSH_IP }}" >> ~/.ssh/known_hosts
       - name: deploy
-        run: ssh -vT "bauer@${{ secrets.SSH_IP }}" "cd ~/clones/metagallery/stiller-backend && git pull && go run ./cmd/serve"
+        run: ssh -vT "bauer@${{ secrets.SSH_IP }}" "cd ~/clones/metagallery/stiller-backend && git pull"
