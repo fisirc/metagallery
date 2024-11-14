@@ -1,10 +1,16 @@
-package dbutils
+# FS-based handlers
 
+These endpoints are stubs used to modify any kind of file, where each file is
+stored internally as follows:
+
+```go
 type StillerFileType uint8
 const (
-    Image StillerFileType = iota
-    Video
-    Object3D
+    Image StillerFileType = iota    // 0
+    Video                           // 1
+    Object3D                        // 3
+
+    /* control value (not actually used inside the db) */
     Unreachable
 )
 
@@ -21,14 +27,9 @@ type StillerFile struct {
     Size        int             `json:"size"`
     Deleted     bool            `json:"deleted"`
 }
+```
 
-type StillerUser struct {
-    Id          int    `json:"id"`
-    AvatarId    int    `json:"avatarid"`
-    TierId      int    `json:"tierid"`
-    Displayname string `json:"displayname"`
-    Username    string `json:"username"`
-    Mail        string `json:"mail"`
-    Bpasswd     string `json:"bpasswd"`
-}
+So each file entrance inside the database is actually a metadata block of an
+actual file that lies in the server in a path defined by [the
+configuration file](configuration.md##FilesPath).
 

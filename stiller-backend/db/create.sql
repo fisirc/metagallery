@@ -1,18 +1,3 @@
-create table tier (
-    id integer unique primary key not null,
-    name text unique not null
-);
-
-create table user (
-    id integer unique primary key autoincrement not null,
-    avatar integer references file (id),
-    tier integer not null references tier (id),
-    displayname text not null,
-    username text unique not null,
-    mail text not null,
-    bpasswd text not null
-);
-
 create table filetype (
     code integer unique primary key not null,
     name text unique not null
@@ -30,6 +15,25 @@ create table file (
     hashed integer not null,
     size real not null,
     deleted integer not null
+);
+
+create table tier (
+    id integer unique primary key not null,
+    name text unique not null
+);
+
+create table user (
+    id integer unique primary key autoincrement not null,
+    tier integer not null references tier (id),
+    displayname text not null,
+    username text unique not null,
+    mail text not null,
+    bpasswd text not null
+);
+
+create table avatar (
+    user integer not null references user (id),
+    file integer not null references file (id)
 );
 
 create table gallery (
@@ -72,5 +76,5 @@ insert into tier values
     (1, 'van gogh'),
     (2, 'picasso');
 
-insert into user VALUES (0, null, 0, 'admin', 'admin', '', '');
+insert into user VALUES (0, 0, 'admin', 'admin', '', '');
 

@@ -121,7 +121,7 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    ishashed_str := r.FormValue("stiller-hash")
+    ishashed_str := r.FormValue("stiller-hashed")
     if len(ishashed_str) != 1 {
         handleutils.GenericLog(nil, "invalid hash '%s' expected 0|1", ishashed_str)
         w.WriteHeader(http.StatusNotAcceptable)

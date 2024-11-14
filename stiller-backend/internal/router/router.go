@@ -13,12 +13,37 @@ import (
 
 func NewStillerRouter() *httprouter.Router {
     new_router := httprouter.New()
-    new_router.POST("/file/upload", upload.NetHandler)
-    new_router.PATCH("/file/update", patchfile.NetHandler)
-    new_router.GET("/file/retrieveall/:user_id", fileretrieve.Nethandler)
-    new_router.POST("/auth/newuser", newuser.Nethandler)
-    new_router.GET("/auth/checkuser/:username", userverify.NetHandler)
-    new_router.POST("/auth/login", userlogin.NetHandler)
+
+    new_router.POST(
+        "/file/upload",
+        upload.NetHandler,
+    )
+
+    new_router.PATCH(
+        "/file/update",
+        patchfile.NetHandler,
+    )
+
+    new_router.GET(
+        "/file/retrieveall",
+        fileretrieve.Nethandler,
+    )
+
+    new_router.POST(
+        "/auth/newuser",
+        newuser.Nethandler,
+    )
+
+    new_router.GET(
+        "/auth/checkuser/:username",
+        userverify.NetHandler,
+    )
+
+    new_router.POST(
+        "/auth/login",
+        userlogin.NetHandler,
+    )
+
     return new_router
 }
 

@@ -5,6 +5,7 @@ import (
 	"stiller"
 	"stiller/internal/dbutils"
 	"stiller/internal/handlers/handleutils"
+	"stiller/internal/jwtutils"
 
 	jsonexp "github.com/go-json-experiment/json"
 	"github.com/julienschmidt/httprouter"
@@ -13,10 +14,9 @@ import (
 )
 
 func Nethandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-    user_id := params.ByName("user_id")
-    if len(user_id) == 0 {
-        w.WriteHeader(http.StatusNotFound)
-        handleutils.GenericLog(nil, "empty user id")
+    user_token := r.Header.Get("token")
+    user_tk, token_decode_err := jwtutils.Decode(user_token)
+    if handleutils.RequestLog(token_decode_err, "", http.StatusUnauthorized, &w) {
         return
     }
 
@@ -56,7 +56,7 @@ func Nethandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
                 return nil
             },
             Args: []any{
-                user_id,
+                user_tk.UserId,
             },
         },
     )
@@ -92,7 +92,7 @@ func Nethandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
                 return nil
             },
             Args: []any{
-                user_id,
+                user_tk.UserId,
             },
         },
     )

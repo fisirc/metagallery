@@ -32,4 +32,5 @@ go.work.sum
 static/
 tmp/
 build/
+book/
 
