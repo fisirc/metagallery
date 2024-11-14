@@ -12,6 +12,10 @@ import (
 
 
 func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+    if handleutils.CORS(w, r) {
+        return
+    }
+
     username := params.ByName("username")
     if len(username) == 0 {
         w.WriteHeader(http.StatusNotFound)

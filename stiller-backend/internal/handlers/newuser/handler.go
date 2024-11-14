@@ -2,6 +2,7 @@ package newuser
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"os"
 	"stiller"
@@ -36,9 +37,8 @@ func newuserScalarFn(ctx sqlite.Context, args []sqlite.Value) (sqlite.Value, err
     }
 
     new_user := dbutils.StillerUser{
-        AvatarId:    args[0].Int(),
-        TierId:      args[1].Int(),
-        Username:    args[2].Text(),
+        TierId:      args[0].Int(),
+        Username:    args[1].Text(),
         Displayname: args[2].Text(),
         Mail:        args[3].Text(),
         Bpasswd:     string(bcrypt_pwd),
@@ -46,21 +46,20 @@ func newuserScalarFn(ctx sqlite.Context, args []sqlite.Value) (sqlite.Value, err
 
     query := `
         insert into
-            user (avatar, tier, displayname, username, mail, bpasswd)
+            user (tier, displayname, username, mail, bpasswd)
         values
-            (?1, ?2, ?3, ?4, ?5, ?6)
+            (?1, ?2, ?3, ?4, ?5)
         returning
             id;`
 
     new_id := int(-1)
-    sqlitex.ExecuteTransient(db_conn, query, &sqlitex.ExecOptions{
+    exec_err := sqlitex.ExecuteTransient(db_conn, query, &sqlitex.ExecOptions{
         ResultFunc: func(stmt *sqlite.Stmt) error {
             new_id = stmt.ColumnInt(0)
             return nil
         },
 
         Args: []any{
-            new_user.AvatarId,
             new_user.TierId,
             new_user.Username,
             new_user.Displayname,
@@ -68,6 +67,10 @@ func newuserScalarFn(ctx sqlite.Context, args []sqlite.Value) (sqlite.Value, err
             new_user.Bpasswd,
         },
     })
+
+    if exec_err != nil {
+        return sqlite.Value{}, exec_err
+    }
 
     if new_id == -1 {
         return sqlite.Value{}, ErrInQuery
@@ -77,16 +80,16 @@ func newuserScalarFn(ctx sqlite.Context, args []sqlite.Value) (sqlite.Value, err
 }
 
 func Nethandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+    if handleutils.CORS(w, r) {
+        return
+    }
+
     type ReqPayload struct {
         AvatarId    int    `json:"avatar_id"`
         TierId      int    `json:"tier_id"`
         Username    string `json:"username"`
         Mail        string `json:"mail"`
         Passwd      string `json:"pwd"`
-    }
-
-    type ResPayload struct {
-        NewId int `json:"newid"`
     }
 
     rpayload := ReqPayload{}
@@ -112,13 +115,12 @@ func Nethandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    query := `select newuser(?1, ?2, ?3, ?4, ?5);`
-
     new_tk := jwtutils.Token{
         UserId: -1,
     }
 
-    sqlitex.ExecuteTransient(new_dbconn, query, &sqlitex.ExecOptions{
+    query := `select newuser(?1, ?2, ?3, ?4, ?5);`
+    exec_err := sqlitex.ExecuteTransient(new_dbconn, query, &sqlitex.ExecOptions{
         ResultFunc: func(stmt *sqlite.Stmt) error {
             new_tk.UserId = stmt.ColumnInt(0)
             return nil
@@ -132,6 +134,10 @@ func Nethandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
             rpayload.Passwd,
         },
     })
+
+    if handleutils.RequestLog(exec_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
 
     if new_tk.UserId == -1 {
         handleutils.GenericLog(nil, "no new user was created")

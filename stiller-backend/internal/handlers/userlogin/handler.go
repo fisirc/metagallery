@@ -16,6 +16,10 @@ import (
 
 
 func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+    if handleutils.CORS(w, r) {
+        return
+    }
+
     type ReqPayload struct {
         Username string `json:"username"`
         Pwd      string `json:"pwd"`

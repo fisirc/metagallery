@@ -24,7 +24,6 @@ type StillerFile struct {
 
 type StillerUser struct {
     Id          int    `json:"id"`
-    AvatarId    int    `json:"avatarid"`
     TierId      int    `json:"tierid"`
     Displayname string `json:"displayname"`
     Username    string `json:"username"`

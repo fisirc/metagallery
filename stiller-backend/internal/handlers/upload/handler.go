@@ -70,6 +70,10 @@ func pushNewFile(fileptr *dbutils.StillerFile) (int, error) {
 }
 
 func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+    if handleutils.CORS(w, r) {
+        return
+    }
+
     type ResPayload struct {
         Id int `json:"id"`
     }

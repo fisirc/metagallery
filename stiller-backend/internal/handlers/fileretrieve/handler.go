@@ -14,6 +14,10 @@ import (
 )
 
 func Nethandler(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+    if handleutils.CORS(w, r) {
+        return
+    }
+
     user_token := r.Header.Get("token")
     user_tk, token_decode_err := jwtutils.Decode(user_token)
     if handleutils.RequestLog(token_decode_err, "", http.StatusUnauthorized, &w) {
