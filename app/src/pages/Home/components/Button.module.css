@@ -1,37 +1,37 @@
 .button {
   border: none;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   cursor: pointer;
   font-weight: 600;
   transition: background-color 0.2s ease-in-out;
 }
 
 .primary {
-  background-color: #000;
+  background-color: #18181B;
   color: #fff;
 }
 
 .secondary {
   background-color: transparent;
   color: #000;
-  border: 0.1px solid #010101;
+  border: 0.1px solid #d3d3d3;
 }
 
 .small {
   font-size: 0.875rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.5rem;
 }
 
 .medium {
   font-size: 1rem;
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 0.75rem;
 }
 
 .large {
   font-size: 1.125rem;
-  padding: 1rem 2rem;
+  padding: 0.5rem 1.75rem;
 }
 
 .button:hover {
-  opacity: 0.9;
+  opacity: 0.7;
 }

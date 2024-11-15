@@ -40,9 +40,6 @@ const PricingSection = () => {
 
   return (
     <section className={styles.pricingSection}>
-      <div className={styles.imageContainer}>
-        <img src="./left.png" alt="Imagen izquierda" />
-      </div>
       <div className={styles.contentContainer}>
         <h2 className={styles.title}>Crea tu galería hoy mismo</h2>
         <p className={styles.description}>
@@ -53,9 +50,6 @@ const PricingSection = () => {
             <PricingCard key={index} {...plan} />
           ))}
         </div>
-      </div>
-      <div className={styles.imageContainer}>
-        <img src="./right.png" alt="Imagen derecha" />
       </div>
     </section>
   );
