@@ -20,32 +20,32 @@ type individualHandler struct {
 
 var routes = [...]individualHandler{
     {
-        path: "/file/upload",
+        path: "/services/stiller/file/upload",
         method: http.MethodPost,
         handlefunc: upload.NetHandler,
     },
     {
-        path: "/file/update",
+        path: "/services/stiller/file/update",
         method: http.MethodPatch,
         handlefunc: patchfile.NetHandler,
     },
     {
-        path: "/file/retrieveall",
+        path: "/services/stiller/file/retrieveall",
         method: http.MethodGet,
         handlefunc: fileretrieve.Nethandler,
     },
     {
-        path: "/auth/newuser",
+        path: "/services/stiller/auth/newuser",
         method: http.MethodPost,
         handlefunc: newuser.Nethandler,
     },
     {
-        path: "/auth/checkuser/:username",
+        path: "/services/stiller/auth/checkuser/:username",
         method: http.MethodGet,
         handlefunc: userverify.NetHandler,
     },
     {
-        path: "/auth/login",
+        path: "/services/stiller/auth/login",
         method: http.MethodPost,
         handlefunc: userlogin.NetHandler,
     },

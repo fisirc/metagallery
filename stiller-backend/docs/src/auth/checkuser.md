@@ -4,7 +4,7 @@
 
 <div align="center">
 
-`POST /auth/checkuser/:username`
+`GET /auth/checkuser/:username`
 
 </div>
 
