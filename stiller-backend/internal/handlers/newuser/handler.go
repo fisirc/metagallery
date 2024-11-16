@@ -2,7 +2,6 @@ package newuser
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"os"
 	"stiller"
