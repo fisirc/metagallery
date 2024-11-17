@@ -1,6 +1,5 @@
 import useSWR from 'swr';
-import { UserContentFileElement } from '@/types';
-import { GenericGalleryBlock } from '@/pages/Editor/components/Canvas';
+import { GenericGalleryBlock, UserContentFileElement } from '@/types';
 import { DIR_BOTTOM, DIR_LEFT, DIR_RIGHT, DIR_TOP } from '@/pages/Editor/components/constants';
 
 type ArgsType<T> = T extends (...args: infer U) => any ? U : never;
@@ -136,12 +135,12 @@ const fetcher = (...args: ArgsType<typeof fetch>) => {
         throw new Error('Invalid path');
     }
 
+    if (path === 'gallery/media') {
+        return mockedUserMedia;
+    }
     if (path.startsWith('gallery/')) {
         // const gallery = path.split('/')[1];
         return mockedGalleryBlocks;
-    }
-    if (path === 'gallery/media') {
-        return mockedUserMedia;
     }
 
     throw new Error('404');
