@@ -1,3 +1,4 @@
+import { Redirect } from 'wouter';
 import { Home } from './Home';
 import { Editor } from './Editor';
 import { Gallery3D } from './Gallery3D';
@@ -26,6 +27,13 @@ export const routes = [
         return <div>User {handle}</div>;
       }
       return <Gallery3D gallery={handle}></Gallery3D>;
+    },
+  },
+  {
+    href: '',
+    label: '404',
+    component: () => {
+      return <Redirect to="/" />;
     },
   },
 ];
