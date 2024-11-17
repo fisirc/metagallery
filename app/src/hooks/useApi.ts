@@ -62,7 +62,7 @@ const mockedGalleryBlocks = ([
         props: {
             size: 2,
             dir: DIR_BOTTOM,
-            res: 'https://ibizartguide.com/que-es-arte-contemporaneo/picasso-guernica/',
+            res: 'https://www.grupoeducar.cl/wp-content/uploads/2023/09/Arte-Revista-Educar-octubre-2023-edicion-277.jpg',
         },
     },
     {
@@ -89,7 +89,7 @@ const mockedGalleryBlocks = ([
         props: {
             size: 1,
             dir: DIR_LEFT,
-            res: 'https://www.grupoeducar.cl/wp-content/uploads/2023/09/Arte-Revista-Educar-octubre-2023-edicion-277.jpg',
+            res: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Tux_Droid_1.jpg/1200px-Tux_Droid_1.jpg',
         },
     },
     {
