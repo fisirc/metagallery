@@ -4,17 +4,11 @@ import { Image, Rect } from 'react-konva';
 import { setCursor } from '@/utils';
 import { UNIT } from '../constants';
 import { useEditorStore } from '@/stores/editorAction';
+import { Model3DBlockProps } from '@/types';
 
-export type Model3DBlockProps = {
-  pos: [number, number],
-  props: {
-    size?: number, // We ignore size since this is a 2d view
-    dir?: number,
-    res: string,
-  },
-};
+export const Model3DBlock = ({ block }: { block: Model3DBlockProps }) => {
+  const { pos, props } = block;
 
-export const Model3DBlock = ({ pos, props }: Model3DBlockProps) => {
   const [image] = useImage(props.res);
   const [hovering, setHovering] = useState(false);
   const draggingElem = useEditorStore((state) => state.draggingFile);

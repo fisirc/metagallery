@@ -1,18 +1,12 @@
 import { Rect } from 'react-konva';
 import { DIR_TOP, DIR_RIGHT, DIR_BOTTOM, DIR_LEFT, UNIT, WALL_THICKNESS, WALL_COLOR } from '../constants';
-
-export type WallBlockProps = {
-  pos: [number, number],
-  props: {
-    size: number,
-    dir: 0 | 1 | 2 | 3,
-    res?: string | null,
-  },
-};
+import { WallBlockProps } from '@/types';
 
 const HALF_THICKNESS = WALL_THICKNESS / 2;
 
-export const WallBlock = ({ pos, props }: WallBlockProps) => {
+export const WallBlock = ({ block }: { block: WallBlockProps }) => {
+  const { pos, props } = block;
+
   const scaledPosX = pos[0] * UNIT - HALF_THICKNESS;
   const scaledPosY = pos[1] * UNIT - HALF_THICKNESS;
   const scaledSize = props.size * UNIT;

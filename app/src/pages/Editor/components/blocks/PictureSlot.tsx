@@ -6,20 +6,14 @@ import { setCursor } from '@/utils';
 import { useEditorStore } from '@/stores/editorAction';
 import { DIR_TOP, DIR_RIGHT, DIR_BOTTOM, DIR_LEFT, UNIT, WALL_THICKNESS, PICTURE_SLOT_UNIT } from '../constants';
 import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
-
-export type PictureSlotProps = {
-  pos: [number, number],
-  props: {
-    size: number,
-    dir: 0 | 1 | 2 | 3,
-    res: string,
-  },
-};
+import { PictureSlotProps } from '@/types';
 
 const HALF_THICKNESS = WALL_THICKNESS / 2;
 const WALL_PADDING = 0.1;
 
-export const PictureSlot = ({ pos, props }: PictureSlotProps) => {
+export const PictureSlot = ({ block }: { block: PictureSlotProps }) => {
+  const { pos, props } = block;
+
   const [image] = useImage(props.res);
   const [hovering, setHovering] = useState(false);
   const draggingElem = useEditorStore((state) => state.draggingFile);

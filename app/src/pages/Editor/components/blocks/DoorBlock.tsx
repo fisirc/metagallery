@@ -1,16 +1,10 @@
 import { Rect } from 'react-konva';
 import { DIR_TOP, DIR_RIGHT, DIR_BOTTOM, DIR_LEFT, UNIT, WALL_THICKNESS, WALL_COLOR } from '../constants';
+import { DoorBlockProps } from '@/types';
 
-export type DoorBlockProps = {
-  pos: [number, number],
-  props: {
-    size: number,
-    dir?: number,
-    res?: string,
-  },
-};
+export const DoorBlock = ({ block }: { block: DoorBlockProps }) => {
+  const { pos, props } = block;
 
-export const DoorBlock = ({ pos, props }: DoorBlockProps) => {
   switch (props.dir) {
     case DIR_TOP: {
       return (
