@@ -11,7 +11,10 @@ export default [
   {
     href: ':gallery/edit',
     label: 'Editor',
-    component: Editor,
+    component: ({ params }: { params: { gallery: string } }) => {
+      const { gallery } = params;
+      return <Editor gallery={gallery}></Editor>;
+    },
   },
   {
     href: ':handle/',

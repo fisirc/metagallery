@@ -12,7 +12,7 @@ import { setCursor } from '@/utils';
 
 // TRBL -> 0123
 
-type GenericGalleryBlock = {
+export type GenericGalleryBlock = {
   type: 'wall' | 'model3d' | 'door',
   pos: [number, number],
   props: {
@@ -21,106 +21,6 @@ type GenericGalleryBlock = {
     res?: string | null,
   },
 };
-
-// Until we have the backend, we mock
-const mockedResponse = ([
-  {
-    type: 'wall',
-    pos: [0, 0],
-    props: {
-      size: 2,
-      dir: DIR_RIGHT,
-      res: 'https://patrimoniocultural.bogota.unal.edu.co/wp-content/uploads/2023/galeria-arte-contemp/1903_1-scaled.jpg',
-    },
-  },
-  {
-    type: 'wall',
-    pos: [0, 1],
-    props: {
-      size: 1,
-      dir: DIR_TOP,
-      res: 'https://e00-elmundo.uecdn.es/assets/multimedia/imagenes/2017/02/24/14879498132987.jpg',
-    },
-  },
-  {
-    type: 'wall',
-    pos: [2, 0],
-    props: {
-      size: 2,
-      dir: DIR_LEFT,
-      res: null,
-    },
-  },
-  {
-    type: 'wall',
-    pos: [2, 0],
-    props: {
-      size: 2,
-      dir: DIR_BOTTOM,
-      res: 'https://ibizartguide.com/que-es-arte-contemporaneo/picasso-guernica/',
-    },
-  },
-  {
-    type: 'wall',
-    pos: [2, 0],
-    props: {
-      size: 1,
-      dir: DIR_BOTTOM,
-      res: null,
-    },
-  },
-  {
-    type: 'wall',
-    pos: [0, 2],
-    props: {
-      size: 2,
-      dir: DIR_TOP,
-      res: null,
-    },
-  },
-  {
-    type: 'wall',
-    pos: [2, 2],
-    props: {
-      size: 1,
-      dir: DIR_LEFT,
-      res: 'https://www.grupoeducar.cl/wp-content/uploads/2023/09/Arte-Revista-Educar-octubre-2023-edicion-277.jpg',
-    },
-  },
-  {
-    type: 'wall',
-    pos: [0, 2],
-    props: {
-      size: 2,
-      dir: DIR_RIGHT,
-      res: null,
-    },
-  },
-  {
-    type: 'model3d',
-    pos: [0.5, 1.5],
-    props: {
-      res: 'https://cdn3d.iconscout.com/3d/premium/thumb/balloon-dog-3d-illustration-download-in-png-blend-fbx-gltf-file-formats--birthday-party-pack-celebration-illustrations-4712928.png?f=webp',
-      size: 0.6,
-    },
-  },
-  {
-    type: 'door',
-    pos: [0, 1],
-    props: {
-      dir: DIR_RIGHT,
-      size: 1,
-    },
-  },
-  {
-    type: 'door',
-    pos: [1, 2],
-    props: {
-      dir: DIR_TOP,
-      size: 1,
-    },
-  },
-] satisfies Array<GenericGalleryBlock>).toSorted((a, b) => b.props.size - a.props.size);
 
 export const Canvas = () => {
   const [viewport, setViewport] = useState({ x: 0, y: 0 });

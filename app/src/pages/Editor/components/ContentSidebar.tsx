@@ -7,34 +7,12 @@ import { primaryIconProps, secondaryIconProps, smallIconProps } from '@/constant
 import { UserContentFileElement } from '@/types';
 import { useEditorStore } from '@/stores/editorAction';
 import { DRAG_PORTAL_ID } from './constants';
-
-const mockedResponse = [
-  {
-    id: 1,
-    type: 'image',
-    title: 'Aiko Tanaka',
-    description: 'Lorem punpuns',
-    url: 'https://www.grupoeducar.cl/wp-content/uploads/2023/06/Arte-Revista-Educar-Julio-2023-edicion-274.png',
-  },
-  {
-    id: 2,
-    type: 'model3d',
-    title: 'Grace en 3d',
-    description: 'Modelo 3d no implementado',
-    url: 'https://diario.global/wp-content/uploads/2022/02/C2015014-TOTS-SOM-EUROPA-UNIDA.jpg',
-  },
-  {
-    id: 3,
-    type: 'image',
-    title: 'Xiao Pang',
-    description: 'Le gusta mirar fijamente a cosas cotidianas',
-    url: 'https://unidadlatina.org/wp-content/uploads/2024/04/arte-contemporaneo-latinoamerica.jpg',
-  },
-] satisfies Array<UserContentFileElement>;
+import { useApi } from '@/hooks/useApi';
 
 export const EditorSidebar = () => {
   const [opened, setOpened] = useState(false);
   const isLargeScreen = useMediaQuery('(min-width: 900px)');
+  const { data: medias } = useApi<UserContentFileElement[]>('gallery/media');
 
   const onDragEnd = () => {
     useEditorStore.getState().dropFile();
@@ -50,11 +28,15 @@ export const EditorSidebar = () => {
     };
   }, []);
 
+  if (!medias) {
+    return <SidebarContent mediaContents={[]} />;
+  }
+
   return (
     <>
       {isLargeScreen ? (
         <Stack mih="100%" gap="sm" mb="16px" miw={300}>
-          <SidebarContent />
+          <SidebarContent mediaContents={medias} />
         </Stack>
       ) : (
         <Drawer
@@ -66,7 +48,7 @@ export const EditorSidebar = () => {
           opacity={0.2}
           zIndex={2000}
         >
-          <SidebarContent />
+          <SidebarContent mediaContents={medias} />
         </Drawer>
       )}
     </>
@@ -151,7 +133,7 @@ const UserContentSidebarElement = ({ element }: { element: UserContentFileElemen
 };
 
 // Sidebar content extracted for reusability
-const SidebarContent = () => (
+const SidebarContent = ({ mediaContents }: { mediaContents: UserContentFileElement[] }) => (
   <>
     <Group>
       <TextInput
@@ -169,7 +151,7 @@ const SidebarContent = () => (
     >
       <Masonry columnsCount={2} gutter="12px">
         {
-          mockedResponse.map((element) => (
+          mediaContents.map((element) => (
             <UserContentSidebarElement key={element.id} element={element} />
           ))
         }
