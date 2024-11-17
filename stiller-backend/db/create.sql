@@ -48,33 +48,45 @@ create table gallery (
 create table template (
     id integer unique primary key autoincrement not null,
     tier integer not null references tier (id),
+    thumbnail integer not null references file (id),
+    res integer not null references file (id),
     title text not null,
-    description text
+    description text not null
 );
 
 create table templateblock (
     id integer unique primary key autoincrement not null,
     template integer references template (id),
-    gallery integer references gallery (id),
-    res integer references file (id),
-    title text not null,
-    description text not null,
-    type text not null,
     posx real not null,
     posy real not null,
-    scale real not null,
     direction integer not null
 );
 
-insert INTO filetype VALUES
+create table galleryblock (
+    gallery integer not null references gallery (id),
+    block integer not null references templateblock (id),
+    res integer references file (id),
+    title text not null,
+    description text not null,
+    scale real not null
+);
+
+insert into
+    filetype
+values
 	(0, 'image'),
     (1, 'video'),
     (2, 'object3d');
 
-insert into tier values
+insert into
+    tier
+values
 	(0, 'free'),
     (1, 'van gogh'),
     (2, 'picasso');
 
-insert into user VALUES (0, 0, 'admin', 'admin', '', '');
+insert into
+    user (tier, displayname, username, mail, bpasswd)
+values
+    (0, 'admin', 'admin', '', 'skibidi pana');
 

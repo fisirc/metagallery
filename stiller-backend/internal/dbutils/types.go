@@ -31,3 +31,22 @@ type StillerUser struct {
     Bpasswd     string `json:"bpasswd"`
 }
 
+type StillerTemplateBlock struct {
+    Id          int     `json:"id"`
+    TemplateId  int     `json:"template"`
+    Posx        float64 `json:"posx"`
+    Posy        float64 `json:"posy"`
+    Direction   float64 `json:"direction"`
+}
+
+type StillerTemplate struct {
+    Id          int                    `json:"id"`
+    TierId      int                    `json:"tier"`
+    ThumbnailId int                    `json:"thumbnail"`
+    ResId       int                    `json:"res"`
+    Title       string                 `json:"title"`
+    Description string                 `json:"description"`
+    Blocks      []StillerTemplateBlock `json:"blocks"`
+}
+
+

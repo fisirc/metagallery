@@ -2,12 +2,13 @@ package router
 
 import (
 	"net/http"
-	"stiller/internal/handlers/fileretrieve"
-	"stiller/internal/handlers/newuser"
-	"stiller/internal/handlers/patchfile"
-	"stiller/internal/handlers/upload"
-	"stiller/internal/handlers/userlogin"
-	"stiller/internal/handlers/userverify"
+	"stiller/internal/handlers/auth/newuser"
+	"stiller/internal/handlers/auth/userlogin"
+	"stiller/internal/handlers/auth/userverify"
+	"stiller/internal/handlers/file/fileretrieve"
+	"stiller/internal/handlers/file/patchfile"
+	"stiller/internal/handlers/file/upload"
+	"stiller/internal/handlers/gallery/addtemplate"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -19,6 +20,11 @@ type individualHandler struct {
 }
 
 var routes = [...]individualHandler{
+    {
+        path: "/gallery/template",
+        method: http.MethodPost,
+        handlefunc: addtemplate.NetHandler,
+    },
     {
         path: "/file/upload",
         method: http.MethodPost,
