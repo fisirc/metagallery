@@ -1,16 +1,16 @@
 import { Switch, Route } from 'wouter';
-import pages from '@/pages';
+import { routes } from '@/pages';
 
 const App = () => {
   return (
     <div style={{ height: '100vh' }}>
       <Switch>
         {
-          pages.map(page => (
+          routes.map((route, i) => (
             <Route
-              key={page.href}
-              path={page.href}
-              component={page.component}
+              key={i}
+              path={route.href}
+              component={route.component as any}
             />
           ))
         }

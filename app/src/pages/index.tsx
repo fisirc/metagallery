@@ -2,7 +2,7 @@ import { Home } from './Home';
 import { Editor } from './Editor';
 import { Gallery3D } from './Gallery3D';
 
-export default [
+export const routes = [
   {
     href: '/',
     label: 'Welcome',
