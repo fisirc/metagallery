@@ -9,23 +9,14 @@ import { DIR_TOP, DIR_RIGHT, DIR_BOTTOM, DIR_LEFT, ZOOM_FACTOR, UNIT } from './c
 import { PictureSlot } from './blocks/PictureSlot';
 import { useEditorStore } from '@/stores/editorAction';
 import { setCursor } from '@/utils';
+import { useApi } from '@/hooks/useApi';
+import { GenericGalleryBlock, isDoorBlock, isModel3DBlock, isWallBlock, PictureSlotProps } from '@/types';
 
-// TRBL -> 0123
-
-export type GenericGalleryBlock = {
-  type: 'wall' | 'model3d' | 'door',
-  pos: [number, number],
-  props: {
-    size?: number,
-    dir?: 0 | 1 | 2 | 3,
-    res?: string | null,
-  },
-};
-
-export const Canvas = () => {
+export const Canvas = ({ gallery }: { gallery: string }) => {
   const [viewport, setViewport] = useState({ x: 0, y: 0 });
   const stageRef = useRef<Konva.Stage>(null);
   const draggingElem = useEditorStore((state) => state.draggingFile);
+  let { data: blocks } = useApi<GenericGalleryBlock[]>(`gallery/${gallery}`);
 
   useEffect(() => {
     handleViewportResize();
@@ -40,42 +31,52 @@ export const Canvas = () => {
 
   // We calculate minXY and maxXY just to define the gallery boundaries
   const minXY = useMemo(() => {
+    if (!blocks) {
+      return [0, 0];
+    }
+
     let x = 0;
     let y = 0;
 
-    for (const item of mockedResponse) {
+    for (const item of blocks) {
+      const size = item.props.size ?? 1;
       x = Math.min(x, item.pos[0]);
       y = Math.min(y, item.pos[1]);
 
       if (item.props.dir === DIR_TOP) {
-        y = Math.min(y, item.pos[1] - item.props.size);
+        y = Math.min(y, item.pos[1] - size);
       }
       if (item.props.dir === DIR_LEFT) {
-        x = Math.min(x, item.pos[0] - item.props.size);
+        x = Math.min(x, item.pos[0] - size);
       }
     }
 
     return [x, y];
-  }, [mockedResponse]);
+  }, [blocks]);
 
   const maxXY = useMemo(() => {
     let x = 0;
     let y = 0;
 
-    for (const item of mockedResponse) {
+    if (!blocks) {
+      return [0, 0];
+    }
+
+    for (const item of blocks) {
+      const size = item.props.size ?? 1;
       x = Math.max(x, item.pos[0]);
       y = Math.max(y, item.pos[1]);
 
       if (item.props.dir === DIR_BOTTOM) {
-        y = Math.max(y, item.pos[1] + item.props.size);
+        y = Math.max(y, item.pos[1] + size);
       }
       if (item.props.dir === DIR_RIGHT) {
-        x = Math.max(x, item.pos[0] + item.props.size);
+        x = Math.max(x, item.pos[0] + size);
       }
     }
 
     return [x - 1, y - 1];
-  }, [mockedResponse]);
+  }, [blocks]);
 
   // For dynamic canvas resizing
   const handleViewportResize = () => {
@@ -88,6 +89,10 @@ export const Canvas = () => {
       });
     }
   };
+
+  if (!blocks) {
+    blocks = [];
+  }
 
   return (
     <Box
@@ -142,41 +147,40 @@ export const Canvas = () => {
         { /* First layer of walls and doors */}
         <Layer>
           {
-            mockedResponse.map((item, index) => {
-              switch (item.type) {
-                case 'wall':
-                  return (
-                    <WallBlock key={index} pos={item.pos} props={item.props} />
-                  );
-                case 'door':
-                  return (
-                    <DoorBlock key={index} pos={item.pos} props={item.props} />
-                  );
-                default:
-                  return null;
+            blocks.map((item, index) => {
+              if (isWallBlock(item)) {
+                return (
+                  <WallBlock key={index} block={item} />
+                );
               }
+              if (isDoorBlock(item)) {
+                return (
+                  <DoorBlock key={index} block={item} />
+                );
+              }
+
+              return null;
             })
           }
         </Layer>
         { /* Top layer of image and model slots */}
         <Layer>
           {
-            mockedResponse.map((item, index) => {
-              switch (item.type) {
-                case 'wall':
-                  if (!item.props.res) {
-                    return null;
-                  }
-                  return (
-                    <PictureSlot key={index} pos={item.pos} props={item.props} />
-                  );
-                case 'model3d':
-                  return (
-                    <Model3DBlock key={index} pos={item.pos} props={item.props} />
-                  );
-                default:
+            blocks.map((item, index) => {
+              if (isWallBlock(item)) {
+                if (!item.props.res) {
                   return null;
+                }
+                return (
+                  <PictureSlot key={index} block={item as PictureSlotProps} />
+                );
               }
+              if (isModel3DBlock(item)) {
+                return (
+                  <Model3DBlock key={index} block={item} />
+                );
+              }
+              return null;
             })
           }
         </Layer>
