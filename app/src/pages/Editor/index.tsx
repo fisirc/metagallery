@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { UserButton } from '@/components/UserButton';
 import { DynamicText } from '@/components/DynamicText';
-import { Canvas } from './components/Canvas';
+import { GalleryCanvas } from './components/GalleryCanvas';
 import { MenuBurger } from './components/MenuBurger';
 import { MainButtons } from './components/MainButtons';
 import { EditorSidebar } from './components/ContentSidebar';
@@ -25,7 +25,7 @@ export const Editor = ({ gallery }: { gallery: string }) => {
       </div>
       <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', minHeight: 'calc(100vh - 70px)', maxHeight: 'calc(100vh - 70px)' }}>
         <EditorSidebar />
-        <Canvas gallery={gallery} />
+        <GalleryCanvas gallery={gallery} />
       </div>
     </section>
   );
