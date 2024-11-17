@@ -39,6 +39,8 @@ create table avatar (
 create table gallery (
     id integer unique primary key autoincrement not null,
     owner integer not null references user (id),
+    -- ******slug         (pedir al crear galería)
+    -- ******template_fk  (pedir al crear galería)
     title text not null,
     description text,
     deploy_stage integer not null,
@@ -54,21 +56,38 @@ create table template (
     description text not null
 );
 
-create table templateblock (
-    id integer unique primary key autoincrement not null,
-    template integer references template (id),
-    posx real not null,
-    posy real not null,
-    direction integer not null
-);
+-- casafugaz.metatemplate
+-- - escenario 3d (.blend, .obj)
+-- - slots -> slot: ref=10 type=3d (.json)
+-- - topdown_view (.svg)
 
-create table galleryblock (
+-- Crear galería a partir de template t:
+-- - select * from template where id = t;
+-- - template = file.Open(res)
+-- - parsear template -> escenario, *slots, topdown
+-- - INSERT gallery;
+-- - for slot of slots INSERT galleryslot;
+
+-- Saber cómo renderizar la galería
+-- - slots (.json)
+-- - topdown_view (.svg)
+-- GET gallery/2d/casa-fugaz
+-- - select * from gallery where slug = 'casa-fugaz' join template;
+-- - template = file.Open(res)
+-- - parsear template -> escenario, *slots, *topdown
+-- - return json
+
+-- GET gallery/3d/casa-fugaz
+-- - slots (.json)
+-- - topdown_view (.svg)
+-- - lo mismo
+
+create table galleryslot (
     gallery integer not null references gallery (id),
-    block integer not null references templateblock (id),
+    slot_ref integer not null, -- inmutable
     res integer references file (id),
     title text not null,
-    description text not null,
-    scale real not null
+    description text not null
 );
 
 insert into
