@@ -13,8 +13,8 @@ export const usePlayerControls = () => {
   });
 
   useEffect(() => {
-    const handleKeyDown = (e) => setMovement((m) => ({ ...m, [moveFieldByKey(e.code)]: true }));
-    const handleKeyUp = (e) => setMovement((m) => ({ ...m, [moveFieldByKey(e.code)]: false }));
+    const handleKeyDown = (e: KeyboardEvent) => setMovement((m) => ({ ...m, [moveFieldByKey(e.code)]: true }));
+    const handleKeyUp = (e: KeyboardEvent) => setMovement((m) => ({ ...m, [moveFieldByKey(e.code)]: false }));
 
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
@@ -40,8 +40,10 @@ export const FPV = (props: any) => {
   const [ref, api] = useSphere((index) => ({
     mass: 1,
     type: 'Dynamic',
-    position: [0, 10, 0],
-    ...props,
+    position: [0, 2, 0],
+    controls: true,
+    args: [2],
+    color: 'yellow',
   }));
 
   const { forward, backward, left, right, jump } = usePlayerControls();
@@ -65,15 +67,5 @@ export const FPV = (props: any) => {
     }
   });
 
-  return (
-    <>
-      <PointerLockControls args={[camera, gl.domElement]} />
-      <group>
-        <mesh castShadow position={props.position} ref={ref}>
-          <sphereGeometry args={props.args} />
-          <meshStandardMaterial color="#FFFF00" />
-        </mesh>
-      </group>
-    </>
-  );
+  return <PointerLockControls args={[camera, gl.domElement]} />
 };

@@ -1,4 +1,4 @@
-import { Sky, SpotLightShadow } from '@react-three/drei';
+import { Sky } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import { Physics } from '@react-three/cannon';
 import { useApi } from '@/hooks/useApi';
@@ -9,7 +9,6 @@ import { Scene } from './components/gallery/Scene';
 
 export const Gallery3D = ({ gallery }: { gallery: string }) => {
   const { data } = useApi<Array<UserContentFileElement>>(`gallery/${gallery}`);
-
   console.log('🐢🐢🐢🐢', data);
 
   return (
@@ -20,7 +19,7 @@ export const Gallery3D = ({ gallery }: { gallery: string }) => {
         position={[10, 10, 5]}
         castShadow />
       <Physics>
-        <FPV controls position={[0, 1, 0]} args={[2]} color="yellow" />
+        <FPV />
         <Ground />
         <Scene />
       </Physics>
