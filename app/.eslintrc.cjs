@@ -1,5 +1,11 @@
 module.exports = {
-  extends: ['mantine'],
+  extends: [
+    'mantine',
+    'plugin:react-three/recommended',
+  ],
+  plugins: [
+    'react-three',
+  ],
   parserOptions: {
     project: './tsconfig.json',
   },
