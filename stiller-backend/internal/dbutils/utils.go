@@ -10,7 +10,17 @@ import (
 )
 
 func newPool() *sqlitex.Pool {
-    pool, err := sqlitex.NewPool(stiller.StillerConfig.DBPath, sqlitex.PoolOptions{})
+    pool, err := sqlitex.NewPool(stiller.StillerConfig.DBPath, sqlitex.PoolOptions{
+        PrepareConn: func(conn *sqlite.Conn) error {
+            stmt, _, err := conn.PrepareTransient("PRAGMA foreign_keys = ON;")
+            _, row_ret_err := stmt.Step()
+            if row_ret_err != nil {
+                return row_ret_err
+            }
+
+            return err
+        },
+    })
     if err != nil {
         log.Panicln(err)
     }

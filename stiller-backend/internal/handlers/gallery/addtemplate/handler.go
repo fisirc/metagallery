@@ -30,20 +30,12 @@ func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
         return
     }
 
-
-    blocks := req_payload.Blocks
-    if len(blocks) == 0 {
-        handleutils.GenericLog(nil, "invalid 0 blocks template")
-        w.WriteHeader(http.StatusBadRequest)
-        return
-    }
-
     newtempl_stmt := sqlf.
     InsertInto("template").
         NewRow().
             Set("tier", req_payload.TierId).
             Set("thumbnail", req_payload.ThumbnailId).
-            Set("res", req_payload.ResId).
+            Set("templatefile", req_payload.TemplateId).
             Set("title", req_payload.Title).
             Set("description", req_payload.Description).
         Returning("id")
@@ -55,6 +47,7 @@ func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
             newtemp_id = int(stmt.GetInt64("id"))
             return nil
         },
+
         Args: newtempl_args,
     })
 
@@ -65,25 +58,6 @@ func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
     if newtemp_id == -1 {
         handleutils.GenericLog(nil, "no new template was created")
         w.WriteHeader(http.StatusInternalServerError)
-        return
-    }
-
-    prep_stmt := sqlf.InsertInto("templateblock")
-    defer prep_stmt.Close()
-    for index := range blocks {
-        prep_stmt.NewRow().
-            Set("template", newtemp_id).
-            Set("posx", blocks[index].Posx).
-            Set("posy", blocks[index].Posy).
-            Set("direction", blocks[index].Direction)
-    }
-
-    blocks_execute_query, blocks_execute_args := prep_stmt.String(), prep_stmt.Args()
-    blocks_execute_err := sqlitex.ExecuteTransient(dbconn, blocks_execute_query, &sqlitex.ExecOptions{
-        Args: blocks_execute_args,
-    })
-
-    if handleutils.RequestLog(blocks_execute_err, "", http.StatusInternalServerError, &w) {
         return
     }
 

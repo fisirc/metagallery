@@ -40,13 +40,24 @@ type StillerTemplateBlock struct {
 }
 
 type StillerTemplate struct {
-    Id          int                    `json:"id"`
-    TierId      int                    `json:"tier"`
-    ThumbnailId int                    `json:"thumbnail"`
-    ResId       int                    `json:"res"`
-    Title       string                 `json:"title"`
-    Description string                 `json:"description"`
-    Blocks      []StillerTemplateBlock `json:"blocks"`
+    Id          int    `json:"id"`
+    TierId      int    `json:"tier"`
+    ThumbnailId int    `json:"thumbnail"`
+    TemplateId  int    `json:"templatefile"`
+    Title       string `json:"title"`
+    Description string `json:"description"`
+}
+
+type SlotType uint8
+const (
+    D2 SlotType = iota
+    D3
+)
+
+type StillerSlot struct {
+    Ref  int       `json:"ref"`
+    Pos  []float64 `json:"pos"`
+    Type SlotType  `json:"type"`
 }
 
 

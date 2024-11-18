@@ -39,9 +39,9 @@ create table avatar (
 create table gallery (
     id integer unique primary key autoincrement not null,
     owner integer not null references user (id),
-    -- ******slug         (pedir al crear galería)
-    -- ******template_fk  (pedir al crear galería)
-    title text not null,
+    template integer not null references template (id),
+    slug text unique not null,
+    title text,
     description text,
     deploy_stage integer not null,
     url text unique not null
@@ -51,7 +51,7 @@ create table template (
     id integer unique primary key autoincrement not null,
     tier integer not null references tier (id),
     thumbnail integer not null references file (id),
-    res integer not null references file (id),
+    templatefile integer not null references file (id),
     title text not null,
     description text not null
 );
@@ -84,28 +84,28 @@ create table template (
 
 create table galleryslot (
     gallery integer not null references gallery (id),
-    slot_ref integer not null, -- inmutable
+    slotref integer not null,
     res integer references file (id),
-    title text not null,
-    description text not null
+    title text,
+    description text
 );
 
 insert into
     filetype
 values
-	(0, 'image'),
+    (0, 'image'),
     (1, 'video'),
     (2, 'object3d');
 
 insert into
     tier
 values
-	(0, 'free'),
+    (0, 'free'),
     (1, 'van gogh'),
     (2, 'picasso');
 
 insert into
     user (tier, displayname, username, mail, bpasswd)
 values
-    (0, 'admin', 'admin', '', 'skibidi pana');
+    (0, 'admin', 'admin', 'admin@admin.com', 'skibidi pana');
 

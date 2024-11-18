@@ -21,6 +21,11 @@ type individualHandler struct {
 
 var routes = [...]individualHandler{
     {
+        path: "/gallery/new",
+        method: http.MethodPost,
+        handlefunc: addtemplate.NetHandler,
+    },
+    {
         path: "/gallery/template",
         method: http.MethodPost,
         handlefunc: addtemplate.NetHandler,
