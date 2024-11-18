@@ -5,11 +5,12 @@ import { setCursor } from '@/utils';
 import { UNIT } from '../constants';
 import { useEditorStore } from '@/stores/editorAction';
 import { Model3DBlockProps } from '@/types';
+import { noImageSrc } from '@/constants';
 
 export const Model3DBlock = ({ block }: { block: Model3DBlockProps }) => {
   const { pos, props } = block;
 
-  const [image] = useImage(props.res);
+  const [image] = useImage(props.res ?? noImageSrc);
   const [hovering, setHovering] = useState(false);
   const draggingElem = useEditorStore((state) => state.draggingFile);
 

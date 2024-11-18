@@ -7,6 +7,7 @@ import { useEditorStore } from '@/stores/editorAction';
 import { DIR_TOP, DIR_RIGHT, DIR_BOTTOM, DIR_LEFT, UNIT, WALL_THICKNESS, PICTURE_SLOT_UNIT } from '../constants';
 import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
 import { PictureSlotProps } from '@/types';
+import { noImageSrc } from '@/constants';
 
 const HALF_THICKNESS = WALL_THICKNESS / 2;
 const WALL_PADDING = 0.1;

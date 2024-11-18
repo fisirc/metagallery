@@ -144,7 +144,7 @@ export const GalleryCanvas = ({ gallery }: { gallery: string }) => {
             fill="white"
           />
         </Layer>
-        { /* First layer of walls and doors */}
+        { /* First layer of walls and doors structure */}
         <Layer>
           {
             blocks.map((item, index) => {
@@ -168,17 +168,11 @@ export const GalleryCanvas = ({ gallery }: { gallery: string }) => {
           {
             blocks.map((item, index) => {
               if (isWallBlock(item)) {
-                if (!item.props.res) {
-                  return null;
-                }
-                return (
-                  <PictureSlot key={index} block={item as PictureSlotProps} />
-                );
+                return null;
+                return <PictureSlot key={index} block={item as PictureSlotProps} />;
               }
               if (isModel3DBlock(item)) {
-                return (
-                  <Model3DBlock key={index} block={item} />
-                );
+                return <Model3DBlock key={index} block={item} />;
               }
               return null;
             })

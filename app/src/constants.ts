@@ -16,3 +16,5 @@ export const smallIconProps: IconProps = {
   size: '14px',
   stroke: 1.5,
 };
+
+export const noImageSrc = 'https://icons.veryicon.com/png/o/file-type/linear-icon-2/upload-45.png';

@@ -33,7 +33,7 @@ export type PictureSlotProps = {
   props: {
     size: number,
     dir: 0 | 1 | 2 | 3,
-    res: string,
+    res?: string,
   },
 };
 
@@ -41,9 +41,9 @@ export type Model3DBlockProps = {
   type: 'model3d',
   pos: [number, number],
   props: {
-    size?: number, // We ignore size since this is a 2d view
+    size?: number,
     dir?: 0 | 1 | 2 | 3,
-    res: string,
+    res?: string,
   },
 };
 
@@ -58,17 +58,13 @@ export type DoorBlockProps = {
 };
 
 export const isWallBlock = (block: GenericGalleryBlock): block is WallBlockProps => {
-  return block.type === 'wall' && block.props.size !== undefined;
+  return block.type === 'wall';
 };
 
 export const isModel3DBlock = (block: GenericGalleryBlock): block is Model3DBlockProps => {
-  return block.type === 'model3d' && block.props.res !== undefined && block.props.size === undefined;
+  return block.type === 'model3d';
 };
 
 export const isDoorBlock = (block: GenericGalleryBlock): block is DoorBlockProps => {
-  return block.type === 'door' && block.props.size !== undefined;
-};
-
-export const isPictureSlot = (block: GenericGalleryBlock): block is PictureSlotProps => {
-  return block.type === 'model3d' && block.props.res !== undefined && block.props.size !== undefined;
+  return block.type === 'door';
 };
