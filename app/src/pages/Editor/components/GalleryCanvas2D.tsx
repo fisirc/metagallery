@@ -10,7 +10,7 @@ import { PictureSlot } from './blocks/PictureSlot';
 import { useEditorStore } from '@/stores/editorAction';
 import { setCursor } from '@/utils';
 import { useApi } from '@/hooks/useApi';
-import { GenericGalleryBlock, isDoorBlock, isModel3DBlock, isWallBlock, PictureSlotProps } from '@/types';
+import { GenericGalleryBlock, isDoorBlock, isModel3DBlock, isPictureSlotBlock, isWallBlock, PictureSlotProps } from '@/types';
 
 export const GalleryCanvas2D = ({ gallery }: { gallery: string }) => {
   const [viewport, setViewport] = useState({ x: 0, y: 0 });
@@ -167,8 +167,7 @@ export const GalleryCanvas2D = ({ gallery }: { gallery: string }) => {
         <Layer>
           {
             blocks.map((item, index) => {
-              if (isWallBlock(item)) {
-                return null;
+              if (isPictureSlotBlock(item)) {
                 return <PictureSlot key={index} block={item as PictureSlotProps} />;
               }
               if (isModel3DBlock(item)) {

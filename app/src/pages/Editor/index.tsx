@@ -1,18 +1,15 @@
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 import { UserButton } from '@/components/UserButton';
 import { DynamicText } from '@/components/DynamicText';
-import { GalleryCanvas2D } from './components/GalleryCanvas';
+import { GalleryCanvas2D } from './components/GalleryCanvas2D';
 import { MenuBurger } from './components/MenuBurger';
 import { MainButtons } from './components/MainButtons';
 import { EditorSidebar } from './components/ContentSidebar';
 import { DRAG_PORTAL_ID } from './components/constants';
-import { useLocation } from 'wouter';
-import { Modal } from '@mantine/core';
 import { Gallery3D } from '../Gallery3D';
 
 export const Editor = ({ gallery }: { gallery: string }) => {
   const [projectName, setProjectName] = useState('Nueva galería');
-  const [location, setLocation] = useLocation();
   const [previewOpened, setPreviewOpened] = useState(false);
 
   return (

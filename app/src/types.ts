@@ -61,6 +61,10 @@ export const isWallBlock = (block: GenericGalleryBlock): block is WallBlockProps
   return block.type === 'wall';
 };
 
+export const isPictureSlotBlock = (block: GenericGalleryBlock): block is WallBlockProps => {
+  return block.type === 'wall' && block.props.res !== null;
+};
+
 export const isModel3DBlock = (block: GenericGalleryBlock): block is Model3DBlockProps => {
   return block.type === 'model3d';
 };
