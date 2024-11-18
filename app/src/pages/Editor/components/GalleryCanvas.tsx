@@ -12,7 +12,7 @@ import { setCursor } from '@/utils';
 import { useApi } from '@/hooks/useApi';
 import { GenericGalleryBlock, isDoorBlock, isModel3DBlock, isWallBlock, PictureSlotProps } from '@/types';
 
-export const GalleryCanvas = ({ gallery }: { gallery: string }) => {
+export const GalleryCanvas2D = ({ gallery }: { gallery: string }) => {
   const [viewport, setViewport] = useState({ x: 0, y: 0 });
   const stageRef = useRef<Konva.Stage>(null);
   const draggingElem = useEditorStore((state) => state.draggingFile);

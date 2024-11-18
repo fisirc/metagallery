@@ -128,8 +128,9 @@ const mockedGalleryBlocks = ([
 ] satisfies Array<GenericGalleryBlock>).toSorted((a, b) => b.props.size - a.props.size);
 
 // const fetcher = (...args: ArgsType<typeof fetch>) => fetch(...args).then(res => res.json());
-const fetcher = (...args: ArgsType<typeof fetch>) => {
+const fetcher = async (...args: ArgsType<typeof fetch>) => {
     const [path] = args;
+    await new Promise(resolve => setTimeout(resolve, 200));
 
     if (typeof path !== 'string') {
         throw new Error('Invalid path');
