@@ -5,7 +5,8 @@ import (
 	"stiller/internal/handlers/auth/newuser"
 	"stiller/internal/handlers/auth/userlogin"
 	"stiller/internal/handlers/auth/userverify"
-	"stiller/internal/handlers/file/fileretrieve"
+	"stiller/internal/handlers/file/filedl"
+	filetree "stiller/internal/handlers/file/filetree"
 	"stiller/internal/handlers/file/patchfile"
 	"stiller/internal/handlers/file/upload"
 	"stiller/internal/handlers/gallery/addtemplate"
@@ -31,19 +32,24 @@ var routes = [...]individualHandler{
         handlefunc: addtemplate.NetHandler,
     },
     {
-        path: "/file/upload",
-        method: http.MethodPost,
-        handlefunc: upload.NetHandler,
+        path: "/file",
+        method: http.MethodGet,
+        handlefunc: filetree.Nethandler,
     },
     {
-        path: "/file/update",
+        path: "/file",
         method: http.MethodPatch,
         handlefunc: patchfile.NetHandler,
     },
     {
-        path: "/file/retrieveall",
+        path: "/file/new",
+        method: http.MethodPost,
+        handlefunc: upload.NetHandler,
+    },
+    {
+        path: "/file/dl",
         method: http.MethodGet,
-        handlefunc: fileretrieve.Nethandler,
+        handlefunc: filedl.Nethandler,
     },
     {
         path: "/auth/newuser",
@@ -77,7 +83,11 @@ func routerDigest(router *httprouter.Router, ind *individualHandler) {
         fun = router.PUT
     }
 
-    router.OPTIONS(ind.path, ind.handlefunc)
+    _, _, flag := router.Lookup(http.MethodOptions, ind.path)
+    if flag {
+        router.OPTIONS(ind.path, ind.handlefunc)
+    }
+
     fun(ind.path, ind.handlefunc)
 }
 

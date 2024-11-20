@@ -4,7 +4,7 @@ import "github.com/profclems/go-dotenv"
 
 type ConfigType struct {
     // local directory where to retrieve/store data from/to
-    Port       string
+    Addr       string
     FilesPath  string
     DBPath     string
     Secret     []byte
@@ -15,7 +15,7 @@ func newConfig() *ConfigType {
     dotenv.Load()
 
     return &ConfigType{
-        Port: dotenv.GetString("Port"),
+        Addr: dotenv.GetString("Addr"),
         FilesPath: dotenv.GetString("FilesPath"),
         DBPath: dotenv.GetString("DBPath"),
         Secret: []byte(dotenv.GetString("Secret")),
