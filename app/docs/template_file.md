@@ -44,4 +44,6 @@ For `2d` slots, the `v` array should contain the 4 vertices that represent the
 4 corners of the slot frame.
 
 For `3d` slots, the `v` array should contain a single vertex that represents
-the origin position of the 3D model.
+the origin position of the 3D model. If `rotating` is enabled (default=`false`),
+the model will constantly rotate around the Z axis. If the `scale` property
+exists (default=`1`), the model will be scaled by the given factor.
