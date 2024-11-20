@@ -8,7 +8,8 @@ import { Ground } from './components/gallery/Ground';
 import { FPV } from './components/gallery/FPV';
 import { Scene } from './components/gallery/Scene';
 import { Loader } from '@mantine/core';
-import { DynamicPainting } from './components/gallery/Painting';
+import { DynamicPainting } from './components/gallery/DynamicPainting';
+import { DynamicSculpture } from './components/gallery/DynamicSculpture';
 
 export const Gallery3D = ({ gallery }: { gallery: string }) => {
   const { data, isLoading } = useApi<Array<UserContentFileElement>>(`gallery/${gallery}`);
@@ -19,7 +20,6 @@ export const Gallery3D = ({ gallery }: { gallery: string }) => {
     [-2.190091, 1.010420, 1.957159], // Vertex 2
     [-3.686093, 2.930418, 1.957160], // Vertex 3
     [-3.686091, 1.010419, 1.957160], // Vertex 4
-
   ];
 
   if (isLoading) {
@@ -43,6 +43,13 @@ export const Gallery3D = ({ gallery }: { gallery: string }) => {
         <DynamicPainting
           imageUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Tux_Droid_1.jpg/1200px-Tux_Droid_1.jpg"
           vertices={paintingVertices}
+        />
+        <DynamicSculpture
+          glbUrl="/assets/3d/chihiro.glb"
+          position={[2, 0, 0]}
+          rotation={[0, Math.PI / 4, 0]}
+          scale={[1, 1, 1]}
+          rotate={true}
         />
         <Physics>
           <FPV />
