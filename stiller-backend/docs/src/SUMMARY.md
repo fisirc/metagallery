@@ -4,10 +4,12 @@
 
 - [Server configuration](configuration.md)
 - [FS-based handlers](files.md)
-    - [`/file/upload`](file/upload.md)
-    - [`/file/update`](file/update.md)
-    - [`/file/retrieveall`](file/retrieveall.md)
+    - [GET `/file/`](file/filetree.md)
+    - [PATCH `/file/`](file/patchfile.md)
+    - [POST `/file/new`](file/new.md)
+    - [GET `/file/dl`](file/dl.md)
 - [Auth Handlers](auth.md)
-    - [`/auth/checkuser/:username`](auth/checkuser.md)
-    - [`/auth/login`](auth/login.md)
+    - [GET `/auth/checkuser/:username`](auth/checkuser.md)
+    - [POST `/auth/login`](auth/login.md)
+    - [POST `/auth/newuser`](auth/newuser.md)
 

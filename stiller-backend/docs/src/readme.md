@@ -21,3 +21,17 @@ Stiller is built almost totally upon the stdlib http serving packages except for
 the router (where
 [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) shines).
 
+## About these docs
+
+These docs contain simple information about each and every one of the server
+endpoints. Those which have this logo:
+
+<div align="center" style="text-align: center;">
+
+<img src="./jwt_logo.png" style="width: 100px;"/>
+
+</div>
+
+At the "#Path" section of their documentation are supposed to pass a [`token:
+<jwt token>`] along with the endpoint's usual request body and payload elements.
+

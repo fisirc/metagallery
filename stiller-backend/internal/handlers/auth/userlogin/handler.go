@@ -1,7 +1,6 @@
 package userlogin
 
 import (
-	"log"
 	"net/http"
 	"stiller/internal/dbutils"
 	"stiller/internal/handlers/handleutils"
@@ -73,9 +72,6 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    log.Println("uid:", new_tk.UserId)
-    log.Println("pwd:", user_bpwd)
-
     cmp_err := bcrypt.CompareHashAndPassword([]byte(user_bpwd), []byte(payload.Pwd))
     if handleutils.RequestLog(
         cmp_err,
@@ -92,6 +88,5 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     }
 
     w.Write(sign_encoded)
-    w.WriteHeader(http.StatusOK)
 }
 

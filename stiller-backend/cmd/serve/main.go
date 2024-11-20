@@ -14,7 +14,7 @@ func main() {
     }
 
     log.Println(
-        "[ ✅ ] server started at port",
+        "[ ✅ ] server started at address",
         stiller.StillerConfig.Addr,
     )
 
