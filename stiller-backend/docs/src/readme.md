@@ -10,10 +10,9 @@
 
 ## What is Stiller
 
-Stiller is both a **single-node** content distribution "network" and
-multi-purposed server created as part of the MetaGallery project. It is built as
-a totally self-contained, sqlite-based web service deployed through air and
-actions.
+Stiller is both a **single-node** content distribution "network" and a
+multi-purpose server created as part of the MetaGallery project. It is a
+sqlite-based web service deployed through air and github actions.
 
 ## Components
 
