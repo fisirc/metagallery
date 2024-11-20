@@ -28,4 +28,4 @@ jobs:
       - name: build
         run: ssh -vT "bauer@${{ secrets.SSH_IP }}" "cd ~/clones/metagallery/stiller-backend/docs && mdbook build"
       - name: deploy
-        run: ssh -vT "bauer@${{ secrets.SSH_IP }}" "sudo cp -r ~/clones/metagallery/stiller-backend/docs/book /var/www/stillerdocs && sudo chown --recursive www-data /var/www/stillerdocs"
+        run: ssh -vT "bauer@${{ secrets.SSH_IP }}" "echo ${{ secrets.SUDO_PWD }} | sudo -S cp -r ~/clones/metagallery/stiller-backend/docs/book /var/www/stillerdocs && sudo chown --recursive www-data /var/www/stillerdocs"
