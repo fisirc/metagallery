@@ -18,6 +18,7 @@ import (
 	"github.com/cespare/xxhash"
 	jsonexp "github.com/go-json-experiment/json"
 	"github.com/julienschmidt/httprouter"
+	"github.com/leporo/sqlf"
 	"zombiezen.com/go/sqlite"
 	"zombiezen.com/go/sqlite/sqlitex"
 )
@@ -42,24 +43,26 @@ func pushNewFile(fileptr *dbutils.StillerFile) (int, error) {
 
     defer dbutils.CloseConn(new_dbconn)
 
-    query := `insert into file (owner, type, path, filename, ext, hashed, size, deleted) values (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8) returning id;`
+    query_stmt := sqlf.InsertInto("file").
+        Set("owner", fileptr.OwnerId).
+        Set("type", fileptr.Typeof).
+        Set("path", fileptr.Typeof).
+        Set("filename", fileptr.Typeof).
+        Set("ext", fileptr.Typeof).
+        Set("hashed", fileptr.Typeof).
+        Set("size", fileptr.Typeof).
+        Set("deleted", fileptr.Typeof)
+
+    query := query_stmt.String()
     query_id_res := int(0)
 
     exec_err := sqlitex.ExecuteTransient(new_dbconn, query, &sqlitex.ExecOptions{
-        Args: []any{
-            fileptr.OwnerId,
-            fileptr.Typeof,
-            fileptr.Path,
-            fileptr.Filename,
-            fileptr.Ext,
-            fileptr.Hashed,
-            fileptr.Size,
-            fileptr.Deleted,
-        },
         ResultFunc: func(stmt *sqlite.Stmt) error {
             query_id_res = int(stmt.ColumnInt64(0))
             return nil
         },
+
+        Args: query_stmt.Args(),
     })
 
     if exec_err != nil {

@@ -6,7 +6,7 @@ import (
 	"stiller/internal/handlers/auth/userlogin"
 	"stiller/internal/handlers/auth/userverify"
 	"stiller/internal/handlers/file/filedl"
-	filetree "stiller/internal/handlers/file/filetree"
+	"stiller/internal/handlers/file/filetree"
 	"stiller/internal/handlers/file/patchfile"
 	"stiller/internal/handlers/file/upload"
 	"stiller/internal/handlers/gallery/addtemplate"
@@ -22,14 +22,17 @@ type individualHandler struct {
 
 var routes = [...]individualHandler{
     {
-        path: "/gallery/new",
+        path: "/admin/template/new",
         method: http.MethodPost,
         handlefunc: addtemplate.NetHandler,
     },
     {
-        path: "/gallery/template",
+        path: "/gallery",
+        method: http.MethodGet,
+    },
+    {
+        path: "/gallery/new",
         method: http.MethodPost,
-        handlefunc: addtemplate.NetHandler,
     },
     {
         path: "/file",

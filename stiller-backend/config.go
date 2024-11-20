@@ -8,6 +8,7 @@ type ConfigType struct {
     FilesPath  string
     DBPath     string
     Secret     []byte
+    Admin      string
     BCryptCost int
 }
 
@@ -20,6 +21,7 @@ func newConfig() *ConfigType {
         DBPath: dotenv.GetString("DBPath"),
         Secret: []byte(dotenv.GetString("Secret")),
         BCryptCost: dotenv.GetInt("BCryptCost"),
+        Admin: dotenv.GetString("Admin"),
     }
 }
 
