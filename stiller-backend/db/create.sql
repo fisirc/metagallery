@@ -104,8 +104,3 @@ values
     (1, 'van gogh'),
     (2, 'picasso');
 
-insert into
-    user (tier, displayname, username, mail, bpasswd)
-values
-    (0, 'admin', 'admin', 'admin@admin.com', 'skibidi pana');
-
