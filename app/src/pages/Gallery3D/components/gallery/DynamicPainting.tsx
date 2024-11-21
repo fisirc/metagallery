@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useTexture } from "@react-three/drei";
 import * as THREE from 'three';
 
-export function DynamicPainting({ imageUrl, vertices }: { imageUrl: string; vertices: number[][] }) {
+export function DynamicPainting({ imageUrl, vertices }: { imageUrl: string; vertices: readonly (readonly number[])[] }) {
   const texture = useTexture(imageUrl);
 
   // Define a geometry using the provided vertices
@@ -31,8 +31,10 @@ export function DynamicPainting({ imageUrl, vertices }: { imageUrl: string; vert
   }, [vertices]);
 
   return (
-    <mesh geometry={geometry}>
-      <meshBasicMaterial map={texture} side={THREE.DoubleSide} />
-    </mesh>
+    <>
+      <mesh geometry={geometry}>
+        <meshBasicMaterial map={texture} side={THREE.DoubleSide} />
+      </mesh>
+    </>
   );
 }

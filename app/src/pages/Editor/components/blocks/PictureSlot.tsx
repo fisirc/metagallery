@@ -1,7 +1,7 @@
 import useImage from 'use-image';
 import { useState } from 'react';
 import { Text } from '@mantine/core';
-import { Image, Rect } from 'react-konva';
+import { Image, Rect, Layer, Group } from 'react-konva';
 import { setCursor } from '@/utils';
 import { useEditorStore } from '@/stores/editorAction';
 import { DIR_TOP, DIR_RIGHT, DIR_BOTTOM, DIR_LEFT, UNIT, WALL_THICKNESS, PICTURE_SLOT_UNIT } from '../constants';
@@ -15,7 +15,7 @@ const WALL_PADDING = 0.1;
 export const PictureSlot = ({ block }: { block: PictureSlotProps }) => {
   const { pos, props } = block;
 
-  const [image] = useImage(props.res);
+  const [image] = useImage(props.res ?? noImageSrc);
   const [hovering, setHovering] = useState(false);
   const draggingElem = useEditorStore((state) => state.draggingFile);
 
@@ -112,7 +112,7 @@ export const PictureSlot = ({ block }: { block: PictureSlotProps }) => {
   }
 
   return (
-    <>
+    <Group rotation={Math.PI}>
       { /* Base */}
       <Rect
         cornerRadius={corners}
@@ -154,6 +154,6 @@ export const PictureSlot = ({ block }: { block: PictureSlotProps }) => {
           setCursor(null);
         }}
       />
-    </>
+    </Group>
   );
 };

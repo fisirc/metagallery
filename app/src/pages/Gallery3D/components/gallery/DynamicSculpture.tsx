@@ -5,9 +5,9 @@ import * as THREE from "three";
 
 interface DynamicSculptureProps {
   glbUrl: string;
-  position: [number, number, number];
+  position: readonly [number, number, number];
   rotation: [number, number, number];
-  scale?: [number, number, number];
+  scale?: readonly [number, number, number];
   rotate?: boolean;
 }
 
