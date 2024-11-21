@@ -9,4 +9,13 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './vitest.setup.mjs',
   },
+  server: {
+    proxy: {
+      '/services/stiller': {
+        target: 'https://pandadiestro.xyz',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/services/, '/services'),
+      }
+    }
+  }
 });

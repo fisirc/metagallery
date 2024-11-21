@@ -2,12 +2,18 @@ import { Redirect } from 'wouter';
 import { Home } from './Home';
 import { Editor } from './Editor';
 import { Gallery3D } from './Gallery3D';
+import { Dashboard } from './Dashboard';
 
 export const routes = [
   {
     href: '/',
     label: 'Welcome',
     component: Home,
+  },
+  {
+    href: '/dashboard',
+    label: 'Dashboard router',
+    component: Dashboard,
   },
   {
     href: ':gallery/edit',
@@ -35,5 +41,5 @@ export const routes = [
     component: () => {
       return <Redirect to="/" />;
     },
-  },
+  }
 ];

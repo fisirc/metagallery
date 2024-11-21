@@ -18,9 +18,43 @@ export const Header = () => {
   const [cardNumber, setCardNumber] = useState('');
   const [cvv, setCvv] = useState('');
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setLoginError('');
+
+    try {
+      const response = await fetch('/services/stiller/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, pwd: password }),
+      });
+
+      if (!response.ok) {
+        const errorDetails = await response.text();
+        throw new Error(errorDetails || 'Failed to log in');
+      }
+
+      const token = await response.text();
+      console.log('Login successful. Token:', token);
+
+      localStorage.setItem('authToken', token);
+    } catch (error: any) {
+      console.error('Login error details:', error);
+    }
+
+  };
+
   const resetLoginFlow = () => {
     setLoginPopup(false);
     setLoginStep(1);
+    setUsername('');
+    setPassword('');
+    setLoginError('');
   };
 
   const resetRegisterFlow = () => {
@@ -49,7 +83,7 @@ export const Header = () => {
             <>
               <h3 className={popupStyles.title}>Inicio de sesión</h3>
               <p className={popupStyles.description}>Descubre tu experiencia Metagallery</p>
-              <form onSubmit={(e) => { e.preventDefault(); setLoginStep(2); }}>
+              <form onSubmit={handleLogin}>
                 <div className={popupStyles.formgroup}>
                   <label className={popupStyles.label} htmlFor="username">
                     Nombre de usuario
@@ -59,7 +93,10 @@ export const Header = () => {
                     id="username"
                     type="text"
                     placeholder="Nombre de usuario"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     required
+                    disabled={isLoading}
                   />
                 </div>
                 <div className={popupStyles.formgroup}>
@@ -71,19 +108,23 @@ export const Header = () => {
                     id="password"
                     type="password"
                     placeholder="Contraseña"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
+                    disabled={isLoading}
                   />
                 </div>
-                <button className={popupStyles.button} type="submit">
-                  Ingresar
-                </button>
-                <div className={popupStyles.dividerContainer}>
-                  <div className={popupStyles.divider}></div>
-                  <span className={popupStyles.dividerText}>OR</span>
-                  <div className={popupStyles.divider}></div>
-                </div>
-                <button className={popupStyles.buttongoogle} type="button">
-                  Ingresar con Google
+                {loginError && (
+                  <div className={popupStyles.errorMessage}>
+                    {loginError}
+                  </div>
+                )}
+                <button
+                  className={popupStyles.button}
+                  type="submit"
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Iniciando sesión...' : 'Ingresar'}
                 </button>
               </form>
             </>
@@ -150,14 +191,6 @@ export const Header = () => {
                 </div>
                 <button className={popupStyles.button} type="submit">
                   Siguiente
-                </button>
-                <div className={popupStyles.dividerContainer}>
-                  <div className={popupStyles.divider}></div>
-                  <span className={popupStyles.dividerText}>OR</span>
-                  <div className={popupStyles.divider}></div>
-                </div>
-                <button className={popupStyles.buttongoogle} type="button">
-                  Registrarse con Google
                 </button>
               </form>
             </>

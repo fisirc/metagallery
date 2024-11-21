@@ -1,0 +1,237 @@
+.container {
+  min-height: 100vh;
+  background-color: white;
+}
+
+.header {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.headerContent {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.menuButton {
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.menuButton:hover {
+  background-color: #f3f4f6;
+  border-radius: 0.375rem;
+}
+
+.menuIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tierName {
+  font-size: 0.875rem;
+}
+
+.upgradeButton {
+  background-color: black;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+}
+
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.profileSection {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.profileName {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.socialLinks {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.socialLink {
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #d1d5db;
+  border-radius: 50%;
+}
+
+.socialLink:hover {
+  background-color: #9ca3af;
+}
+
+.searchContainer {
+  position: relative;
+  max-width: 36rem;
+  margin: 0 auto 2rem;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+}
+
+.searchInput:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(209, 213, 219, 0.5);
+}
+
+.filters {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.filterButton {
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.filterButton:hover,
+.filterButton.active {
+  background-color: #f3f4f6;
+}
+
+.galleryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.galleryCard {
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid #e5e5e5;
+  width: 350px;
+  height: 275px;
+}
+
+.galleryImage {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.galleryOverlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1rem;
+}
+
+.galleryCard:hover .galleryOverlay {
+  opacity: 1;
+}
+
+.galleryTitle {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.galleryDescription {
+  font-size: 0.875rem;
+  color: #e5e5e5;
+  margin-bottom: 0.75rem;
+}
+
+.galleryActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.openButton,
+.shareButton {
+  padding: 0.25rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+}
+
+.openButton {
+  background-color: black;
+  color: white;
+}
+
+.shareButton {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.shareIcon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+@media (max-width: 768px) {
+  .galleryGrid {
+    grid-template-columns: 1fr;
+  }
+}
