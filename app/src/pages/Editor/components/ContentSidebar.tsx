@@ -1,6 +1,20 @@
 import Masonry from 'react-responsive-masonry';
 import { useEffect, useRef, useState } from 'react';
-import { Button, Group, ScrollArea, Stack, TextInput, Drawer, Card, Image, Text, Menu, rem, Portal } from '@mantine/core';
+import {
+  rem,
+  Button,
+  Portal,
+  Drawer,
+  Group,
+  Card,
+  Text,
+  Menu,
+  Image,
+  Stack,
+  TextInput,
+  ScrollArea,
+  FileButton,
+} from '@mantine/core';
 import { useHover, useMediaQuery, useMouse } from '@mantine/hooks';
 import { IconDots, IconDownload, IconEdit, IconSearch, IconTrash, IconUpload } from '@tabler/icons-react';
 import { primaryIconProps, secondaryIconProps, smallIconProps } from '@/constants';
@@ -133,32 +147,65 @@ const UserContentSidebarElement = ({ element }: { element: UserContentFileElemen
 };
 
 // Sidebar content extracted for reusability
-const SidebarContent = ({ mediaContents }: { mediaContents: UserContentFileElement[] }) => (
-  <>
-    <Group>
-      <TextInput
-        variant="transparent"
-        placeholder="¿Qué estás buscando?"
-        size="xs"
-        leftSection={<IconSearch {...secondaryIconProps} />}
-      />
-    </Group>
-    <ScrollArea
-      flex={1}
-      bg="gray.1"
-      p={8}
-      style={{ borderRadius: 'var(--mantine-radius-md)' }}
-    >
-      <Masonry columnsCount={2} gutter="12px">
-        {
-          mediaContents.map((element) => (
-            <UserContentSidebarElement key={element.id} element={element} />
-          ))
-        }
-      </Masonry>
-    </ScrollArea>
-    <Button size="sm" leftSection={<IconUpload {...primaryIconProps} />}>
-      Añadir contenido
-    </Button>
-  </>
-);
+const SidebarContent = ({ mediaContents }: { mediaContents: UserContentFileElement[] }) => {
+  const handleFileUpload = (payload: File[]) => {
+    payload.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = (reader.result as string).split(',')[1];
+        console.log(base64);
+      };
+      reader.readAsDataURL(file);
+    })
+  };
+
+  return (
+    <>
+      <Group>
+        <TextInput
+          variant="transparent"
+          placeholder="¿Qué estás buscando?"
+          size="xs"
+          leftSection={<IconSearch {...secondaryIconProps} />}
+        />
+      </Group>
+      <ScrollArea
+        flex={1}
+        bg="gray.1"
+        p={8}
+        style={{ borderRadius: 'var(--mantine-radius-md)' }}
+      >
+        <Masonry columnsCount={2} gutter="12px">
+          {
+            mediaContents.map((element) => (
+              <UserContentSidebarElement key={element.id} element={element} />
+            ))
+          }
+        </Masonry>
+      </ScrollArea>
+      <FileButton
+        onChange={handleFileUpload}
+        accept="image/png,image/jpeg"
+        multiple
+      >
+      {
+        (props) => (
+          <Button
+            size="sm"
+            leftSection={<IconUpload {...primaryIconProps} />}
+            {...props}
+          >
+            Añadir contenido
+          </Button>
+        )
+      }
+      </FileButton>
+      {/* <Button
+        size="sm"
+        leftSection={<IconUpload {...primaryIconProps} />}
+      >
+        Añadir contenido
+      </Button> */}
+    </>
+  );
+} 
