@@ -20,7 +20,6 @@
     "@mantine/core": "7.11.2",
     "@mantine/hooks": "^7.11.2",
     "@mantinex/mantine-logo": "^1.0.1",
-    "@react-three/cannon": "^6.6.0",
     "@react-three/drei": "^9.116.3",
     "@react-three/fiber": "^8.17.10",
     "@react-three/rapier": "^1.5.0",
