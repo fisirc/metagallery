@@ -46,7 +46,7 @@ export const saveXYToLocalStorage = debounce((x: number, y: number) => {
 
 export const getInitialScale = () => {
     const s = Number(localStorage.getItem('editor_scale'));
-    if (Number.isNaN(s)) {
+    if (!s || Number.isNaN(s)) {
         return 1;
     }
     return s;
@@ -55,7 +55,7 @@ export const getInitialScale = () => {
 export const getInitialXY = () => {
     const x = Number(localStorage.getItem('editor_x'));
     const y = Number(localStorage.getItem('editor_y'));
-    if (!Number.isNaN(x) && !Number.isNaN(y)) {
+    if ((x != 0 && y!= 0) && !Number.isNaN(x) && !Number.isNaN(y)) {
         return { x, y };
     }
     return { x: null, y: null };
