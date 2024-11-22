@@ -6,13 +6,15 @@ const App = () => {
     <div style={{ height: '100vh' }}>
       <Switch>
         {
-          routes.map((route, i) => (
-            <Route
-              key={i}
-              path={route.href}
-              component={route.component as any}
-            />
-          ))
+          routes.map((route, i) => {
+            return (
+              <Route
+                key={i}
+                path={route.href}
+                component={route.component as any}
+              />
+            )
+          })
         }
       </Switch>
     </div>

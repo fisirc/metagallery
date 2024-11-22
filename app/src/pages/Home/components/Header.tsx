@@ -3,6 +3,7 @@ import Button from './Button';
 import styles from './Header.module.css';
 import Popup from './PopUp/Popup';
 import popupStyles from './PopUp/Popup.module.css';
+import { useLocation } from 'wouter';
 
 export const Header = () => {
   const [loginPopup, setLoginPopup] = useState(false);
@@ -20,13 +21,15 @@ export const Header = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [, setLocation] = useLocation();
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setLoginError('');
 
     try {
-      const response = await fetch('/services/stiller/auth/login', {
+      const response = await fetch('https://pandadiestro.xyz/services/stiller/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,8 +44,8 @@ export const Header = () => {
 
       const token = await response.text();
       console.log('Login successful. Token:', token);
-
-      localStorage.setItem('authToken', token);
+      localStorage.setItem('metagallery-token', token);
+      setLocation('/dashboard');
     } catch (error: any) {
       console.error('Login error details:', error);
     }
@@ -68,6 +71,37 @@ export const Header = () => {
     setCardNumber('');
     setCvv('');
   };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('https://pandadiestro.xyz/services/stiller/auth/newuser', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tier_id: 0,
+          username,
+          mail: email,
+          pwd: password,
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorDetails = await response.text();
+        console.error('Failed to register:', errorDetails);
+        return;
+      }
+
+      const token = await response.text();
+      console.log('Registration successful. Token:', token);
+      localStorage.setItem('metagallery-token', token);
+      setLocation('/dashboard');
+    } catch (e) {
+      console.error('Failed to register:', e);
+    }
+  }
 
   return (
     <header className={styles.header}>
@@ -198,10 +232,7 @@ export const Header = () => {
             <>
               <h3 className={popupStyles.title}>Registro de usuario</h3>
               <p className={popupStyles.description}>Completa tus datos adicionales</p>
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                setRegisterStep(3);
-              }}>
+              <form onSubmit={handleRegister}>
                 <div className={popupStyles.formgroup}>
                   <label className={popupStyles.label} htmlFor="address">
                     Dirección

@@ -11,7 +11,6 @@ import { Gallery3D } from '../Gallery3D';
 export const Editor = ({ gallery }: { gallery: string }) => {
   const [projectName, setProjectName] = useState('Nueva galería');
   const [previewOpened, setPreviewOpened] = useState(false);
-
   return (
     <>
       <section style={{ minWidth: '420px', position: 'relative', overflow: 'hidden' }}>

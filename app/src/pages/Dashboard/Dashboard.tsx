@@ -1,5 +1,6 @@
 import { Menu, Search, Share2 } from "lucide-react";
 import styles from "./GalleryDashboard.module.css";
+import { UserButton } from "@/components/UserButton";
 
 const galleries = [
   {
@@ -43,10 +44,7 @@ export const GalleryDashboard = () => {
             <Menu className={styles.menuIcon} />
             <span className={styles.srOnly}>Dashboard</span>
           </button>
-          <div className={styles.headerRight}>
-            <span className={styles.userName}>Van Gogh</span>
-            <button className={styles.upgradeButton}>Mejora tu plan</button>
-          </div>
+          <UserButton />
         </div>
       </header>
 
