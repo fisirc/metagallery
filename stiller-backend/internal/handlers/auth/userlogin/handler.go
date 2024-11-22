@@ -9,6 +9,7 @@ import (
 
 	jsonexp "github.com/go-json-experiment/json"
 	"github.com/julienschmidt/httprouter"
+	"github.com/leporo/sqlf"
 	"golang.org/x/crypto/bcrypt"
 	"zombiezen.com/go/sqlite"
 	"zombiezen.com/go/sqlite/sqlitex"
@@ -37,10 +38,24 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
     user_bpwd := string("")
     amount := int(0)
-    query := `select id, bpasswd from user where username=?1;`
+
+    query_stmt := sqlf.
+        Select("id, bpasswd").
+        From("user").
+        Where("username = ?", payload.Username)
+
+    defer query_stmt.Close()
+
+    query := query_stmt.String()
+    log.Println(query, query_stmt.Args())
 
     new_dbconn, dbconn_err := dbutils.NewConn()
-    if handleutils.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
+    if handleutils.RequestLog(
+        dbconn_err,
+        "",
+        http.StatusInternalServerError,
+        &w,
+    ) {
         return
     }
 
@@ -53,22 +68,22 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
             user_bpwd = stmt.GetText("bpasswd")
             return nil
         },
-        Args: []any{
-            payload.Username,
-        },
+
+        Args: query_stmt.Args(),
     })
 
     if amount == 0 {
-        handleutils.GenericLog(nil, "no user was found")
-        w.WriteHeader(http.StatusNotFound)
+        handleutils.RequestLog(nil, "no user was found", http.StatusNotFound, &w)
         return
     }
 
-    log.Println("uid:", new_tk.UserId)
-    log.Println("pwd:", user_bpwd)
-
     cmp_err := bcrypt.CompareHashAndPassword([]byte(user_bpwd), []byte(payload.Pwd))
-    if handleutils.RequestLog(cmp_err, "", http.StatusNotFound, &w) {
+    if handleutils.RequestLog(
+        cmp_err,
+        "",
+        http.StatusNotFound,
+        &w,
+    ) {
         return
     }
 
@@ -78,6 +93,5 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     }
 
     w.Write(sign_encoded)
-    w.WriteHeader(http.StatusOK)
 }
 

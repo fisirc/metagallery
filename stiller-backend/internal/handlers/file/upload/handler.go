@@ -18,8 +18,6 @@ import (
 	"github.com/cespare/xxhash"
 	jsonexp "github.com/go-json-experiment/json"
 	"github.com/julienschmidt/httprouter"
-	"zombiezen.com/go/sqlite"
-	"zombiezen.com/go/sqlite/sqlitex"
 )
 
 const BUFSIZE = 512
@@ -33,41 +31,6 @@ const (
 var (
     ErrFileExists = errors.New("filename already exists, try another name")
 )
-
-func pushNewFile(fileptr *dbutils.StillerFile) (int, error) {
-    new_dbconn, dbconn_err := dbutils.NewConn()
-    if dbconn_err != nil {
-        return 0, dbconn_err
-    }
-
-    defer dbutils.CloseConn(new_dbconn)
-
-    query := `insert into file (owner, type, path, filename, ext, hashed, size, deleted) values (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8) returning id;`
-    query_id_res := int(0)
-
-    exec_err := sqlitex.ExecuteTransient(new_dbconn, query, &sqlitex.ExecOptions{
-        Args: []any{
-            fileptr.OwnerId,
-            fileptr.Typeof,
-            fileptr.Path,
-            fileptr.Filename,
-            fileptr.Ext,
-            fileptr.Hashed,
-            fileptr.Size,
-            fileptr.Deleted,
-        },
-        ResultFunc: func(stmt *sqlite.Stmt) error {
-            query_id_res = int(stmt.ColumnInt64(0))
-            return nil
-        },
-    })
-
-    if exec_err != nil {
-        return 0, exec_err
-    }
-
-    return query_id_res, nil
-}
 
 func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     if handleutils.CORS(w, r) {
@@ -120,8 +83,8 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    if dbutils.StillerFileType(filetype) >= dbutils.Unreachable {
-        handleutils.GenericLog(nil, "invalid filetype, 0 < ft < %d", dbutils.Unreachable)
+    if dbutils.StillerFileType(filetype) >= dbutils.UnreachableFileType {
+        handleutils.GenericLog(nil, "invalid filetype, 0 < ft < %d", dbutils.UnreachableFileType)
         return
     }
 
@@ -224,7 +187,7 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         normal_buf = normal_buf[:cap(normal_buf)]
     }
 
-    id, push_err := pushNewFile(&new_file)
+    id, push_err := dbutils.PushNewFile(&new_file)
     if handleutils.RequestLog(push_err, "", http.StatusInternalServerError, &w) {
         return
     }

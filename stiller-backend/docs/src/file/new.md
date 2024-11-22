@@ -4,7 +4,7 @@
 
 <div align="center">
 
-<img src="jwt_logo.png" height="10px"/> `POST /file/upload`
+<img src="jwt_logo.png" height="10px"/> `POST /file/new`
 
 </div>
 

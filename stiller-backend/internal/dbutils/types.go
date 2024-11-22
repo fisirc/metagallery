@@ -5,7 +5,8 @@ const (
     Image StillerFileType = iota
     Video
     Object3D
-    Unreachable
+    Metatemplate
+    UnreachableFileType
 )
 
 type StillerFile struct {
@@ -22,13 +23,21 @@ type StillerFile struct {
     Deleted     bool            `json:"deleted"`
 }
 
+type StillerTier uint8
+const (
+    Free StillerTier = iota
+    VanGogh
+    Picasso
+    UnreachableTier
+)
+
 type StillerUser struct {
-    Id          int    `json:"id"`
-    TierId      int    `json:"tierid"`
-    Displayname string `json:"displayname"`
-    Username    string `json:"username"`
-    Mail        string `json:"mail"`
-    Bpasswd     string `json:"bpasswd"`
+    Id          int         `json:"id"`
+    TierId      StillerTier `json:"tierid"`
+    Displayname string      `json:"displayname"`
+    Username    string      `json:"username"`
+    Mail        string      `json:"mail"`
+    Bpasswd     string      `json:"bpasswd"`
 }
 
 type StillerTemplateBlock struct {
@@ -37,6 +46,11 @@ type StillerTemplateBlock struct {
     Posx        float64 `json:"posx"`
     Posy        float64 `json:"posy"`
     Direction   float64 `json:"direction"`
+}
+
+type StillerMetatemplatefile struct {
+    Id   int
+    Path string
 }
 
 type StillerTemplate struct {
@@ -48,16 +62,20 @@ type StillerTemplate struct {
     Description string `json:"description"`
 }
 
-type SlotType uint8
-const (
-    D2 SlotType = iota
-    D3
-)
-
-type StillerSlot struct {
-    Ref  int       `json:"ref"`
-    Pos  []float64 `json:"pos"`
-    Type SlotType  `json:"type"`
+type StillerGallerySlot struct {
+    Id          string `json:"id"`
+    Res         int    `json:"res"`
+    Title       string `json:"title"`
+    Description string `json:"description"`
 }
 
+type StillerGallery struct {
+    Id           int                  `json:"id"`
+    OwnerId      int                  `json:"ownerid"`
+    TemplateId   int                  `json:"templateid"`
+    Slug         string               `json:"slug"`
+    Title        string               `json:"title"`
+    Description  string               `json:"description"`
+    Slots        []StillerGallerySlot `json:"slots"`
+}
 

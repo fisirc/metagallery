@@ -1,4 +1,4 @@
-package fileretrieve
+package filetree
 
 import (
 	"net/http"

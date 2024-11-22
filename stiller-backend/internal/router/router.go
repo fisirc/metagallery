@@ -5,10 +5,13 @@ import (
 	"stiller/internal/handlers/auth/newuser"
 	"stiller/internal/handlers/auth/userlogin"
 	"stiller/internal/handlers/auth/userverify"
-	"stiller/internal/handlers/file/fileretrieve"
+	"stiller/internal/handlers/file/filedl"
+	"stiller/internal/handlers/file/filetree"
 	"stiller/internal/handlers/file/patchfile"
 	"stiller/internal/handlers/file/upload"
-	"stiller/internal/handlers/gallery/addtemplate"
+	"stiller/internal/handlers/gallery/addgallery"
+	"stiller/internal/handlers/template/addtemplate"
+	"stiller/internal/handlers/template/gettemplate"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -21,29 +24,43 @@ type individualHandler struct {
 
 var routes = [...]individualHandler{
     {
+        path: "/template",
+        method: http.MethodGet,
+        handlefunc: gettemplate.NetHandler,
+    },
+    {
+        path: "/template/new",
+        method: http.MethodPost,
+        handlefunc: addtemplate.NetHandler,
+    },
+    {
+        path: "/gallery",
+        method: http.MethodGet,
+    },
+    {
         path: "/gallery/new",
         method: http.MethodPost,
-        handlefunc: addtemplate.NetHandler,
+        handlefunc: addgallery.NetHandler,
     },
     {
-        path: "/gallery/template",
-        method: http.MethodPost,
-        handlefunc: addtemplate.NetHandler,
+        path: "/file",
+        method: http.MethodGet,
+        handlefunc: filetree.Nethandler,
     },
     {
-        path: "/file/upload",
-        method: http.MethodPost,
-        handlefunc: upload.NetHandler,
-    },
-    {
-        path: "/file/update",
+        path: "/file",
         method: http.MethodPatch,
         handlefunc: patchfile.NetHandler,
     },
     {
-        path: "/file/retrieveall",
+        path: "/file/new",
+        method: http.MethodPost,
+        handlefunc: upload.NetHandler,
+    },
+    {
+        path: "/file/dl",
         method: http.MethodGet,
-        handlefunc: fileretrieve.Nethandler,
+        handlefunc: filedl.Nethandler,
     },
     {
         path: "/auth/newuser",
@@ -77,7 +94,11 @@ func routerDigest(router *httprouter.Router, ind *individualHandler) {
         fun = router.PUT
     }
 
-    router.OPTIONS(ind.path, ind.handlefunc)
+    handler, _, _ := router.Lookup(http.MethodOptions, ind.path)
+    if handler == nil {
+        router.OPTIONS(ind.path, ind.handlefunc)
+    }
+
     fun(ind.path, ind.handlefunc)
 }
 

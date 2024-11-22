@@ -1,6 +1,8 @@
 package handleutils
 
-import "net/http"
+import (
+	"net/http"
+)
 
 func CORS(w http.ResponseWriter, r *http.Request) bool {
     w.Header().Add("Access-Control-Allow-Origin", "*")
