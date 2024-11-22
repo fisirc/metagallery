@@ -1,20 +1,41 @@
-import {
-  IconProps,
-} from '@tabler/icons-react';
+import { IconProps } from '@tabler/icons-react';
 
 export const primaryIconProps: IconProps = {
   size: '18px',
   stroke: 1.5,
-};
+} as const;
 
 export const secondaryIconProps: IconProps = {
   size: '16px',
   stroke: 1.5,
-};
+} as const;
 
 export const smallIconProps: IconProps = {
   size: '14px',
   stroke: 1.5,
-};
+} as const;
 
-export const noImageSrc = 'https://icons.veryicon.com/png/o/file-type/linear-icon-2/upload-45.png';
+export const noImageSrc = 'assets/empty_slot.svg';
+
+export const cornerRadius = [0.08, 0.08, 0.08, 0.08];
+export const FRAME_STROKE_WIDTH = 0.12;
+
+// 🎨 2D Editor constants
+
+export const UNIT = 250;
+
+export const ZOOM_FACTOR = 1.08;
+
+export const WALL_COLOR = '#c0c0c0';
+
+export const DRAG_PORTAL_ID = 'drag-portal';
+export const MODAL_PORTAL_ID = 'modal-portal';
+
+/**
+ * The mult factor to convert from px to meters.
+ * Actually, 37.8 is for centimeters, but I chose it to be meters because 378 would be too much.
+ *
+ * <https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Values_and_units#lengths>
+ */
+export const PX_TO_METERS_FACTOR = 37.8;
+export const SLOTS_SCALE = { x: PX_TO_METERS_FACTOR, y: PX_TO_METERS_FACTOR };

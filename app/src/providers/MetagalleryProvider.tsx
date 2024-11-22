@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { Modal, Portal } from '@mantine/core';
 import { ReactNode } from 'react';
-import { MODAL_PORTAL_ID } from '@/pages/Editor/components/constants';
+import { MODAL_PORTAL_ID } from '@/constants';
 
 interface MetagalleryProviderStore {
   activeModals: Set<ReactNode>,

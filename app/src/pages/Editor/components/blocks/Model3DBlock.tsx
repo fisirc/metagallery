@@ -2,23 +2,39 @@ import useImage from 'use-image';
 import { useState } from 'react';
 import { Image, Rect } from 'react-konva';
 import { setCursor } from '@/utils';
-import { UNIT } from '../constants';
+import { UNIT } from '@/constants';
 import { useEditorStore } from '@/stores/editorAction';
-import { Model3DBlockProps } from '@/types';
-import { noImageSrc } from '@/constants';
+import { FRAME_STROKE_WIDTH, noImageSrc } from '@/constants';
+import { JSONValue, SlotVertex } from '@/types';
+import { v3tov2 } from '../../utils';
 
-export const Model3DBlock = ({ block }: { block: Model3DBlockProps }) => {
-  const { pos, props } = block;
+type Model3DBlockProps = {
+  id: number,
+  v: SlotVertex,
+  res: string | null;
+  props: Record<string, JSONValue>;
+};
 
-  const [image] = useImage(props.res ?? noImageSrc);
+export const Model3DSlot = ({ id, v, res, props }: Model3DBlockProps) => {
   const [hovering, setHovering] = useState(false);
   const draggingElem = useEditorStore((state) => state.draggingFile);
-
-  const x = (pos[0] - 0.2) * UNIT;
-  const y = (pos[1] - 0.2) * UNIT;
-  const size = UNIT * 0.4;
-
   const dragging = draggingElem !== null;
+
+  let src = res;
+  if (hovering && dragging) {
+    // Preview when user hover this slot while drawing
+    src = draggingElem.url;
+    useEditorStore.getState().setDraggingFileVisible(false);
+  } else {
+    useEditorStore.getState().setDraggingFileVisible(true);
+  }
+
+  const [image] = useImage(src ?? '');
+
+  const pos = v3tov2(v);
+  const size = 2 * (props.scale as number | null ?? 1);
+  const x = pos[0] - size / 2;
+  const y = pos[1] - size / 2;
 
   return (
     <>
@@ -27,8 +43,8 @@ export const Model3DBlock = ({ block }: { block: Model3DBlockProps }) => {
         y={y}
         width={size}
         height={size}
-        fill={hovering ? (dragging ? '#fcf3de' : '#e1e3e5') : '#f1f3f5'}
-        cornerRadius={5}
+        fill={dragging ? '#fcf3de' : (hovering ? '#e1e3e5' : '#f1f3f5')}
+        cornerRadius={1.2}
       />
       <Image
         x={x}
@@ -37,13 +53,15 @@ export const Model3DBlock = ({ block }: { block: Model3DBlockProps }) => {
         width={size}
         height={size}
       />
+      {/* Border stroke */}
       <Rect
         x={x}
         y={y}
         width={size}
         height={size}
-        stroke={hovering ? (dragging ? '#e8bb74' : '#b0b0b0') : '#e1e3e5'}
-        cornerRadius={5}
+        stroke={hovering ? (dragging ? '#e8bb74' : '#b0b0b0') : '#c0c0c0'}
+        strokeWidth={FRAME_STROKE_WIDTH}
+        cornerRadius={1.2}
         onMouseEnter={() => {
           setHovering(true);
           setCursor('pointer');

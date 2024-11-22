@@ -1,10 +1,9 @@
 import { Perf } from 'r3f-perf';
 import Ecctrl, { } from 'ecctrl';
 import { KeyboardControls, Sky, Sparkles } from '@react-three/drei';
-import { useApi } from '@/hooks/useApi';
-import { UserContentFileElement } from '@/types';
+import { galleryResponse, useApi } from '@/hooks/useApi';
 import { SceneRoom } from './components/gallery/Scene';
-import { BallCollider, CapsuleCollider, Physics } from '@react-three/rapier';
+import { BallCollider, Physics } from '@react-three/rapier';
 import { useEffect, useState } from 'react';
 import { DynamicPainting } from './components/gallery/DynamicPainting';
 import { DynamicSculpture } from './components/gallery/DynamicSculpture';
@@ -100,66 +99,8 @@ const template1 = [
   },
 ];
 
-const template7 = [
-  {
-    "ref": "wall1",
-    "type": "2d",
-    "props": {},
-    "v": [
-      [7.393, 6.677, 29.855],
-      [7.393, 2.979, 29.855],
-      [5.211, 6.677, 29.855],
-      [5.211, 2.979, 29.855],
-    ]
-  },
-  {
-    "ref": "wall2",
-    "type": "2d",
-    "props": {},
-    "v": [
-      [3.192, 6.677, 29.855],
-      [3.192, 2.979, 29.855],
-      [1.009, 6.677, 29.855],
-      [1.009, 2.979, 29.855],
-    ]
-  },
-  {
-    "ref": "wall3",
-    "type": "2d",
-    "props": {},
-    "v": [
-      [-3.192, 6.677, 29.855],
-      [-3.192, 2.979, 29.855],
-      [-1.009, 6.677, 29.855],
-      [-1.009, 2.979, 29.855],
-    ]
-  },
-  {
-    "ref": "wall4",
-    "type": "2d",
-    "props": {},
-    "v": [
-      [-5.211, 6.677, 29.855],
-      [-5.211, 2.979, 29.855],
-      [-7.393, 6.677, 29.855],
-      [-7.393, 2.979, 29.855],
-    ]
-  },
-  {
-    "ref": "center",
-    "type": "3d",
-    "props": {
-      "scale": 1,
-      "rotate": true,
-    },
-    "v": [
-      [0, 1.170, 10.706],
-    ]
-  },
-] as const;
-
 export const Experience = ({ gallery }: { gallery: string }) => {
-  const { data, isLoading } = useApi<Array<UserContentFileElement>>(`gallery/${gallery}`);
+  const { data: galleryData } = useApi<typeof galleryResponse>(`gallery/${gallery}`);
 
   const [gravityEnabled, setGravityEnabled] = useState(false);
 
@@ -172,10 +113,10 @@ export const Experience = ({ gallery }: { gallery: string }) => {
   return (
     <>
       <Perf position="top-right" minimal />
-      <ambientLight intensity={0.6} />
+      <ambientLight intensity={0.5} />
       <axesHelper args={[10]} />
       {
-        template7.map((slots) => {
+        galleryData && galleryData.slots.map((slots) => {
           if (slots.type == '2d') {
             return (
               <DynamicPainting

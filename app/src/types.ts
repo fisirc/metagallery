@@ -7,68 +7,10 @@ export interface UserContentFileElement {
   type: 'model3d' | 'image',
 }
 
-export type GenericGalleryBlock = {
-  type: 'wall' | 'model3d' | 'door',
-  pos: [number, number],
-  props: {
-    size?: number,
-    dir?: 0 | 1 | 2 | 3,
-    res?: string | null,
-  },
-};
+export type SlotVertex = readonly [number, number, number];
 
-export type WallBlockProps = {
-  type: 'wall',
-  pos: [number, number],
-  props: {
-    size: number,
-    dir: 0 | 1 | 2 | 3,
-    res?: string | null,
-  },
-};
+export type SlotVertices = readonly [SlotVertex, SlotVertex, SlotVertex, SlotVertex]
 
-export type PictureSlotProps = {
-  type: 'wall',
-  pos: [number, number],
-  props: {
-    size: number,
-    dir: 0 | 1 | 2 | 3,
-    res?: string,
-  },
-};
+export type JSONPrimitive = string | number | boolean | null | undefined;
 
-export type Model3DBlockProps = {
-  type: 'model3d',
-  pos: [number, number],
-  props: {
-    size?: number,
-    dir?: 0 | 1 | 2 | 3,
-    res?: string,
-  },
-};
-
-export type DoorBlockProps = {
-  type: 'door',
-  pos: [number, number],
-  props: {
-    size: number,
-    dir?: 0 | 1 | 2 | 3,
-    res?: string,
-  },
-};
-
-export const isWallBlock = (block: GenericGalleryBlock): block is WallBlockProps => {
-  return block.type === 'wall';
-};
-
-export const isPictureSlotBlock = (block: GenericGalleryBlock): block is WallBlockProps => {
-  return block.type === 'wall' && block.props.res !== null;
-};
-
-export const isModel3DBlock = (block: GenericGalleryBlock): block is Model3DBlockProps => {
-  return block.type === 'model3d';
-};
-
-export const isDoorBlock = (block: GenericGalleryBlock): block is DoorBlockProps => {
-  return block.type === 'door';
-};
+export type JSONValue = JSONPrimitive | JSONValue[] | { [key: string]: JSONValue; };

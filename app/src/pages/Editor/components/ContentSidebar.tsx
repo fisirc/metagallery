@@ -20,7 +20,7 @@ import { IconDots, IconDownload, IconEdit, IconSearch, IconTrash, IconUpload } f
 import { primaryIconProps, secondaryIconProps, smallIconProps } from '@/constants';
 import { UserContentFileElement } from '@/types';
 import { useEditorStore } from '@/stores/editorAction';
-import { DRAG_PORTAL_ID } from './constants';
+import { DRAG_PORTAL_ID } from '@/constants';
 import { useApi } from '@/hooks/useApi';
 
 export const EditorSidebar = () => {
@@ -78,11 +78,12 @@ const UserContentSidebarElement = ({ element }: { element: UserContentFileElemen
   const [opened, setOpened] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
   const draggingElem = useEditorStore((state) => state.draggingFile);
+  const isDraggingFileVisible = useEditorStore((state) => state.isDraggingFileVisible);
 
   return (
     <>
       {
-        draggingElem === element && (
+        (draggingElem === element && isDraggingFileVisible) && (
           <Portal target={`#${DRAG_PORTAL_ID}`}>
             <div
               style={{

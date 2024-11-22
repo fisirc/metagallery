@@ -8,18 +8,22 @@ import { UserContentFileElement } from '@/types';
 interface EditorActionState {
   // Represents a sidebar element being dragged.
   draggingFile: UserContentFileElement | null,
+  isDraggingFileVisible: boolean,
   startDragging: (f: UserContentFileElement) => void,
   dropFile: () => void,
+  setDraggingFileVisible: (visible: boolean) => void,
 }
 
 export const useEditorStore = create<EditorActionState>()(
   (set, get) => ({
     draggingFile: null,
-    startDragging: (file: UserContentFileElement) => set({ draggingFile: file }),
+    isDraggingFileVisible: false,
+    startDragging: (file: UserContentFileElement) => set({ draggingFile: file, isDraggingFileVisible: true }),
     dropFile: () => {
       if (get().draggingFile) {
-        set({ draggingFile: null });
+        set({ draggingFile: null, isDraggingFileVisible: false });
       }
     },
+    setDraggingFileVisible: (visible: boolean) => set({ isDraggingFileVisible: visible }),
   }),
 );

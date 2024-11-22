@@ -5,7 +5,7 @@ import { GalleryCanvas2D } from './components/GalleryCanvas2D';
 import { MenuBurger } from './components/MenuBurger';
 import { MainButtons } from './components/MainButtons';
 import { EditorSidebar } from './components/ContentSidebar';
-import { DRAG_PORTAL_ID } from './components/constants';
+import { DRAG_PORTAL_ID } from '@/constants';
 import { Gallery3D } from '../Gallery3D';
 
 export const Editor = ({ gallery }: { gallery: string }) => {
@@ -35,7 +35,7 @@ export const Editor = ({ gallery }: { gallery: string }) => {
         </div>
         <div style={{ display: previewOpened ? 'none' : 'flex', flexDirection: 'row', gap: '16px', minHeight: 'calc(100vh - 70px)', maxHeight: 'calc(100vh - 70px)', paddingLeft: '16px', paddingRight: '16px' }}>
           <EditorSidebar />
-          <GalleryCanvas2D gallery={gallery} />
+          <GalleryCanvas2D gallery={gallery} triggerReRender={previewOpened} />
         </div>
         {
           previewOpened && (

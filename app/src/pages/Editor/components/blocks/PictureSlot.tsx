@@ -1,145 +1,94 @@
 import useImage from 'use-image';
 import { useState } from 'react';
 import { Text } from '@mantine/core';
-import { Image, Rect, Layer, Group } from 'react-konva';
+import { Image, Rect, Group } from 'react-konva';
 import { setCursor } from '@/utils';
 import { useEditorStore } from '@/stores/editorAction';
-import { DIR_TOP, DIR_RIGHT, DIR_BOTTOM, DIR_LEFT, UNIT, WALL_THICKNESS, PICTURE_SLOT_UNIT } from '../constants';
 import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
-import { PictureSlotProps } from '@/types';
-import { noImageSrc } from '@/constants';
+import { cornerRadius, FRAME_STROKE_WIDTH, noImageSrc } from '@/constants';
+import { JSONValue, SlotVertices } from '@/types';
+import { getFrameAngle, getFrameHeight, getFrameWidth, v3tov2 } from '@/pages/Editor/utils';
 
-const HALF_THICKNESS = WALL_THICKNESS / 2;
-const WALL_PADDING = 0.1;
+type PictureSlotProps = {
+  id: number,
+  v: SlotVertices,
+  res: string | null;
+  props: Record<string, JSONValue>;
+};
 
-export const PictureSlot = ({ block }: { block: PictureSlotProps }) => {
-  const { pos, props } = block;
-
-  const [image] = useImage(props.res ?? noImageSrc);
+export const PictureSlot = ({ id, v, res, props }: PictureSlotProps) => {
   const [hovering, setHovering] = useState(false);
   const draggingElem = useEditorStore((state) => state.draggingFile);
-
-  const scaledPosX = pos[0] * UNIT - HALF_THICKNESS;
-  const scaledPosY = pos[1] * UNIT - HALF_THICKNESS;
-  const scaledSize = props.size * UNIT;
-  const scaledSizeWithoutPadding = scaledSize * (1 - 2 * WALL_PADDING);
-
   const dragging = draggingElem !== null;
 
-  const ratio = image ? image.width / image.height : 1;
-
-  let x: number;
-  let y: number;
-  let w: number;
-  let h: number;
-
-  let ix: number;
-  let iy: number;
-  let iw: number;
-  let ih: number;
-
-  let corners: number[];
-
-  let irotation: number;
-
-  switch (props.dir) {
-    case DIR_LEFT: {
-      x = scaledPosX - scaledSize + 0.1 * scaledSize;
-      y = scaledPosY - PICTURE_SLOT_UNIT;
-      irotation = 0;
-      corners = [5, 5, 0, 0];
-      break;
-    }
-    case DIR_RIGHT: {
-      x = scaledPosX + 0.1 * scaledSize;
-      y = scaledPosY + WALL_THICKNESS;
-      irotation = 0;
-      corners = [0, 0, 5, 5];
-      break;
-    }
-    case DIR_BOTTOM: {
-      x = pos[0] * UNIT - PICTURE_SLOT_UNIT - HALF_THICKNESS;
-      y = scaledPosY + 0.1 * scaledSize;
-      irotation = 90;
-      corners = [5, 0, 0, 5];
-      break;
-    }
-    case DIR_TOP: {
-      x = scaledPosX + WALL_THICKNESS;
-      y = scaledPosY - scaledSize + 0.1 * scaledSize;
-      irotation = -90;
-      corners = [0, 5, 5, 0];
-      break;
-    }
+  let src = res;
+  if (hovering && dragging) {
+    // Preview when user hover this slot while drawing
+    src = draggingElem.url;
+    useEditorStore.getState().setDraggingFileVisible(false);
+  } else {
+    useEditorStore.getState().setDraggingFileVisible(true);
   }
 
-  switch (props.dir) {
-    case DIR_TOP:
-    case DIR_BOTTOM: {
-      w = PICTURE_SLOT_UNIT;
-      h = scaledSizeWithoutPadding + WALL_THICKNESS;
-      iw = PICTURE_SLOT_UNIT * ratio;
-      ih = PICTURE_SLOT_UNIT;
-      break;
-    }
-    case DIR_RIGHT:
-    case DIR_LEFT: {
-      w = scaledSizeWithoutPadding + WALL_THICKNESS;
-      h = PICTURE_SLOT_UNIT;
-      iw = PICTURE_SLOT_UNIT * ratio;
-      ih = PICTURE_SLOT_UNIT;
-      break;
-    }
-  }
+  const [image] = useImage(src ?? '');
 
-  switch (props.dir) {
-    case DIR_BOTTOM: {
-      ix = x + w;
-      iy = y + h / 2 - iw / 2;
-      break;
-    }
-    case DIR_TOP: {
-      ix = x;
-      iy = y + h / 2 + iw / 2;
-      break;
-    }
-    case DIR_LEFT:
-    case DIR_RIGHT: {
-      ix = x + w / 2 - iw / 2;
-      iy = y;
-      break;
-    }
+  const pos = v3tov2(v[2]);
+  const rotation = getFrameAngle(v);
+
+  const frameWidth = getFrameWidth(v);
+  const frameHeight = getFrameHeight(v);
+
+  const frameRatio = frameWidth / frameHeight;
+  const imageRatio = image ? image.width / image.height : 1;
+
+  let imgWidth = frameWidth;
+  let imgHeight = frameHeight;
+  let imgOffsetX = 0;
+  let imgOffsetY = 0;
+
+  if (frameRatio > imageRatio) {
+    imgWidth = imgHeight * imageRatio;
+    imgOffsetX = frameWidth / 2 - imgWidth / 2;
+  }
+  else {
+    imgHeight = imgWidth / imageRatio;
+    imgOffsetY = frameHeight / 2 - imgHeight / 2;
   }
 
   return (
-    <Group rotation={Math.PI}>
+    <Group>
       { /* Base */}
       <Rect
-        cornerRadius={corners}
-        x={x}
-        y={y}
-        fill={hovering ? (dragging ? '#fcf3de' : '#e1e3e5') : '#f1f3f5'}
-        width={w}
-        height={h}
+        x={pos[0]}
+        y={pos[1]}
+        width={frameWidth}
+        height={frameHeight}
+        rotation={rotation}
+        cornerRadius={cornerRadius}
+        fill={dragging ? '#fcf3de' : (hovering ? '#e1e3e5' : '#f1f3f5')}
       />
       { /* Rendered image */}
-      <Image
-        x={ix}
-        y={iy}
-        rotation={irotation}
-        width={iw}
-        height={ih}
-        image={image}
-      />
+      {
+        image && <Image
+          x={pos[0] + imgOffsetX}
+          y={pos[1] + imgOffsetY}
+          width={imgWidth}
+          height={imgHeight}
+          rotation={rotation}
+          image={image}
+        />
+      }
       { /* Border */}
       <Rect
-        cornerRadius={corners}
-        x={x}
-        y={y}
-        width={w}
-        height={h}
+        x={pos[0] - FRAME_STROKE_WIDTH / 2}
+        y={pos[1] - FRAME_STROKE_WIDTH / 2}
+        width={frameWidth + FRAME_STROKE_WIDTH}
+        height={frameHeight + FRAME_STROKE_WIDTH}
         listening
-        stroke={hovering ? (dragging ? '#e8bb74' : '#b0b0b0') : '#e1e3e5'}
+        cornerRadius={cornerRadius}
+        rotation={rotation}
+        stroke={hovering ? (dragging ? '#e8bb74' : '#b0b0b0') : '#c0c0c0'}
+        strokeWidth={FRAME_STROKE_WIDTH}
         onClick={() => {
           useMetagalleryStore.getState().openModal(
             <Text>Hawk tuah!</Text>

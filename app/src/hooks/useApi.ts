@@ -1,6 +1,5 @@
 import useSWR from 'swr';
-import { GenericGalleryBlock, UserContentFileElement } from '@/types';
-import { DIR_BOTTOM, DIR_LEFT, DIR_RIGHT, DIR_TOP } from '@/pages/Editor/components/constants';
+import { UserContentFileElement } from '@/types';
 
 type ArgsType<T> = T extends (...args: infer U) => any ? U : never;
 
@@ -26,106 +25,75 @@ const mockedUserMedia = [
         description: 'Le gusta mirar fijamente a cosas cotidianas',
         url: 'https://unidadlatina.org/wp-content/uploads/2024/04/arte-contemporaneo-latinoamerica.jpg',
     },
+    {
+        id: 4,
+        type: 'model3d',
+        title: 'Xiao Pang',
+        description: 'Le gusta mirar fijamente a cosas cotidianas',
+        url: 'http://localhost:5173/assets/3d/chihiro.glb',
+    },
 ] satisfies Array<UserContentFileElement>;
 
-const mockedGalleryBlocks = ([
-    {
-        type: 'wall',
-        pos: [0, 0],
-        props: {
-            size: 2,
-            dir: DIR_RIGHT,
-            res: 'https://patrimoniocultural.bogota.unal.edu.co/wp-content/uploads/2023/galeria-arte-contemp/1903_1-scaled.jpg',
+export const galleryResponse = {
+    "origin": [-9.4, -29.5],
+    "slots": [
+        {
+            "ref": "wall1",
+            "type": "2d",
+            "props": {},
+            "v": [
+                [7.393, 6.677, 29.855],
+                [7.393, 2.979, 29.855],
+                [5.211, 6.677, 29.855],
+                [5.211, 2.979, 29.855]
+            ]
         },
-    },
-    {
-        type: 'wall',
-        pos: [0, 1],
-        props: {
-            size: 1,
-            dir: DIR_TOP,
-            res: 'https://e00-elmundo.uecdn.es/assets/multimedia/imagenes/2017/02/24/14879498132987.jpg',
+        {
+            "ref": "wall2",
+            "type": "2d",
+            "props": {},
+            "v": [
+                [3.192, 6.677, 29.855],
+                [3.192, 2.979, 29.855],
+                [1.009, 6.677, 29.855],
+                [1.009, 2.979, 29.855]
+            ]
         },
-    },
-    {
-        type: 'wall',
-        pos: [2, 0],
-        props: {
-            size: 2,
-            dir: DIR_LEFT,
-            res: null,
+        {
+            "ref": "wall3",
+            "type": "2d",
+            "props": {},
+            "v": [
+                [-1.009, 6.677, 29.855],
+                [-1.009, 2.979, 29.855],
+                [-3.192, 6.677, 29.855],
+                [-3.192, 2.979, 29.855]
+            ]
         },
-    },
-    {
-        type: 'wall',
-        pos: [2, 0],
-        props: {
-            size: 2,
-            dir: DIR_BOTTOM,
-            res: 'https://www.grupoeducar.cl/wp-content/uploads/2023/09/Arte-Revista-Educar-octubre-2023-edicion-277.jpg',
+        {
+            "ref": "wall4",
+            "type": "2d",
+            "props": {},
+            "v": [
+                [-5.211, 6.677, 29.855],
+                [-5.211, 2.979, 29.855],
+                [-7.393, 6.677, 29.855],
+                [-7.393, 2.979, 29.855]
+            ]
         },
-    },
-    {
-        type: 'wall',
-        pos: [2, 0],
-        props: {
-            size: 1,
-            dir: DIR_BOTTOM,
-            res: null,
-        },
-    },
-    {
-        type: 'wall',
-        pos: [0, 2],
-        props: {
-            size: 2,
-            dir: DIR_TOP,
-            res: null,
-        },
-    },
-    {
-        type: 'wall',
-        pos: [2, 2],
-        props: {
-            size: 1,
-            dir: DIR_LEFT,
-            res: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Tux_Droid_1.jpg/1200px-Tux_Droid_1.jpg',
-        },
-    },
-    {
-        type: 'wall',
-        pos: [0, 2],
-        props: {
-            size: 2,
-            dir: DIR_RIGHT,
-            res: null,
-        },
-    },
-    {
-        type: 'model3d',
-        pos: [0.5, 1.5],
-        props: {
-            res: 'https://cdn3d.iconscout.com/3d/premium/thumb/balloon-dog-3d-illustration-download-in-png-blend-fbx-gltf-file-formats--birthday-party-pack-celebration-illustrations-4712928.png?f=webp',
-            size: 0.6,
-        },
-    },
-    {
-        type: 'door',
-        pos: [0, 1],
-        props: {
-            dir: DIR_RIGHT,
-            size: 1,
-        },
-    },
-    {
-        type: 'door',
-        pos: [1, 2],
-        props: {
-            dir: DIR_TOP,
-            size: 1,
-        },
-    },
-] satisfies Array<GenericGalleryBlock>).toSorted((a, b) => b.props.size - a.props.size);
+        {
+            "ref": "center",
+            "type": "3d",
+            "props": {
+                "scale": 2,
+                "rotate": true
+            },
+            "v": [
+                [0, 1.170, 10.706]
+            ]
+        }
+    ]
+} as const;
 
 // const fetcher = (...args: ArgsType<typeof fetch>) => fetch(...args).then(res => res.json());
 const fetcher = async (...args: ArgsType<typeof fetch>) => {
@@ -141,7 +109,7 @@ const fetcher = async (...args: ArgsType<typeof fetch>) => {
     }
     if (path.startsWith('gallery/')) {
         // const gallery = path.split('/')[1];
-        return mockedGalleryBlocks;
+        return galleryResponse;
     }
 
     throw new Error('404');

@@ -3,7 +3,7 @@ import { RigidBody } from '@react-three/rapier';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 export const SceneRoom = () => {
-  const gltf = useLoader(GLTFLoader, '/assets/3d/gallery.glb');
+  const gltf = useLoader(GLTFLoader, '/assets/3d/vegetable_gallery.glb');
 
   return (
     <group>
