@@ -1,6 +1,7 @@
 package userlogin
 
 import (
+	"log"
 	"net/http"
 	"stiller/internal/dbutils"
 	"stiller/internal/handlers/handleutils"
@@ -43,7 +44,11 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         From("user").
         Where("username = ?", payload.Username)
 
+    defer query_stmt.Close()
+
     query := query_stmt.String()
+    log.Println(query, query_stmt.Args())
+
     new_dbconn, dbconn_err := dbutils.NewConn()
     if handleutils.RequestLog(
         dbconn_err,
@@ -63,12 +68,12 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
             user_bpwd = stmt.GetText("bpasswd")
             return nil
         },
+
         Args: query_stmt.Args(),
     })
 
     if amount == 0 {
-        handleutils.GenericLog(nil, "no user was found")
-        w.WriteHeader(http.StatusNotFound)
+        handleutils.RequestLog(nil, "no user was found", http.StatusNotFound, &w)
         return
     }
 

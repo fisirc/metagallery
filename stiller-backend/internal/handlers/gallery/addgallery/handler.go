@@ -9,6 +9,7 @@ import (
 	"stiller/internal/fsutils"
 	"stiller/internal/handlers/handleutils"
 	"stiller/internal/jwtutils"
+	"stiller/internal/templates"
 
 	jsonexp "github.com/go-json-experiment/json"
 	"github.com/julienschmidt/httprouter"
@@ -30,6 +31,7 @@ func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
         Description string `json:"description"`
     }
 
+    type ResPayload dbutils.StillerGallery
     req_payload := ReqPayload{}
     unmarshal_err := jsonexp.UnmarshalRead(r.Body, &req_payload, jsonexp.DefaultOptionsV2())
     if handleutils.RequestLog(unmarshal_err, "", http.StatusBadRequest, &w) {
@@ -72,7 +74,7 @@ func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
         Args: newgallery_args,
     })
 
-    if handleutils.RequestLog(exec_err, "", http.StatusInternalServerError, &w) {
+    if handleutils.RequestLog(exec_err, "", http.StatusBadRequest, &w) {
         return
     }
 
@@ -82,62 +84,43 @@ func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
         return
     }
 
-    templpath_stmt := sqlf.
-        Select("path").
-        From("file").
-        Where("id = ?", req_payload.Template)
-
-    metatemplate_path := ""
-    templpath_query, temptemplpath_args := templpath_stmt.String(), templpath_stmt.Args()
-    sqlitex.ExecuteTransient(dbconn, templpath_query, &sqlitex.ExecOptions{
-        ResultFunc: func(stmt *sqlite.Stmt) error {
-            metatemplate_path = stmt.GetText("path")
-            return nil
-        },
-        Args: temptemplpath_args,
-    })
-
-    if len(metatemplate_path) == 0 {
-        handleutils.GenericLog(nil, "no valid template, empty path")
-        w.WriteHeader(http.StatusInternalServerError)
-        return
-    }
-
-    flag, flag_err := fsutils.FileExists(metatemplate_path)
-    if handleutils.RequestLog(flag_err, "", http.StatusInternalServerError, &w){
-        return
-    }
-
-    if !flag {
-        handleutils.GenericLog(nil, "metatemplate not found")
-        w.WriteHeader(http.StatusInternalServerError)
-        return
-    }
-
-    metatempl_file, open_err := os.Open(metatemplate_path)
+    path := fsutils.GetTemplatePath(req_payload.Template)
+    file, open_err := os.Open(path)
     if handleutils.RequestLog(open_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
-    bufread := bufio.NewReader(metatempl_file)
+    defer file.Close()
 
-    tarball := tar.NewReader(bufread)
-    slots := []dbutils.StillerSlot{}
-    slotread_err := jsonexp.UnmarshalRead(tarball, &slots, jsonexp.DefaultOptionsV2())
-    if handleutils.RequestLog(slotread_err, "", http.StatusInternalServerError, &w) {
+    tar_reader := tar.NewReader(file)
+    _, read_err := tar_reader.Next()
+    if handleutils.RequestLog(read_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
-    newslots_stmt := sqlf.InsertInto("galleryslot")
-    for index := range slots {
-        newslots_stmt.NewRow().
-            Set("gallery", newgallery_id).
-            Set("slotref", slots[index].Ref)
+    buftar := bufio.NewReader(tar_reader)
+
+    slots := []templates.MetatemplateSlot{}
+    slotunmarshal_exp := jsonexp.UnmarshalRead(buftar, &slots, jsonexp.DefaultOptionsV2())
+    if handleutils.RequestLog(slotunmarshal_exp, "", http.StatusInternalServerError, &w) {
+        return
     }
 
-    newslots_query, newslots_args := newslots_stmt.String(), newslots_stmt.Args()
-    sqlitex.ExecuteTransient(dbconn, newslots_query, &sqlitex.ExecOptions{
-        Args: newslots_args,
+    insert_slots_stmt := sqlf.
+        InsertInto("galleryslot")
+
+    for index := range slots {
+        insert_slots_stmt.NewRow().
+            Set("gallery", newgallery_id).
+            Set("slotid", slots[index].Id)
+    }
+
+    insert_slots_err := sqlitex.ExecuteTransient(dbconn, insert_slots_stmt.String(), &sqlitex.ExecOptions{
+        Args: insert_slots_stmt.Args(),
     })
+
+    if handleutils.RequestLog(insert_slots_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
 }
 
