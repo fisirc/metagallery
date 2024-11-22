@@ -26,6 +26,7 @@
     "@tabler/icons-react": "^3.11.0",
     "ecctrl": "^1.0.91",
     "konva": "^9.3.16",
+    "lucide-react": "^0.460.0",
     "r3f-perf": "^7.2.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
