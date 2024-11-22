@@ -23,7 +23,7 @@ type GalleryCanvas2DProps = {
 
 export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DProps) => {
   const [viewport, setViewport] = useState({ x: 0, y: 0 });
-  const [image,] = useImage('/assets/topview/gallery.svg');
+  const [image,] = useImage('/assets/examples/topview.svg');
   const draggingElem = useEditorStore((state) => state.draggingFile);
   const stageRef = useRef<Konva.Stage>(null);
   const { data: galleryData } = useApi<typeof galleryResponse>(`gallery/${gallery}`);
