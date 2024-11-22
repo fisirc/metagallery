@@ -7,6 +7,7 @@ the following files:
 template.tar/
   |- data.json
   |- topview.svg
+  |- thumbnail.png
   +- scene.glb
 ```
 
