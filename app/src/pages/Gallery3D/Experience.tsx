@@ -102,7 +102,7 @@ const template1 = [
 
 const template7 = [
   {
-    "id": "wall1",
+    "ref": "wall1",
     "type": "2d",
     "props": {},
     "v": [
@@ -113,7 +113,7 @@ const template7 = [
     ]
   },
   {
-    "id": "wall2",
+    "ref": "wall2",
     "type": "2d",
     "props": {},
     "v": [
@@ -124,7 +124,7 @@ const template7 = [
     ]
   },
   {
-    "id": "wall3",
+    "ref": "wall3",
     "type": "2d",
     "props": {},
     "v": [
@@ -135,7 +135,7 @@ const template7 = [
     ]
   },
   {
-    "id": "wall4",
+    "ref": "wall4",
     "type": "2d",
     "props": {},
     "v": [
@@ -146,7 +146,7 @@ const template7 = [
     ]
   },
   {
-    "id": "center",
+    "ref": "center",
     "type": "3d",
     "props": {
       "scale": 1,
@@ -179,7 +179,7 @@ export const Experience = ({ gallery }: { gallery: string }) => {
           if (slots.type == '2d') {
             return (
               <DynamicPainting
-                key={slots.id}
+                key={slots.ref}
                 imageUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Tux_Droid_1.jpg/1200px-Tux_Droid_1.jpg"
                 vertices={slots.v}
               />

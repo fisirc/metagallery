@@ -16,7 +16,7 @@ the scene for the user to drop images/3D models.
 ```json
 [
   {
-    "id": "slot1",
+    "ref": "slot1",
     "type": "2d",
     "props": {},
     "v": [
@@ -27,7 +27,7 @@ the scene for the user to drop images/3D models.
     ]
   },
   {
-    "id": "slot2",
+    "ref": "slot2",
     "type": "3d",
     "props": {
       "rotating": false,
