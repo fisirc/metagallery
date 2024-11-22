@@ -36,10 +36,18 @@ func GenericLog(err error, msg_fmt string, args ...any) {
 
 
 func RequestLog(err error, msg string, status int, res *http.ResponseWriter) bool {
-    GenericLog(err, msg)
-    (*res).WriteHeader(status)
+    if len(msg) != 0 {
+        GenericLog(err, msg)
+        return true
+    }
 
-    return err == nil
+    if err != nil {
+        GenericLog(err, msg)
+        (*res).WriteHeader(status)
+        return true
+    }
+
+    return false
 }
 
 

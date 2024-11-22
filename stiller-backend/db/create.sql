@@ -36,22 +36,15 @@ create table avatar (
     file integer not null references file (id)
 );
 
-create table gallery (
-    id integer unique primary key autoincrement not null,
-    owner integer not null references user (id),
-    template integer not null references template (id),
-    slug text unique not null,
-    title text,
-    description text,
-    deploy_stage integer not null,
-    url text unique not null
+create table metatemplatefile (
+    id integer unique primary key autoincrement not null
 );
 
 create table template (
     id integer unique primary key autoincrement not null,
     tier integer not null references tier (id),
     thumbnail integer not null references file (id),
-    templatefile integer not null references file (id),
+    templatefile integer not null references metatemplatefile(id),
     title text not null,
     description text not null
 );
@@ -84,8 +77,17 @@ create table template (
 
 create table galleryslot (
     gallery integer not null references gallery (id),
-    slotref integer not null,
+    slotid text not null,
     res integer references file (id),
+    title text,
+    description text
+);
+
+create table gallery (
+    id integer unique primary key autoincrement not null,
+    owner integer not null references user (id),
+    template integer not null references template (id),
+    slug text unique not null,
     title text,
     description text
 );

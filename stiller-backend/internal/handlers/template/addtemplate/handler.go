@@ -2,12 +2,16 @@ package addtemplate
 
 import (
 	"archive/tar"
+	"bufio"
 	"net/http"
+	"os"
 	"stiller/internal/dbutils"
+	"stiller/internal/fsutils"
 	"stiller/internal/handlers/handleutils"
+	"stiller/internal/jwtutils"
+	"stiller/internal/tarutils"
 	"strconv"
 
-	jsonexp "github.com/go-json-experiment/json"
 	"github.com/julienschmidt/httprouter"
 	"github.com/leporo/sqlf"
 	"zombiezen.com/go/sqlite"
@@ -25,6 +29,18 @@ func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
     }
 
     type ReqPayload dbutils.StillerTemplate
+
+    user_token := r.Header.Get("token")
+    user_tk, token_decode_err := jwtutils.Decode(user_token)
+    if handleutils.RequestLog(token_decode_err, "", http.StatusUnauthorized, &w) {
+        return
+    }
+
+    user_id := user_tk.UserId
+    if user_id != handleutils.ADMIN_ID {
+        handleutils.RequestLog(nil, "non admin user", http.StatusUnauthorized, &w)
+        return
+    }
 
     form_err := r.ParseMultipartForm(100 * MB)
     if handleutils.RequestLog(form_err, "", http.StatusBadRequest, &w) {
@@ -71,24 +87,91 @@ func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
     req_payload.Title = title_str
     req_payload.Description = description_str
 
-    slots_file, _, slotsfile_err := r.FormFile("slots")
+    dbconn, dbconn_err := dbutils.NewConn()
+    if handleutils.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
+
+    templatefile_stmt := sqlf.
+        New("insert into metatemplatefile").
+            Expr("default values").
+        Returning("id")
+
+    templatefile_id := int(-1)
+    templatefile_query := templatefile_stmt.String()
+    templatefile_exec_err := sqlitex.ExecuteTransient(dbconn, templatefile_query, &sqlitex.ExecOptions{
+        ResultFunc: func(stmt *sqlite.Stmt) error {
+            templatefile_id = int(stmt.GetInt64("id"))
+            return nil
+        },
+
+        Args: templatefile_stmt.Args(),
+    })
+
+    if handleutils.RequestLog(templatefile_exec_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
+
+    if templatefile_id == -1 {
+        handleutils.RequestLog(nil, "no new template row was created", http.StatusInternalServerError, &w)
+        return
+    }
+
+    abs_path := fsutils.GetTemplatePath(templatefile_id)
+
+    tarfile, tarball_err := os.Create(abs_path)
+    if handleutils.RequestLog(tarball_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
+
+    tarball_writer := tar.NewWriter(tarfile)
+
+    slots_file, slots_header, slotsfile_err := r.FormFile("slots")
     if handleutils.RequestLog(slotsfile_err, "", http.StatusBadRequest, &w) {
         return
     }
 
-    modelfile, _, modelfile_err := r.FormFile("model")
+    defer slots_file.Close()
+
+    model_file, model_header, modelfile_err := r.FormFile("model")
     if handleutils.RequestLog(modelfile_err, "", http.StatusBadRequest, &w) {
         return
     }
 
+    defer model_file.Close()
 
+    bufslots := bufio.NewReader(slots_file)
+    modelslots := bufio.NewReader(model_file)
 
+    writeslot_err := tarutils.TarPushFile(
+        tarball_writer,
+        bufslots,
+        slots_header.Filename,
+        slots_header.Size,
+    )
 
+    if handleutils.RequestLog(writeslot_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
 
+    writemodel_err := tarutils.TarPushFile(
+        tarball_writer,
+        modelslots,
+        model_header.Filename,
+        model_header.Size,
+    )
 
+    if handleutils.RequestLog(writemodel_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
 
-    dbconn, dbconn_err := dbutils.NewConn()
-    if handleutils.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
+    close_tarball_writer :=  tarball_writer.Close()
+    if handleutils.RequestLog(close_tarball_writer, "", http.StatusInternalServerError, &w) {
+        return
+    }
+
+    close_tarfile_err := tarfile.Close()
+    if handleutils.RequestLog(close_tarfile_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
@@ -99,6 +182,7 @@ func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
             Set("thumbnail", req_payload.ThumbnailId).
             Set("title", req_payload.Title).
             Set("description", req_payload.Description).
+            Set("templatefile", templatefile_id).
         Returning("id")
 
     newtempl_query, newtempl_args := newtempl_stmt.String(), newtempl_stmt.Args()

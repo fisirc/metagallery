@@ -12,6 +12,7 @@ import (
 
 	jsonexp "github.com/go-json-experiment/json"
 	"github.com/julienschmidt/httprouter"
+	"github.com/leporo/sqlf"
 	"golang.org/x/crypto/bcrypt"
 	"zombiezen.com/go/sqlite"
 	"zombiezen.com/go/sqlite/sqlitex"
@@ -20,6 +21,7 @@ import (
 var (
     ErrInQuery = errors.New("query error")
     ErrNotEnoughArgs = errors.New("not enough args in query")
+    ErrUserExists = errors.New("user already exists")
 )
 
 func newuserScalarFn(ctx sqlite.Context, args []sqlite.Value) (sqlite.Value, error){
@@ -36,21 +38,50 @@ func newuserScalarFn(ctx sqlite.Context, args []sqlite.Value) (sqlite.Value, err
     }
 
     new_user := dbutils.StillerUser{
-        TierId:      args[0].Int(),
+        TierId:      dbutils.StillerTier(args[0].Int()),
         Username:    args[1].Text(),
         Displayname: args[2].Text(),
         Mail:        args[3].Text(),
         Bpasswd:     string(bcrypt_pwd),
     }
 
-    query := `
-        insert into
-            user (tier, displayname, username, mail, bpasswd)
-        values
-            (?1, ?2, ?3, ?4, ?5)
-        returning
-            id;`
+    check_stmt := sqlf.
+        Select("id").
+        From("user").
+        Where("username = ?", new_user.Username)
 
+    defer check_stmt.Close()
+
+    check_id := int(-1)
+    check_err := sqlitex.ExecuteTransient(db_conn, check_stmt.String(), &sqlitex.ExecOptions{
+        ResultFunc: func(stmt *sqlite.Stmt) error {
+            check_id++
+            return nil
+        },
+
+        Args: check_stmt.Args(),
+    })
+
+    if check_err != nil {
+        return sqlite.Value{}, check_err
+    }
+
+    if check_id != -1 {
+        return sqlite.IntegerValue(-1), ErrUserExists
+    }
+
+    query_stmt := sqlf.
+        InsertInto("user").
+            Set("tier", new_user.TierId).
+            Set("displayname", new_user.Displayname).
+            Set("username", new_user.Username).
+            Set("mail", new_user.Mail).
+            Set("bpasswd", new_user.Bpasswd).
+        Returning("id")
+
+    defer query_stmt.Close()
+
+    query := query_stmt.String()
     new_id := int(-1)
     exec_err := sqlitex.ExecuteTransient(db_conn, query, &sqlitex.ExecOptions{
         ResultFunc: func(stmt *sqlite.Stmt) error {
@@ -58,21 +89,11 @@ func newuserScalarFn(ctx sqlite.Context, args []sqlite.Value) (sqlite.Value, err
             return nil
         },
 
-        Args: []any{
-            new_user.TierId,
-            new_user.Username,
-            new_user.Displayname,
-            new_user.Mail,
-            new_user.Bpasswd,
-        },
+        Args: query_stmt.Args(),
     })
 
     if exec_err != nil {
         return sqlite.Value{}, exec_err
-    }
-
-    if new_id == -1 {
-        return sqlite.Value{}, ErrInQuery
     }
 
     return sqlite.IntegerValue(int64(new_id)), nil
@@ -118,29 +139,32 @@ func Nethandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         UserId: -1,
     }
 
-    query := `select newuser(?1, ?2, ?3, ?4, ?5);`
+    query_stmt := sqlf.Select(
+        "newuser(?, ?, ?, ?, ?)",
+        rpayload.TierId,
+        rpayload.Username,
+        rpayload.Username,
+        rpayload.Mail,
+        rpayload.Passwd,
+    )
+
+    defer query_stmt.Close()
+
+    query := query_stmt.String()
     exec_err := sqlitex.ExecuteTransient(new_dbconn, query, &sqlitex.ExecOptions{
         ResultFunc: func(stmt *sqlite.Stmt) error {
+            if stmt.ColumnType(0) == sqlite.TypeText {
+                return errors.New(stmt.ColumnText(0))
+            }
+
             new_tk.UserId = stmt.ColumnInt(0)
             return nil
         },
 
-        Args: []any{
-            rpayload.AvatarId,
-            rpayload.TierId,
-            rpayload.Username,
-            rpayload.Mail,
-            rpayload.Passwd,
-        },
+        Args: query_stmt.Args(),
     })
 
-    if handleutils.RequestLog(exec_err, "", http.StatusInternalServerError, &w) {
-        return
-    }
-
-    if new_tk.UserId == -1 {
-        handleutils.GenericLog(nil, "no new user was created")
-        w.WriteHeader(http.StatusInternalServerError)
+    if handleutils.RequestLog(exec_err, "", http.StatusBadRequest, &w) {
         return
     }
 

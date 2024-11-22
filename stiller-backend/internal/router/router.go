@@ -9,7 +9,9 @@ import (
 	"stiller/internal/handlers/file/filetree"
 	"stiller/internal/handlers/file/patchfile"
 	"stiller/internal/handlers/file/upload"
-	"stiller/internal/handlers/gallery/addtemplate"
+	"stiller/internal/handlers/gallery/addgallery"
+	"stiller/internal/handlers/template/addtemplate"
+	"stiller/internal/handlers/template/gettemplate"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -22,7 +24,12 @@ type individualHandler struct {
 
 var routes = [...]individualHandler{
     {
-        path: "/admin/template/new",
+        path: "/template",
+        method: http.MethodGet,
+        handlefunc: gettemplate.NetHandler,
+    },
+    {
+        path: "/template/new",
         method: http.MethodPost,
         handlefunc: addtemplate.NetHandler,
     },
@@ -33,6 +40,7 @@ var routes = [...]individualHandler{
     {
         path: "/gallery/new",
         method: http.MethodPost,
+        handlefunc: addgallery.NetHandler,
     },
     {
         path: "/file",
@@ -86,8 +94,8 @@ func routerDigest(router *httprouter.Router, ind *individualHandler) {
         fun = router.PUT
     }
 
-    _, _, flag := router.Lookup(http.MethodOptions, ind.path)
-    if flag {
+    handler, _, _ := router.Lookup(http.MethodOptions, ind.path)
+    if handler == nil {
         router.OPTIONS(ind.path, ind.handlefunc)
     }
 
