@@ -40,6 +40,8 @@ func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
         return
     }
 
+    defer dbutils.CloseConn(dbconn)
+
     tier := dbutils.UnreachableTier
     tierexec_err := sqlitex.ExecuteTransient(dbconn, tier_stmt.String(), &sqlitex.ExecOptions{
         ResultFunc: func(stmt *sqlite.Stmt) error {

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"stiller"
 	"stiller/internal/router"
+	"time"
 )
 
 func main() {
@@ -18,8 +19,15 @@ func main() {
         stiller.StillerConfig.Addr,
     )
 
+    server := &http.Server{
+        Addr:         stiller.StillerConfig.Addr,
+        Handler:      new_router,
+        ReadTimeout:  1 * time.Second,
+        WriteTimeout: 10 * time.Second,
+    }
+
     log.Fatalln(
-        http.ListenAndServe(stiller.StillerConfig.Addr, new_router),
+        server.ListenAndServe(),
     )
 }
 

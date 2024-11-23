@@ -36,6 +36,8 @@ func Nethandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
         return
     }
 
+    defer dbutils.CloseConn(new_dbconn)
+
     getpath_stmt := sqlf.
     Select("path").
         From("file").

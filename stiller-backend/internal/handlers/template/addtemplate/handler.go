@@ -92,6 +92,8 @@ func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
         return
     }
 
+    defer dbutils.CloseConn(dbconn)
+
     templatefile_stmt := sqlf.
         New("insert into metatemplatefile").
             Expr("default values").
