@@ -15,14 +15,12 @@ export const smallIconProps: IconProps = {
   stroke: 1.5,
 } as const;
 
-export const noImageSrc = 'assets/empty_slot.svg';
+export const noImageSrc = '';
 
-export const cornerRadius = [0.08, 0.08, 0.08, 0.08];
+export const CORNER_RADIUS = [0.02, 0.02, 0.02, 0.02];
 export const FRAME_STROKE_WIDTH = 0.12;
 
 // 🎨 2D Editor constants
-
-export const UNIT = 250;
 
 export const ZOOM_FACTOR = 1.08;
 

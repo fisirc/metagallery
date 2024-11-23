@@ -12,7 +12,7 @@ export function getFrameWidth(v: SlotVertices) {
 }
 
 export function getFrameHeight(v: SlotVertices) {
-    return v[0][1] - v[1][1];
+    return Math.abs(v[0][1] - v[1][1]);
 }
 
 export function getFrameAngle(v: SlotVertices) {
@@ -24,6 +24,14 @@ export function getFrameAngle(v: SlotVertices) {
 
 export function getFrameXY(v: SlotVertices) {
     return v3tov2(v[0]);
+}
+
+export function cosine(angle: number) {
+    return Math.cos(angle * Math.PI / 180);
+}
+
+export function sine(angle: number) {
+    return Math.sin(angle * Math.PI / 180);
 }
 
 /**
@@ -55,7 +63,7 @@ export const getInitialScale = () => {
 export const getInitialXY = () => {
     const x = Number(localStorage.getItem('editor_x'));
     const y = Number(localStorage.getItem('editor_y'));
-    if ((x != 0 && y!= 0) && !Number.isNaN(x) && !Number.isNaN(y)) {
+    if ((x != 0 && y != 0) && !Number.isNaN(x) && !Number.isNaN(y)) {
         return { x, y };
     }
     return { x: null, y: null };

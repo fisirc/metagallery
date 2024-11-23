@@ -2,7 +2,6 @@ import useImage from 'use-image';
 import { useState } from 'react';
 import { Image, Rect } from 'react-konva';
 import { setCursor } from '@/utils';
-import { UNIT } from '@/constants';
 import { useEditorStore } from '@/stores/editorAction';
 import { FRAME_STROKE_WIDTH, noImageSrc } from '@/constants';
 import { JSONValue, SlotVertex } from '@/types';
@@ -60,7 +59,7 @@ export const Model3DSlot = ({ id, v, res, props }: Model3DBlockProps) => {
         width={size}
         height={size}
         stroke={hovering ? (dragging ? '#e8bb74' : '#b0b0b0') : '#c0c0c0'}
-        strokeWidth={FRAME_STROKE_WIDTH}
+        strokeWidth={FRAME_STROKE_WIDTH / 2}
         cornerRadius={1.2}
         onMouseEnter={() => {
           setHovering(true);

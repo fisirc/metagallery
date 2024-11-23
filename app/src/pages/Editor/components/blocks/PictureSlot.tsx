@@ -1,13 +1,13 @@
 import useImage from 'use-image';
 import { useState } from 'react';
 import { Text } from '@mantine/core';
-import { Image, Rect, Group } from 'react-konva';
+import { Image, Rect, Group, Text as Text3D } from 'react-konva';
 import { setCursor } from '@/utils';
 import { useEditorStore } from '@/stores/editorAction';
 import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
-import { cornerRadius, FRAME_STROKE_WIDTH, noImageSrc } from '@/constants';
+import { CORNER_RADIUS, FRAME_STROKE_WIDTH, noImageSrc } from '@/constants';
 import { JSONValue, SlotVertices } from '@/types';
-import { getFrameAngle, getFrameHeight, getFrameWidth, v3tov2 } from '@/pages/Editor/utils';
+import { cosine, getFrameAngle, getFrameHeight, getFrameWidth, sine, v3tov2 } from '@/pages/Editor/utils';
 
 type PictureSlotProps = {
   id: number,
@@ -30,7 +30,7 @@ export const PictureSlot = ({ id, v, res, props }: PictureSlotProps) => {
     useEditorStore.getState().setDraggingFileVisible(true);
   }
 
-  const [image] = useImage(src ?? '');
+  const [image] = useImage(src ?? noImageSrc);
 
   const pos = v3tov2(v[2]);
   const rotation = getFrameAngle(v);
@@ -57,37 +57,19 @@ export const PictureSlot = ({ id, v, res, props }: PictureSlotProps) => {
 
   return (
     <Group>
-      { /* Base */}
+      { /* Base color and border */}
       <Rect
         x={pos[0]}
         y={pos[1]}
         width={frameWidth}
         height={frameHeight}
         rotation={rotation}
-        cornerRadius={cornerRadius}
-        fill={dragging ? '#fcf3de' : (hovering ? '#e1e3e5' : '#f1f3f5')}
-      />
-      { /* Rendered image */}
-      {
-        image && <Image
-          x={pos[0] + imgOffsetX}
-          y={pos[1] + imgOffsetY}
-          width={imgWidth}
-          height={imgHeight}
-          rotation={rotation}
-          image={image}
-        />
-      }
-      { /* Border */}
-      <Rect
-        x={pos[0] - FRAME_STROKE_WIDTH / 2}
-        y={pos[1] - FRAME_STROKE_WIDTH / 2}
-        width={frameWidth + FRAME_STROKE_WIDTH}
-        height={frameHeight + FRAME_STROKE_WIDTH}
         listening
-        cornerRadius={cornerRadius}
-        rotation={rotation}
+        fillAfterStrokeEnabled
+        strokeHitEnabled
+        cornerRadius={CORNER_RADIUS}
         stroke={hovering ? (dragging ? '#e8bb74' : '#b0b0b0') : '#c0c0c0'}
+        fill={dragging ? '#fcf3de' : (hovering ? '#e1e3e5' : '#f1f3f5')}
         strokeWidth={FRAME_STROKE_WIDTH}
         onClick={() => {
           useMetagalleryStore.getState().openModal(
@@ -103,6 +85,27 @@ export const PictureSlot = ({ id, v, res, props }: PictureSlotProps) => {
           setCursor(null);
         }}
       />
+      { /* Rendered image */}
+      {
+        image && <Image
+          x={pos[0] - imgOffsetY * sine(rotation) + imgOffsetX * cosine(rotation)}
+          y={pos[1] + imgOffsetY * cosine(rotation) + imgOffsetX * sine(rotation)}
+          width={imgWidth}
+          height={imgHeight}
+          listening={false}
+          rotation={rotation}
+          image={image}
+        />
+      }
+      {/* <Text3D
+        x={pos[0]}
+        y={pos[1]}
+        text={rotation.toString()}
+        fontSize={0.5}
+        listening={false}
+        fill={'black'}
+        rotation={rotation}
+      /> */}
     </Group>
   );
 };

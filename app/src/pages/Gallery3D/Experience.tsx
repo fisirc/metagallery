@@ -8,97 +8,6 @@ import { useEffect, useState } from 'react';
 import { DynamicPainting } from './components/gallery/DynamicPainting';
 import { DynamicSculpture } from './components/gallery/DynamicSculpture';
 
-const template1 = [
-  {
-    "id": "muro1",
-    "type": "2d",
-    "props": {},
-    "v": [
-      [-15.7062, 3.4598, 0.7131 + 0.01],
-      [-15.7062, 0.87639, 0.7131 + 0.01],
-      [-13.8400, 3.4598, 0.7131 + 0.01],
-      [-13.8400, 0.87639, 0.7131 + 0.01],
-    ]
-  },
-  {
-    "id": "muro2",
-    "type": "2d",
-    "props": {},
-    "v": [
-      [-5.4976, 3.4598, 0.7131 + 0.01], // tl
-      [-5.4976, 0.87639, 0.7131 + 0.01], // bl
-      [-3.6313, 3.4598, 0.7131 + 0.01], // tr
-      [-3.6313, 0.87639, 0.7131 + 0.01], // br
-    ]
-  },
-  {
-    "id": "muro3",
-    "type": "2d",
-    "props": {},
-    "v": [
-      [4.2209, 3.4598, 0.7131 + 0.01], // tl
-      [4.2209, 0.87639, 0.7131 + 0.01], // bl
-      [6.0872, 3.4598, 0.7131 + 0.01], // tr
-      [6.0872, 0.87639, 0.7131 + 0.01], // br
-    ]
-  },
-  {
-    "id": "front1",
-    "type": "2d",
-    "props": {},
-    "v": [
-      [-15.283, 3.460, -10.064],
-      [-15.283, 0.876, -10.064],
-      [-17.149, 3.460, -10.064],
-      [-17.149, 0.876, -10.064],
-    ]
-  },
-  {
-    "id": "front2",
-    "type": "2d",
-    "props": {},
-    "v": [
-      [-10.596, 2.611, -10.064],
-      [-10.596, 1.523, -10.064],
-      [-13.533, 2.611, -10.064],
-      [-13.533, 1.523, -10.064],
-    ]
-  },
-  {
-    "id": "front3",
-    "type": "2d",
-    "props": {},
-    "v": [
-      [-7.381, 3.46, -10.069],
-      [-7.381, 0.876, -10.069],
-      [-9.247, 3.46, -10.069],
-      [-9.247, 0.876, -10.069],
-    ]
-  },
-  {
-    "id": "front4",
-    "type": "2d",
-    "props": {},
-    "v": [
-      [1.49, 3.46, -10.069],
-      [1.49, 0.876, -10.069],
-      [-6.008, 3.46, -10.069],
-      [-6.008, 0.876, -10.069],
-    ]
-  },
-  {
-    "id": "front5",
-    "type": "2d",
-    "props": {},
-    "v": [
-      [6.688, 3.46, -10.069],
-      [6.688, 0.876, -10.069],
-      [2.884, 3.497, -10.064],
-      [2.884, 0.914, -10.064],
-    ]
-  },
-];
-
 export const Experience = ({ gallery }: { gallery: string }) => {
   const { data: galleryData } = useApi<typeof galleryResponse>(`gallery/${gallery}`);
 
@@ -113,7 +22,7 @@ export const Experience = ({ gallery }: { gallery: string }) => {
   return (
     <>
       <Perf position="top-right" minimal />
-      <ambientLight intensity={0.5} />
+      <ambientLight intensity={0.6} />
       <axesHelper args={[10]} />
       {
         galleryData && galleryData.slots.map((slots) => {

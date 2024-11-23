@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
@@ -20,6 +20,7 @@ export function DynamicSculpture({
 }: DynamicSculptureProps) {
   const { scene: model } = useGLTF(glbUrl);
   const groupRef = useRef<THREE.Group>(null);
+  const copiedModel = useMemo(() => model.clone(), [model])
 
   useFrame(() => {
     if (rotate && groupRef.current) {
@@ -34,7 +35,7 @@ export function DynamicSculpture({
       rotation={rotation}
       scale={scale}
     >
-      <primitive object={model} />
+      <primitive object={copiedModel} />
     </group>
   );
 }
