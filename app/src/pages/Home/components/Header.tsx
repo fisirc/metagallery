@@ -87,7 +87,7 @@ export const Header = () => {
           pwd: password,
         }),
       });
-  
+
       if (!response.ok) {
         const errorDetails = await response.text();
         console.error('Failed to register:', errorDetails);
