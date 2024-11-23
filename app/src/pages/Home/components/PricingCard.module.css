@@ -1,43 +1,46 @@
 .card {
-  padding: 20px;
+  padding: clamp(1rem, 3vw, 1.5rem);
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   background-color: #fff;
-  width: 300px;
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto;
   text-align: left;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .title {
-  font-size: 1.25rem;
+  font-size: clamp(1.1rem, 2.5vw, 1.25rem);
   font-weight: 600;
   margin: 0;
 }
 
 .price {
-  font-size: 1.80rem;
+  font-size: clamp(1.5rem, 3vw, 1.8rem);
   font-weight: 700;
   margin: 0.2rem 0;
 }
 
 .features {
-  font-size: 0.5rem;
   list-style-type: none;
   padding: 0;
-  margin: 0.5rem 0;
+  margin: 1rem 0;
+  flex-grow: 1;
 }
 
 .feature {
-  font-size: 0.9rem;
+  font-size: clamp(0.85rem, 2vw, 0.9rem);
   color: #666;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
 }
 
 .button {
-  margin-top: auto;
   padding: 0.75rem 1.5rem;
-  font-size: 1rem;
+  font-size: clamp(0.875rem, 2vw, 1rem);
   font-weight: 600;
   color: #fff;
   background-color: #18181B;
@@ -45,10 +48,27 @@
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  align-self: flex-end;
-  width: auto;
+  width: 100%;
+  text-align: center;
+  margin-top: 1rem;
 }
 
 .button:hover {
   background-color: #333;
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 1.25rem;
+  }
+
+  .feature {
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    max-width: 100%;
+  }
 }

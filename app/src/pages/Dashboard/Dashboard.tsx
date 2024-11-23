@@ -1,4 +1,6 @@
-import { Menu, Search, Share2 } from "lucide-react";
+import React, { useState } from 'react';
+import { Menu, Search, Share2, Plus, Layout, Edit } from "lucide-react";
+import { useLocation } from 'wouter';
 import styles from "./GalleryDashboard.module.css";
 import { UserButton } from "@/components/UserButton";
 
@@ -36,11 +38,52 @@ const galleries = [
 ];
 
 export const GalleryDashboard = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [_, setLocation] = useLocation();
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleNewGallery = () => {
+    setLocation('/new/edit');
+  };
+
   return (
     <div className={styles.container}>
+      {isSidebarOpen && (
+        <div
+          className={styles.overlay}
+          onClick={toggleSidebar}
+        />
+      )}
+
+      <div className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : ''}`}>
+        <div className={styles.sidebarContent}>
+          <h2 className={styles.sidebarTitle}>Menú</h2>
+          <nav className={styles.sidebarNav}>
+            <button onClick={handleNewGallery} className={styles.sidebarButton}>
+              <Plus className={styles.sidebarIcon} />
+              <span>Nueva Galería</span>
+            </button>
+            <button className={styles.sidebarButton}>
+              <Layout className={styles.sidebarIcon} />
+              <span>Desplegar Galería</span>
+            </button>
+            <button className={styles.sidebarButton}>
+              <Edit className={styles.sidebarIcon} />
+              <span>Editar Galería</span>
+            </button>
+          </nav>
+        </div>
+      </div>
+
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <button className={styles.menuButton}>
+          <button
+            onClick={toggleSidebar}
+            className={styles.menuButton}
+          >
             <Menu className={styles.menuIcon} />
             <span className={styles.srOnly}>Dashboard</span>
           </button>
@@ -98,4 +141,3 @@ export const GalleryDashboard = () => {
     </div>
   );
 }
-
