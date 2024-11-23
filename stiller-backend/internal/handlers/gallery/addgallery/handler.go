@@ -32,6 +32,7 @@ func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
     }
 
     type ResPayload dbutils.StillerGallery
+
     req_payload := ReqPayload{}
     unmarshal_err := jsonexp.UnmarshalRead(r.Body, &req_payload, jsonexp.DefaultOptionsV2())
     if handleutils.RequestLog(unmarshal_err, "", http.StatusBadRequest, &w) {
@@ -100,8 +101,8 @@ func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
 
     buftar := bufio.NewReader(tar_reader)
 
-    slots := []templates.MetatemplateSlot{}
-    slotunmarshal_exp := jsonexp.UnmarshalRead(buftar, &slots, jsonexp.DefaultOptionsV2())
+    templatefile_slots := []templates.MetatemplateSlot{}
+    slotunmarshal_exp := jsonexp.UnmarshalRead(buftar, &templatefile_slots, jsonexp.DefaultOptionsV2())
     if handleutils.RequestLog(slotunmarshal_exp, "", http.StatusInternalServerError, &w) {
         return
     }
@@ -109,10 +110,10 @@ func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
     insert_slots_stmt := sqlf.
         InsertInto("galleryslot")
 
-    for index := range slots {
+    for index := range templatefile_slots {
         insert_slots_stmt.NewRow().
             Set("gallery", newgallery_id).
-            Set("slotid", slots[index].Id)
+            Set("slotid", templatefile_slots[index].Ref)
     }
 
     insert_slots_err := sqlitex.ExecuteTransient(dbconn, insert_slots_stmt.String(), &sqlitex.ExecOptions{
@@ -120,6 +121,31 @@ func NetHandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
     })
 
     if handleutils.RequestLog(insert_slots_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
+
+    gallery_slots := make([]dbutils.StillerGallerySlot, 0, len(templatefile_slots))
+    for index := range templatefile_slots {
+        gallery_slots = append(gallery_slots, dbutils.StillerGallerySlot{
+            Ref: templatefile_slots[index].Ref,
+            Type: templatefile_slots[index].Type,
+            Props: templatefile_slots[index].Props,
+            Vertices: templatefile_slots[index].Vertices,
+        })
+    }
+
+    res_payload := dbutils.StillerGallery{
+        Id: newgallery_id,
+        Title: req_payload.Title,
+        Description: req_payload.Description,
+        OwnerId: user_id,
+        TemplateId: req_payload.Template,
+        Slug: req_payload.Slug,
+        Slots: gallery_slots,
+    }
+
+    marshal_err := jsonexp.MarshalWrite(w, res_payload, jsonexp.DefaultOptionsV2())
+    if handleutils.RequestLog(marshal_err, "", http.StatusInternalServerError, &w) {
         return
     }
 }

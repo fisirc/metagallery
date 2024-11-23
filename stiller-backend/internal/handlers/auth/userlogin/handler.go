@@ -1,7 +1,6 @@
 package userlogin
 
 import (
-	"log"
 	"net/http"
 	"stiller/internal/dbutils"
 	"stiller/internal/handlers/handleutils"
@@ -47,7 +46,6 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     defer query_stmt.Close()
 
     query := query_stmt.String()
-    log.Println(query, query_stmt.Args())
 
     new_dbconn, dbconn_err := dbutils.NewConn()
     if handleutils.RequestLog(

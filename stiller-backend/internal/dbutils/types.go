@@ -63,19 +63,22 @@ type StillerTemplate struct {
 }
 
 type StillerGallerySlot struct {
-    Id          string `json:"id"`
-    Res         int    `json:"res"`
-    Title       string `json:"title"`
-    Description string `json:"description"`
+    ResId       int         `json:"res"`
+    Title       string      `json:"title"`
+    Description string      `json:"description"`
+    Ref         string      `json:"ref"`
+    Type        string      `json:"type"`
+    Props       interface{} `json:"props"`
+    Vertices    [][]float64 `json:"v"`
 }
 
 type StillerGallery struct {
     Id           int                  `json:"id"`
+    Title        string               `json:"title"`
+    Description  string               `json:"description"`
     OwnerId      int                  `json:"ownerid"`
     TemplateId   int                  `json:"templateid"`
     Slug         string               `json:"slug"`
-    Title        string               `json:"title"`
-    Description  string               `json:"description"`
     Slots        []StillerGallerySlot `json:"slots"`
 }
 
