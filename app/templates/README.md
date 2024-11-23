@@ -20,7 +20,8 @@ Template rooms 3D models:
 
   ![Gallery 3 thumbnail](./gallery3/thumbnail.png)
 
-  <https://sketchfab.com/3d-models/vr-gallery-house-baked-8e3b280476eb4790af97e2abd3d9be59> by Elin
+  <https://sketchfab.com/3d-models/vr-gallery-1e087aa25dc742e680accb15249bd6be>
+  by Elin
 
 - Gallery 4
 
@@ -29,6 +30,16 @@ Template rooms 3D models:
   ![Gallery 4 thumbnail](./gallery4/thumbnail.png)
 
   <https://www.cgtrader.com/free-3d-models/interior/hall/art-gallery-2bb88c04-cbb8-4299-a054-29ca54b471ac> by cgtrader
+
+## Creating your template
+
+- Load the model or scene into Blender
+- Remove any unnecessary objects
+- Map every frame slots to the data.json using the
+  [print_edges.blender.py](./utils/print_edges.blender.py) script.
+- Now create the `topview` image by rendering the scene from the top.
+  The actual position of SVG view size should be the `max_3dworld_width`
+- Create a thumbnail image for the template
 
 ## To do
 
@@ -48,7 +59,7 @@ Template rooms 3D models:
 
   ![Template 5](https://media.sketchfab.com/models/1e087aa25dc742e680accb15249bd6be/thumbnails/e608b0a0d90b4af5acbebfb63c9bfc74/673d8f8e71824115a2baef5d085d5e37.jpeg)
 
-  <https://sketchfab.com/3d-models/vr-gallery-1e087aa25dc742e680accb15249bd6be> by Maxim Mavrichev
+  <https://sketchfab.com/3d-models/vr-gallery-house-baked-8e3b280476eb4790af97e2abd3d9be59> by Maxim Mavrichev
 
 - Template 6
 
@@ -61,3 +72,7 @@ Template rooms 3D models:
   ![Template 8](https://media.sketchfab.com/models/6dc365ac66884e5aa51f8302c7dc299d/thumbnails/ff1e42da1f4f4e9a95f3ef8b99c9c5d9/7068f4c3a01649c8b4b9a31679a0b6fc.jpeg)
 
   <https://sketchfab.com/3d-models/vr-gallery-showcase-presentation-building-6dc365ac66884e5aa51f8302c7dc299d> by jimbogies
+
+## Resources
+
+- <https://sketchfab.com/3d-models/david-by-michelangelo-8f4827cf36964a17b90bad11f48298ac> "David by Michelangelo" by jerryfisher
