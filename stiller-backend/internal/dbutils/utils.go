@@ -40,10 +40,10 @@ func CloseConn(conn *sqlite.Conn) {
     db_pool.Put(conn)
 }
 
-func PushNewFile(fileptr *StillerFile) (int, error) {
+func PushNewFile(fileptr *StillerFile) error {
     new_dbconn, dbconn_err := NewConn()
     if dbconn_err != nil {
-        return 0, dbconn_err
+        return dbconn_err
     }
 
     defer CloseConn(new_dbconn)
@@ -63,8 +63,6 @@ func PushNewFile(fileptr *StillerFile) (int, error) {
     query := query_stmt.String()
     query_id_res := int(-1)
 
-    log.Println(query_stmt.String())
-    log.Println(query_stmt.Args()...)
     exec_err := sqlitex.ExecuteTransient(new_dbconn, query, &sqlitex.ExecOptions{
         ResultFunc: func(stmt *sqlite.Stmt) error {
             if stmt.ColumnType(0) == sqlite.TypeText {
@@ -80,13 +78,14 @@ func PushNewFile(fileptr *StillerFile) (int, error) {
     })
 
     if query_id_res == -1 {
-        return 0, errors.New("no new file was added")
+        return errors.New("no new file was added")
     }
 
     if exec_err != nil {
-        return 0, exec_err
+        return exec_err
     }
 
-    return query_id_res, nil
+    fileptr.Id = query_id_res
+    return nil
 }
 

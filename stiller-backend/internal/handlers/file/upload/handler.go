@@ -37,9 +37,7 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    type ResPayload struct {
-        Id int `json:"id"`
-    }
+    type ResPayload dbutils.StillerFile
 
     user_token := r.Header.Get("token")
     user_tk, token_decode_err := jwtutils.Decode(user_token)
@@ -187,17 +185,13 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         normal_buf = normal_buf[:cap(normal_buf)]
     }
 
-    id, push_err := dbutils.PushNewFile(&new_file)
+    push_err := dbutils.PushNewFile(&new_file)
     if handleutils.RequestLog(push_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
-    payload := ResPayload{
-        Id: id,
-    }
-
     w.WriteHeader(http.StatusOK)
-    jsonexp.MarshalWrite(w, payload, jsonexp.DefaultOptionsV2())
+    jsonexp.MarshalWrite(w, new_file, jsonexp.DefaultOptionsV2())
 }
 
 
