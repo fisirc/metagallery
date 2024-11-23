@@ -10,6 +10,8 @@ import (
 	"stiller/internal/handlers/file/patchfile"
 	"stiller/internal/handlers/file/upload"
 	"stiller/internal/handlers/gallery/addgallery"
+	"stiller/internal/handlers/gallery/galleryedit"
+	"stiller/internal/handlers/gallery/gallerytree"
 	"stiller/internal/handlers/template/addtemplate"
 	"stiller/internal/handlers/template/gettemplate"
 
@@ -36,6 +38,12 @@ var routes = [...]individualHandler{
     {
         path: "/gallery",
         method: http.MethodGet,
+        handlefunc: gallerytree.NetHandler,
+    },
+    {
+        path: "/gallery/edit",
+        method: http.MethodPatch,
+        handlefunc: galleryedit.NetHandler,
     },
     {
         path: "/gallery/new",
