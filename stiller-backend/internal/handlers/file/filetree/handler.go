@@ -92,7 +92,7 @@ func Nethandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
                     Id: new_id,
                     OwnerId: int(stmt.GetInt64("owner")),
                     Typeof: dbutils.StillerFileType(stmt.GetInt64("type")),
-                    Url: "https://pandadiestro.xyz/services/stiller/file/dl/" + strconv.Itoa(new_id),
+                    Url: stiller.StillerConfig.FileBucket + strconv.Itoa(new_id),
                     Path: stmt.GetText("path"),
                     Filename: stmt.GetText("filename"),
                     Title: stmt.GetText("title"),

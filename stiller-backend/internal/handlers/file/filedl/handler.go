@@ -1,6 +1,7 @@
 package filedl
 
 import (
+	"log"
 	"net/http"
 	"stiller/internal/dbutils"
 	"stiller/internal/fsutils"
@@ -67,6 +68,7 @@ func Nethandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
         handleutils.GenericLog(nil, "path '%s' doesnt exist", path)
     }
 
+    log.Println(path)
     http.ServeFile(w, r, path)
 }
 

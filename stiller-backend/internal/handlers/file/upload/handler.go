@@ -190,7 +190,7 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    new_file.Url = "https://pandadiestro.xyz/services/stiller/file/dl/" + strconv.Itoa(new_file.Id)
+    new_file.Url = stiller.StillerConfig.FileBucket + strconv.Itoa(new_file.Id)
 
     w.WriteHeader(http.StatusOK)
     jsonexp.MarshalWrite(w, new_file, jsonexp.DefaultOptionsV2())

@@ -9,12 +9,15 @@ type ConfigType struct {
     DBPath     string
     Secret     []byte
     Admin      string
+    Host       string
+    FileBucket string
     BCryptCost int
 }
 
 func newConfig() *ConfigType {
     dotenv.Load()
 
+    hostname := dotenv.GetString("Host")
     return &ConfigType{
         Addr: dotenv.GetString("Addr"),
         FilesPath: dotenv.GetString("FilesPath"),
@@ -22,6 +25,8 @@ func newConfig() *ConfigType {
         Secret: []byte(dotenv.GetString("Secret")),
         BCryptCost: dotenv.GetInt("BCryptCost"),
         Admin: dotenv.GetString("Admin"),
+        Host: hostname,
+        FileBucket: hostname + "file/dl/",
     }
 }
 
