@@ -6,28 +6,24 @@ type ArgsType<T> = T extends (...args: infer U) => any ? U : never;
 const mockedUserMedia = [
     {
         id: 1,
-        type: 'image',
         title: 'Aiko Tanaka',
         description: 'Lorem punpuns',
         url: 'https://www.grupoeducar.cl/wp-content/uploads/2023/06/Arte-Revista-Educar-Julio-2023-edicion-274.png',
     },
     {
         id: 2,
-        type: 'model3d',
         title: 'Grace en 3d',
         description: 'Modelo 3d no implementado',
         url: 'https://diario.global/wp-content/uploads/2022/02/C2015014-TOTS-SOM-EUROPA-UNIDA.jpg',
     },
     {
         id: 3,
-        type: 'image',
         title: 'Xiao Pang',
         description: 'Le gusta mirar fijamente a cosas cotidianas',
         url: 'https://unidadlatina.org/wp-content/uploads/2024/04/arte-contemporaneo-latinoamerica.jpg',
     },
     {
         id: 4,
-        type: 'model3d',
         title: 'Xiao Pang',
         description: 'Le gusta mirar fijamente a cosas cotidianas',
         url: 'http://localhost:5173/assets/3d/chihiro.glb',
