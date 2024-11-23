@@ -5,6 +5,7 @@ import (
 	"stiller/internal/handlers/auth/newuser"
 	"stiller/internal/handlers/auth/userlogin"
 	"stiller/internal/handlers/auth/userverify"
+	"stiller/internal/handlers/file/filedel"
 	"stiller/internal/handlers/file/filedl"
 	"stiller/internal/handlers/file/filetree"
 	"stiller/internal/handlers/file/patchfile"
@@ -76,6 +77,11 @@ var routes = [...]individualHandler{
         path: "/file/dl/:file_id",
         method: http.MethodGet,
         handlefunc: filedl.Nethandler,
+    },
+    {
+        path: "/file/del/:file_id",
+        method: http.MethodGet,
+        handlefunc: filedel.Nethandler,
     },
     {
         path: "/auth/newuser",
