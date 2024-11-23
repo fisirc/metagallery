@@ -117,3 +117,58 @@ func PushNewFile(fileptr *StillerFile) error {
     return nil
 }
 
+func GetUserById(id int, conn *sqlite.Conn) StillerUser {
+    new_user := StillerUser{}
+
+    get_user_stmt := sqlf.
+        Select("*").
+            From("user").
+        Where("id = ?")
+
+    sqlitex.ExecuteTransient(conn, get_user_stmt.String(), &sqlitex.ExecOptions{
+        ResultFunc: func(stmt *sqlite.Stmt) error {
+            new_user = StillerUser{
+                Id: int(stmt.GetInt64("id")),
+                TierId: StillerTier(stmt.GetInt64("tier")),
+                Displayname: stmt.GetText("displayname"),
+                Username: stmt.GetText("username"),
+                Mail: stmt.GetText("mail"),
+                Bpasswd: stmt.GetText("bpasswd"),
+            }
+
+            return nil
+        },
+
+        Args: get_user_stmt.Args(),
+    })
+
+    new_user.Id = id
+    return new_user
+}
+
+type SlotUpdateFlag uint8
+const (
+    UPDATE_RES = iota
+    UPDATE_TITLE
+    UPDATE_DESCRIPTION
+)
+
+func UpdateSlot(gallery int, ref string, updater SlotUpdateFlag, newval any, conn *sqlite.Conn) error {
+    base_update_stmt := sqlf.
+        Update("galleryslot").
+            Where("gallery = ? and slotid = ?", gallery, ref)
+
+    switch (updater) {
+    case UPDATE_RES:
+        base_update_stmt.Set("res", newval.(int))
+    case UPDATE_TITLE:
+        base_update_stmt.Set("title", newval.(string))
+    case UPDATE_DESCRIPTION:
+        base_update_stmt.Set("description", newval.(string))
+    }
+
+    return sqlitex.ExecuteTransient(conn, base_update_stmt.String(), &sqlitex.ExecOptions{
+        Args: base_update_stmt.Args(),
+    })
+}
+

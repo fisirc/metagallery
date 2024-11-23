@@ -10,10 +10,12 @@ import (
 	"stiller/internal/handlers/file/patchfile"
 	"stiller/internal/handlers/file/upload"
 	"stiller/internal/handlers/gallery/addgallery"
+	"stiller/internal/handlers/gallery/editslot"
 	"stiller/internal/handlers/gallery/galleryedit"
 	"stiller/internal/handlers/gallery/gallerytree"
 	"stiller/internal/handlers/template/addtemplate"
 	"stiller/internal/handlers/template/gettemplate"
+	"stiller/internal/handlers/userinfo"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -51,6 +53,11 @@ var routes = [...]individualHandler{
         handlefunc: addgallery.NetHandler,
     },
     {
+        path: "/gallery/slot",
+        method: http.MethodPatch,
+        handlefunc: editslot.Nethandler,
+    },
+    {
         path: "/file",
         method: http.MethodGet,
         handlefunc: filetree.Nethandler,
@@ -84,6 +91,11 @@ var routes = [...]individualHandler{
         path: "/auth/login",
         method: http.MethodPost,
         handlefunc: userlogin.NetHandler,
+    },
+    {
+        path: "/info/",
+        method: http.MethodGet,
+        handlefunc: userinfo.Nethandler,
     },
 }
 
