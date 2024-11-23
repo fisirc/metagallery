@@ -63,8 +63,15 @@ func PushNewFile(fileptr *StillerFile) (int, error) {
     query := query_stmt.String()
     query_id_res := int(-1)
 
+    log.Println(query_stmt.String())
+    log.Println(query_stmt.Args()...)
     exec_err := sqlitex.ExecuteTransient(new_dbconn, query, &sqlitex.ExecOptions{
         ResultFunc: func(stmt *sqlite.Stmt) error {
+            if stmt.ColumnType(0) == sqlite.TypeText {
+                log.Println(stmt.ColumnText(0))
+                return errors.New("pushfile error")
+            }
+
             query_id_res = int(stmt.ColumnInt64(0))
             return nil
         },
