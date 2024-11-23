@@ -72,7 +72,7 @@ const ContentSidebarElement = ({ element }: { element: UserContentFileElement })
                   </Button>
                 </Menu.Target>
                 <Menu.Dropdown>
-                  <Menu.Item 
+                  <Menu.Item
                     leftSection={<IconEdit style={{ width: rem(14) }} />}
                     onClick={() => useMetagalleryStore.getState().openModal(
                       <FileEditor element={element} />

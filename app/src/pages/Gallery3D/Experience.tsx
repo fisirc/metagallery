@@ -30,7 +30,7 @@ export const Experience = ({ gallery }: { gallery: string }) => {
             return (
               <DynamicPainting
                 key={slots.ref}
-                imageUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Tux_Droid_1.jpg/1200px-Tux_Droid_1.jpg"
+                imageUrl={slots.res || "/assets/empty_slot.png"}
                 vertices={slots.v}
               />
             );
@@ -38,10 +38,10 @@ export const Experience = ({ gallery }: { gallery: string }) => {
           if (slots.type == '3d') {
             return (
               <DynamicSculpture
-                position={slots.v[0]}
+                position={slots.v[0] as any}
                 glbUrl="/assets/3d/chihiro.glb"
                 rotation={[0, Math.PI / 4, 0]}
-                scale={[slots.props.scale, slots.props.scale, slots.props.scale]}
+                scale={[slots.props.scale, slots.props.scale, slots.props.scale] as any}
                 rotate={slots.props.rotate}
               />
             );

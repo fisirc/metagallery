@@ -103,10 +103,10 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
                 return (
                   <PictureSlot
                     key={i}
-                    id={i} // TODO: replace
-                    v={block.v}
+                    idRef={block.ref}
+                    v={block.v as any}
                     props={{}}
-                    res={null} // TODO: make reactive
+                    res={block.res} // TODO: make reactive
                   />
                 );
               }
@@ -115,9 +115,9 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
                   <Model3DSlot
                     key={i}
                     id={i} // TODO: replace
-                    v={block.v[0]}
+                    v={block.v[0] as any}
                     props={block.props}
-                    res={null} // TODO: make reactive
+                    res={block.res} // TODO: make reactive
                   />
                 );
               }

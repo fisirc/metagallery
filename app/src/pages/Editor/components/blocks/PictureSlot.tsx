@@ -8,15 +8,17 @@ import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
 import { CORNER_RADIUS, FRAME_STROKE_WIDTH, noImageSrc } from '@/constants';
 import { JSONValue, SlotVertices } from '@/types';
 import { cosine, getFrameAngle, getFrameHeight, getFrameWidth, sine, v3tov2 } from '@/pages/Editor/utils';
+import { mutate } from 'swr';
+import { galleryResponse } from '@/hooks/useApi';
 
 type PictureSlotProps = {
-  id: number,
+  idRef: string,
   v: SlotVertices,
   res: string | null;
   props: Record<string, JSONValue>;
 };
 
-export const PictureSlot = ({ id, v, res, props }: PictureSlotProps) => {
+export const PictureSlot = ({ idRef, v, res, props }: PictureSlotProps) => {
   const [hovering, setHovering] = useState(false);
   const draggingElem = useEditorStore((state) => state.draggingFile);
   const dragging = draggingElem !== null;
@@ -29,6 +31,8 @@ export const PictureSlot = ({ id, v, res, props }: PictureSlotProps) => {
   } else {
     useEditorStore.getState().setDraggingFileVisible(true);
   }
+
+  console.log({ res })
 
   const [image] = useImage(src ?? noImageSrc);
 
@@ -75,6 +79,18 @@ export const PictureSlot = ({ id, v, res, props }: PictureSlotProps) => {
           useMetagalleryStore.getState().openModal(
             <Text>Hawk tuah!</Text>
           );
+        }}
+        onMouseUp={() => {
+          const dropped = hovering && dragging;
+
+          if (dropped) {
+            for (let e of galleryResponse.slots) {
+              if (e.ref === idRef) {
+                e.res = draggingElem.url;
+              }
+            }
+          }
+          mutate('gallery/casa-fugaz');
         }}
         onMouseEnter={() => {
           setHovering(true);

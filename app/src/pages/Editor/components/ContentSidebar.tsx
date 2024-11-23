@@ -85,6 +85,11 @@ const ContentMasonry = ({ filterInput }: { filterInput: string }) => {
         } as any,
       });
       const data: UserContentFileElement[] = await res.json();
+
+      for (let e of data) {
+        e.url = `https://pandadiestro.xyz/services/stiller/${e.url}`;
+      }
+
       return data;
     },
   });
