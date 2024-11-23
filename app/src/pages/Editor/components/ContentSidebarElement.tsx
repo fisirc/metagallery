@@ -1,4 +1,6 @@
+import FileEditor from "@/components/FileEditor";
 import { DRAG_PORTAL_ID, smallIconProps } from "@/constants";
+import { useMetagalleryStore } from "@/providers/MetagalleryProvider";
 import { useEditorStore } from "@/stores/editorAction";
 import { UserContentFileElement } from "@/types";
 import { Button, Card, Image, Menu, Portal, rem, Text } from "@mantine/core";
@@ -70,7 +72,12 @@ const ContentSidebarElement = ({ element }: { element: UserContentFileElement })
                   </Button>
                 </Menu.Target>
                 <Menu.Dropdown>
-                  <Menu.Item leftSection={<IconEdit style={{ width: rem(14) }} />}>
+                  <Menu.Item 
+                    leftSection={<IconEdit style={{ width: rem(14) }} />}
+                    onClick={() => useMetagalleryStore.getState().openModal(
+                      <FileEditor element={element} />
+                    )}
+                  >
                     Editar
                   </Menu.Item>
                   <Menu.Item leftSection={<IconDownload style={{ width: rem(14) }} />}>
