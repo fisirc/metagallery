@@ -178,7 +178,6 @@ const SidebarContent = () => {
       </ScrollArea>
       <FileButton
         onChange={handleFileUpload}
-        accept="image/png,image/jpeg"
         multiple
       >
       {
