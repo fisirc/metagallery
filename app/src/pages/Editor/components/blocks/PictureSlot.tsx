@@ -32,8 +32,6 @@ export const PictureSlot = ({ idRef, v, res, props }: PictureSlotProps) => {
     useEditorStore.getState().setDraggingFileVisible(true);
   }
 
-  console.log({ res })
-
   const [image] = useImage(src ?? noImageSrc);
 
   const pos = v3tov2(v[2]);

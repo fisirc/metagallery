@@ -36,7 +36,7 @@ export const galleryResponse = {
         {
             "ref": "wall1",
             "type": "2d",
-            "res": "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/68ce2653-f36c-4c90-aa2e-ca3fd6aea4b1/dheugf9-6158600e-9219-4b68-a317-dca56309e034.jpg/v1/fit/w_828,h_1172,q_70,strp/frieren_fern_by_lailaroever_dheugf9-414w-2x.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzY4Y2UyNjUzLWYzNmMtNGM5MC1hYTJlLWNhM2ZkNmFlYTRiMVwvZGhldWdmOS02MTU4NjAwZS05MjE5LTRiNjgtYTMxNy1kY2E1NjMwOWUwMzQuanBnIiwiaGVpZ2h0IjoiPD0xODExIiwid2lkdGgiOiI8PTEyODAifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uud2F0ZXJtYXJrIl0sIndtayI6eyJwYXRoIjoiXC93bVwvNjhjZTI2NTMtZjM2Yy00YzkwLWFhMmUtY2EzZmQ2YWVhNGIxXC9sYWlsYXJvZXZlci00LnBuZyIsIm9wYWNpdHkiOjk1LCJwcm9wb3J0aW9ucyI6MC40NSwiZ3Jhdml0eSI6ImNlbnRlciJ9fQ.OG7dkZbNa8ac0uc0deM0AF9tkaleW9TuPqNeKD8zqXw",
+            "res": "",
             "props": {},
             "v": [
                 [1.878, 1.752, -3.911],
