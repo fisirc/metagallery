@@ -32,11 +32,10 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     }
 
     new_tk := jwtutils.Token{
-        UserId: 0,
+        UserId: -1,
     }
 
     user_bpwd := string("")
-    amount := int(0)
 
     query_stmt := sqlf.
         Select("id, bpasswd").
@@ -59,9 +58,8 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
     defer dbutils.CloseConn(new_dbconn)
 
-    sqlitex.ExecuteTransient(new_dbconn, query, &sqlitex.ExecOptions{
+    exec_err := sqlitex.ExecuteTransient(new_dbconn, query, &sqlitex.ExecOptions{
         ResultFunc: func(stmt *sqlite.Stmt) error {
-            amount++
             new_tk.UserId = int(stmt.GetInt64("id"))
             user_bpwd = stmt.GetText("bpasswd")
             return nil
@@ -70,7 +68,11 @@ func NetHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         Args: query_stmt.Args(),
     })
 
-    if amount == 0 {
+    if handleutils.RequestLog(exec_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
+
+    if new_tk.UserId == -1 {
         handleutils.RequestLog(nil, "no user was found", http.StatusNotFound, &w)
         return
     }
