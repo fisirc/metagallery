@@ -3,3 +3,48 @@
 :root[data-mantine-color-scheme='light'] {}
 
 body {}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.group {
+  display: flex;
+}
+
+.jc-space-between { justify-content: space-between; }
+.jc-center { justify-content: center; }
+.jc-start { justify-content: start; }
+.jc-end { justify-content: end; }
+
+.ai-center { align-items: center; }
+.ai-start { align-items: start; }
+.ai-end { align-items: end; }
+.ai-stretch { align-items: stretch; }
+
+.as-center { align-self: center; }
+
+.ta-center { text-align: center; }
+
+.flex-1 { flex: 1; }
+
+.c-dimmed { color: var(--mantine-color-dark-3); }
+.c-error { color: var(--mantine-color-error); }
+.c-white { color: var(--mantine-color-white); }
+
+.fz-xs { font-size: var(--mantine-font-size-xs); }
+.fz-sm { font-size: var(--mantine-font-size-sm); }
+.fz-md { font-size: var(--mantine-font-size-md); }
+.fz-lg { font-size: var(--mantine-font-size-lg); }
+.fz-xl { font-size: var(--mantine-font-size-xl); }
+
+.debug,
+.debug * {
+  background-color: rgba(255, 0, 0, 0.1);
+}

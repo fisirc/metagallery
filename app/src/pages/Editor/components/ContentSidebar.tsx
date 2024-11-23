@@ -1,32 +1,35 @@
 import Masonry from 'react-responsive-masonry';
 import { useEffect, useRef, useState } from 'react';
 import {
-  rem,
   Button,
-  Portal,
   Drawer,
   Group,
-  Card,
-  Text,
-  Menu,
-  Image,
   Stack,
   TextInput,
   ScrollArea,
   FileButton,
 } from '@mantine/core';
-import { useHover, useMediaQuery, useMouse } from '@mantine/hooks';
-import { IconDots, IconDownload, IconEdit, IconSearch, IconTrash, IconUpload } from '@tabler/icons-react';
-import { primaryIconProps, secondaryIconProps, smallIconProps } from '@/constants';
+import { useMediaQuery } from '@mantine/hooks';
+import { IconSearch, IconUpload } from '@tabler/icons-react';
+import { primaryIconProps, secondaryIconProps } from '@/constants';
 import { UserContentFileElement } from '@/types';
 import { useEditorStore } from '@/stores/editorAction';
-import { DRAG_PORTAL_ID } from '@/constants';
-import { useApi } from '@/hooks/useApi';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import api from '@/services/api';
+import QueryBoiler from '@/components/QueryBoiler/QueryBoiler';
+import axios from 'axios';
+import ContentSidebarElement from './ContentSidebarElement';
+
+interface UploadImagePayload {
+  "stiller-name":   string;
+  "stiller-type":   number;
+  "stiller-file":   File;
+  "stiller-hashed": number;
+};
 
 export const EditorSidebar = () => {
   const [opened, setOpened] = useState(false);
   const isLargeScreen = useMediaQuery('(min-width: 900px)');
-  const { data: medias } = useApi<UserContentFileElement[]>('gallery/media');
 
   const onDragEnd = () => {
     useEditorStore.getState().dropFile();
@@ -42,15 +45,11 @@ export const EditorSidebar = () => {
     };
   }, []);
 
-  if (!medias) {
-    return <SidebarContent mediaContents={[]} />;
-  }
-
   return (
     <>
       {isLargeScreen ? (
         <Stack mih="100%" gap="sm" mb="16px" miw={300}>
-          <SidebarContent mediaContents={medias} />
+          <SidebarContent />
         </Stack>
       ) : (
         <Drawer
@@ -62,7 +61,7 @@ export const EditorSidebar = () => {
           opacity={0.2}
           zIndex={2000}
         >
-          <SidebarContent mediaContents={medias} />
+          <SidebarContent />
         </Drawer>
       )}
     </>
@@ -72,89 +71,53 @@ export const EditorSidebar = () => {
 /**
  * A user content media element in the sidebar
  */
-const UserContentSidebarElement = ({ element }: { element: UserContentFileElement }) => {
-  const { hovered, ref } = useHover();
-  const { x, y } = useMouse();
-  const [opened, setOpened] = useState(false);
-  const imageRef = useRef<HTMLImageElement>(null);
-  const draggingElem = useEditorStore((state) => state.draggingFile);
-  const isDraggingFileVisible = useEditorStore((state) => state.isDraggingFileVisible);
+
+
+const ContentMasonry = () => {
+  const userMediaQuery = useQuery({
+    queryKey: ['user/media'],
+    queryFn: async () => {
+      const res = await axios.get('/file');
+      const data: UserContentFileElement[] = res.data;
+      return data;
+    }, 
+  });
+
+  // console.log(userMediaQuery.data);
+  if (!userMediaQuery.data) return <QueryBoiler query={userMediaQuery} />
 
   return (
-    <>
+    <Masonry columnsCount={2} gutter="12px">  
       {
-        (draggingElem === element && isDraggingFileVisible) && (
-          <Portal target={`#${DRAG_PORTAL_ID}`}>
-            <div
-              style={{
-                position: 'absolute',
-                pointerEvents: 'none',
-                top: y - 20,
-                left: x - 40,
-                zIndex: 6969,
-                opacity: 0.8,
-                width: imageRef.current?.width,
-                height: imageRef.current?.height,
-              }}
-            >
-              <Image m={0} src={element.url} alt={element.title} radius={5} />
-            </div>
-          </Portal>
-        )
+        userMediaQuery.data.map((file) => (
+          <ContentSidebarElement key={file.id} element={file} />
+        ))
       }
-      <Card
-        ref={ref}
-        p="xs"
-        opacity={draggingElem === element ? 0.4 : 1}
-        style={{ userSelect: 'none', position: 'relative', cursor: 'pointer' }}
-        draggable
-        onDragStart={(e) => {
-          e.preventDefault();
-          useEditorStore.getState().startDragging(element);
-        }}
-      >
-        <Card.Section>
-          <Image ref={imageRef} m={0} src={element.url} alt={element.title} style={{ height: '100%', display: 'block' }} />
-        </Card.Section>
-        <Text size="xs" fw={700} mt={8}>{element.title}</Text>
-        <Text size="xs" mt={4}>{element.description}</Text>
-        {
-          (opened || hovered) && (
-            <div style={{ position: 'absolute', top: '2px', right: '2px' }}>
-              <Menu position="bottom-start" onOpen={() => setOpened(true)} onClose={() => setOpened(false)} openDelay={0}>
-                <Menu.Target>
-                  <Button size="compact-xs">
-                    <IconDots {...smallIconProps} />
-                  </Button>
-                </Menu.Target>
-                <Menu.Dropdown>
-                  <Menu.Item leftSection={<IconEdit style={{ width: rem(14) }} />}>
-                    Editar
-                  </Menu.Item>
-                  <Menu.Item leftSection={<IconDownload style={{ width: rem(14) }} />}>
-                    Descargar
-                  </Menu.Item>
-                  <Menu.Item color="red" leftSection={<IconTrash style={{ width: rem(14) }} />}>
-                    Eliminar
-                  </Menu.Item>
-                </Menu.Dropdown>
-              </Menu>
-            </div>
-          )
-        }
-      </Card>
-    </>
-  );
-};
+    </Masonry>
+  )
+} 
 
 // Sidebar content extracted for reusability
-const SidebarContent = ({ mediaContents }: { mediaContents: UserContentFileElement[] }) => {
+const SidebarContent = () => {
+  const queryClient = useQueryClient();
+
+  const uploadFileMutation = useMutation({
+    mutationFn: (data: UploadImagePayload) => api.postForm('/file/new', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user/media'] });
+    }
+  });
+
   const handleFileUpload = (payload: File[]) => {
     payload.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        const base64 = (reader.result as string).split(',')[1];
-        console.log(base64);
+        uploadFileMutation.mutate({
+          "stiller-name": file.name,
+          "stiller-type": 1,
+          "stiller-file": file,
+          "stiller-hashed": 0,
+        })
       };
       reader.readAsDataURL(file);
     })
@@ -176,13 +139,7 @@ const SidebarContent = ({ mediaContents }: { mediaContents: UserContentFileEleme
         p={8}
         style={{ borderRadius: 'var(--mantine-radius-md)' }}
       >
-        <Masonry columnsCount={2} gutter="12px">
-          {
-            mediaContents.map((element) => (
-              <UserContentSidebarElement key={element.id} element={element} />
-            ))
-          }
-        </Masonry>
+        <ContentMasonry />
       </ScrollArea>
       <FileButton
         onChange={handleFileUpload}
@@ -201,12 +158,6 @@ const SidebarContent = ({ mediaContents }: { mediaContents: UserContentFileEleme
         )
       }
       </FileButton>
-      {/* <Button
-        size="sm"
-        leftSection={<IconUpload {...primaryIconProps} />}
-      >
-        Añadir contenido
-      </Button> */}
     </>
   );
 } 

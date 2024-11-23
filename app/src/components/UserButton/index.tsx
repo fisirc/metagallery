@@ -30,7 +30,10 @@ export const UserButton = () => {
     {
       icon: IconLogout,
       label: 'Cerrar sesión',
-      onClick: () => localStorage.removeItem('metagallery-token'),
+      onClick: () => {
+        localStorage.removeItem('metagallery-token');
+        setLocation('/');
+      },
     },
   ];
 

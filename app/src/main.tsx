@@ -6,14 +6,19 @@ import App from './App';
 import '@mantine/core/styles.css';
 import './main.css';
 import { MetagalleryProvider } from './providers/MetagalleryProvider';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <MantineProvider
-    theme={theme}
-    defaultColorScheme="light"
-  >
-    <MetagalleryProvider>
-      <App />
-    </MetagalleryProvider>
-  </MantineProvider>
+  <QueryClientProvider client={queryClient}>
+    <MantineProvider
+      theme={theme}
+      defaultColorScheme="light"
+    >
+      <MetagalleryProvider>
+        <App />
+      </MetagalleryProvider>
+    </MantineProvider>
+  </QueryClientProvider>
 );
