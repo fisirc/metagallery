@@ -127,6 +127,7 @@ export const Header = () => {
                     id="username"
                     type="text"
                     placeholder="Nombre de usuario"
+                    autoComplete='off'
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
@@ -190,6 +191,7 @@ export const Header = () => {
                     id="username"
                     type="text"
                     placeholder="Nombre de usuario"
+                    autoComplete='off'
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required

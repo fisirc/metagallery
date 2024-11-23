@@ -52,6 +52,8 @@
   gap: 0.75rem;
   padding: 0.75rem;
   border-radius: 0.5rem;
+  color: black;
+  text-decoration: none;
   border: none;
   background: none;
   cursor: pointer;

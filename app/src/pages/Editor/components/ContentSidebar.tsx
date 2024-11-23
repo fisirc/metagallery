@@ -22,9 +22,9 @@ import ContentSidebarElement from './ContentSidebarElement';
 import Empty from '@/components/Empty';
 
 interface UploadImagePayload {
-  "name":   string;
-  "type":   number;
-  "file":   File;
+  "name": string;
+  "type": number;
+  "file": File;
   "hashed": number;
 };
 
@@ -86,7 +86,7 @@ const ContentMasonry = ({ filterInput }: { filterInput: string }) => {
       });
       const data: UserContentFileElement[] = await res.json();
       return data;
-    }, 
+    },
   });
 
   if (!userMediaQuery.data) return <QueryBoiler query={userMediaQuery} />
@@ -100,7 +100,7 @@ const ContentMasonry = ({ filterInput }: { filterInput: string }) => {
   if (!filteredData.length) return <Empty />
 
   return (
-    <Masonry columnsCount={2} gutter="12px">  
+    <Masonry columnsCount={2} gutter="12px">
       {
         filteredData.map((file) => (
           <ContentSidebarElement key={file.id} element={file} />
@@ -108,7 +108,7 @@ const ContentMasonry = ({ filterInput }: { filterInput: string }) => {
       }
     </Masonry>
   )
-} 
+}
 
 // Sidebar content extracted for reusability
 const SidebarContent = () => {
@@ -180,18 +180,18 @@ const SidebarContent = () => {
         onChange={handleFileUpload}
         multiple
       >
-      {
-        (props) => (
-          <Button
-            size="sm"
-            leftSection={<IconUpload {...primaryIconProps} />}
-            {...props}
-          >
-            Añadir contenido
-          </Button>
-        )
-      }
+        {
+          (props) => (
+            <Button
+              size="sm"
+              leftSection={<IconUpload {...primaryIconProps} />}
+              {...props}
+            >
+              Añadir contenido
+            </Button>
+          )
+        }
       </FileButton>
     </>
   );
-} 
+}
