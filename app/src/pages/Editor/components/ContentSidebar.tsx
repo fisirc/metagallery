@@ -19,12 +19,13 @@ import api from '@/services/api';
 import QueryBoiler from '@/components/QueryBoiler/QueryBoiler';
 import axios from 'axios';
 import ContentSidebarElement from './ContentSidebarElement';
+import Empty from '@/components/Empty';
 
 interface UploadImagePayload {
-  "stiller-name":   string;
-  "stiller-type":   number;
-  "stiller-file":   File;
-  "stiller-hashed": number;
+  "name":   string;
+  "type":   number;
+  "file":   File;
+  "hashed": number;
 };
 
 export const EditorSidebar = () => {
@@ -73,23 +74,35 @@ export const EditorSidebar = () => {
  */
 
 
-const ContentMasonry = () => {
+const ContentMasonry = ({ filterInput }: { filterInput: string }) => {
   const userMediaQuery = useQuery({
     queryKey: ['user/media'],
     queryFn: async () => {
-      const res = await axios.get('/file');
-      const data: UserContentFileElement[] = res.data;
+      const res = await fetch('https://pandadiestro.xyz/services/stiller/file', {
+        method: 'GET',
+        headers: {
+          'token': localStorage.getItem('metagallery-token'),
+        } as any,
+      });
+      const data: UserContentFileElement[] = await res.json();
       return data;
     }, 
   });
 
-  // console.log(userMediaQuery.data);
   if (!userMediaQuery.data) return <QueryBoiler query={userMediaQuery} />
+
+  const filteredData = userMediaQuery.data.filter((file) => {
+    return file.title?.toLowerCase().includes(filterInput.toLowerCase());
+  });
+
+  console.log(filteredData);
+
+  if (!filteredData.length) return <Empty />
 
   return (
     <Masonry columnsCount={2} gutter="12px">  
       {
-        userMediaQuery.data.map((file) => (
+        filteredData.map((file) => (
           <ContentSidebarElement key={file.id} element={file} />
         ))
       }
@@ -99,12 +112,31 @@ const ContentMasonry = () => {
 
 // Sidebar content extracted for reusability
 const SidebarContent = () => {
+  const [filterInput, setFilterInput] = useState('');
   const queryClient = useQueryClient();
 
   const uploadFileMutation = useMutation({
-    mutationFn: (data: UploadImagePayload) => api.postForm('/file/new', data),
+    mutationFn: (data: UploadImagePayload) => {
+      const formData = new FormData();
+      formData.append('stiller-name', data.name);
+      formData.append('stiller-type', data.type.toString());
+      formData.append('stiller-file', data.file);
+      formData.append('stiller-hashed', data.hashed.toString());
+      const res = fetch('https://pandadiestro.xyz/services/stiller/file/new', {
+        method: 'POST',
+        headers: {
+          'token': localStorage.getItem('metagallery-token'),
+        } as any,
+        body: formData,
+      });
+      return res;
+    },
     onSuccess: () => {
+      console.log('File uploaded');
       queryClient.invalidateQueries({ queryKey: ['user/media'] });
+    },
+    onError: (error) => {
+      console.error('Error uploading file', error);
     }
   });
 
@@ -112,11 +144,12 @@ const SidebarContent = () => {
     payload.forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
+        console.log('Uploading file', file.name);
         uploadFileMutation.mutate({
-          "stiller-name": file.name,
-          "stiller-type": 1,
-          "stiller-file": file,
-          "stiller-hashed": 0,
+          "name": file.name,
+          "type": 1,
+          "file": file,
+          "hashed": 0,
         })
       };
       reader.readAsDataURL(file);
@@ -131,6 +164,8 @@ const SidebarContent = () => {
           placeholder="¿Qué estás buscando?"
           size="xs"
           leftSection={<IconSearch {...secondaryIconProps} />}
+          value={filterInput}
+          onChange={(e) => setFilterInput(e.currentTarget.value)}
         />
       </Group>
       <ScrollArea
@@ -139,7 +174,7 @@ const SidebarContent = () => {
         p={8}
         style={{ borderRadius: 'var(--mantine-radius-md)' }}
       >
-        <ContentMasonry />
+        <ContentMasonry filterInput={filterInput} />
       </ScrollArea>
       <FileButton
         onChange={handleFileUpload}

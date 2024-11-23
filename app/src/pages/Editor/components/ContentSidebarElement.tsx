@@ -48,10 +48,18 @@ const ContentSidebarElement = ({ element }: { element: UserContentFileElement })
         }}
       >
         <Card.Section>
-          <Image ref={imageRef} m={0} src={element.url} alt={element.title} style={{ height: '100%', display: 'block' }} />
+          <Image
+            ref={imageRef}
+            src={element.url}
+            alt={element.title}
+            style={{
+              height: '100%',
+              display: 'block'
+            }}
+          />
         </Card.Section>
-        <Text size="xs" fw={700} mt={8}>{element.title}</Text>
-        <Text size="xs" mt={4}>{element.description}</Text>
+        <Text size="xs" fw={700} mt={8}>{element.title || 'Sin título'}</Text>
+        <Text size="xs" mt={4}>{element.description || 'Sin descripción'}</Text>
         {
           (opened || hovered) && (
             <div style={{ position: 'absolute', top: '2px', right: '2px' }}>

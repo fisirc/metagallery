@@ -44,7 +44,28 @@ body {}
 .fz-lg { font-size: var(--mantine-font-size-lg); }
 .fz-xl { font-size: var(--mantine-font-size-xl); }
 
-.debug,
+.debug {
+  border: 1px dotted red;
+}
+
 .debug * {
   background-color: rgba(255, 0, 0, 0.1);
 }
+
+.gap-xxs { gap: var(--mantine-spacing-xxs); }
+.gap-xs { gap: var(--mantine-spacing-xs); }
+.gap-sm { gap: var(--mantine-spacing-sm); }
+.gap-md { gap: var(--mantine-spacing-md); }
+.gap-lg { gap: var(--mantine-spacing-lg); }
+.gap-xl { gap: var(--mantine-spacing-xl); }
+.gap-xxl { gap: var(--mantine-spacing-xxl); }
+.gap-xxxl { gap: var(--mantine-spacing-xxxl); }
+
+.p-xxs { padding: var(--mantine-spacing-xxs); }
+.p-xs { padding: var(--mantine-spacing-xs); }
+.p-sm { padding: var(--mantine-spacing-sm); }
+.p-md { padding: var(--mantine-spacing-md); }
+.p-lg { padding: var(--mantine-spacing-lg); }
+.p-xl { padding: var(--mantine-spacing-xl); }
+.p-xxl { padding: var(--mantine-spacing-xxl); }
+.p-xxxl { padding: var(--mantine-spacing-xxxl); }
