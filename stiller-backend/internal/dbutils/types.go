@@ -14,6 +14,7 @@ type StillerFile struct {
     OwnerId     int             `json:"ownerid"`
     Typeof      StillerFileType `json:"typeof"`
     Path        string          `json:"path"`
+    Url         string          `json:"url"`
     Filename    string          `json:"filename"`
     Title       string          `json:"title"`
     Description string          `json:"description"`

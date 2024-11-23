@@ -6,6 +6,7 @@ import (
 	"stiller/internal/dbutils"
 	"stiller/internal/handlers/handleutils"
 	"stiller/internal/jwtutils"
+	"strconv"
 
 	jsonexp "github.com/go-json-experiment/json"
 	"github.com/julienschmidt/httprouter"
@@ -85,10 +86,13 @@ func Nethandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
         getfiles_stmt.String(),
         &sqlitex.ExecOptions{
             ResultFunc: func(stmt *sqlite.Stmt) error {
+                new_id := int(stmt.GetInt64("id"))
+
                 tmp_newf := dbutils.StillerFile{
-                    Id: int(stmt.GetInt64("id")),
+                    Id: new_id,
                     OwnerId: int(stmt.GetInt64("owner")),
                     Typeof: dbutils.StillerFileType(stmt.GetInt64("type")),
+                    Url: "https://pandadiestro.xyz/services/stiller/file/dl/" + strconv.Itoa(new_id),
                     Path: stmt.GetText("path"),
                     Filename: stmt.GetText("filename"),
                     Title: stmt.GetText("title"),
