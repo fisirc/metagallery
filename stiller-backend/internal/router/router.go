@@ -58,7 +58,7 @@ var routes = [...]individualHandler{
         handlefunc: upload.NetHandler,
     },
     {
-        path: "/file/dl",
+        path: "/file/dl/:file_id",
         method: http.MethodGet,
         handlefunc: filedl.Nethandler,
     },
