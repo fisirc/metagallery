@@ -9,6 +9,7 @@ import (
 
 	jsonexp "github.com/go-json-experiment/json"
 	"github.com/julienschmidt/httprouter"
+	"github.com/leporo/sqlf"
 	"zombiezen.com/go/sqlite"
 	"zombiezen.com/go/sqlite/sqlitex"
 )
@@ -31,18 +32,22 @@ func Nethandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
 
     defer new_dbconn.Close()
 
-    ver_query := `select count(*) from user where (id=?1);`
-    ver_query_stmt, _, ver_query_err := new_dbconn.PrepareTransient(ver_query)
-    if handleutils.RequestLog(ver_query_err, "", http.StatusInternalServerError, &w) {
-        return
-    }
+    user_count := int(-1)
+    count_users_stmt := sqlf.
+        Select("count(id)").
+            From("user").
+        Where("id = ?", user_tk.UserId)
 
-    user_count, user_count_err := sqlitex.ResultInt(ver_query_stmt)
-    if handleutils.RequestLog(user_count_err, "", http.StatusInternalServerError, &w) {
-        return
-    }
+    sqlitex.ExecuteTransient(new_dbconn, count_users_stmt.String(), &sqlitex.ExecOptions{
+        ResultFunc: func(stmt *sqlite.Stmt) error {
+            user_count = stmt.ColumnInt(0)
+            return nil
+        },
 
-    if user_count != 1 {
+        Args: count_users_stmt.Args(),
+    })
+
+    if user_count == -1 {
         w.WriteHeader(http.StatusNotFound)
         handleutils.GenericLog(nil, "user does not exist")
         return
@@ -69,13 +74,15 @@ func Nethandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
         return
     }
 
-    query = ""
-    query = `select * from file where (owner=?1);`
+    getfiles_stmt := sqlf.
+        Select("*").
+            From("file").
+        Where("owner = ?", user_tk.UserId)
 
     files := make([]dbutils.StillerFile, 0, row_len)
     exec_err := sqlitex.ExecuteTransient(
         new_dbconn,
-        query,
+        getfiles_stmt.String(),
         &sqlitex.ExecOptions{
             ResultFunc: func(stmt *sqlite.Stmt) error {
                 tmp_newf := dbutils.StillerFile{
@@ -95,9 +102,8 @@ func Nethandler(w http.ResponseWriter, r *http.Request, params httprouter.Params
                 files = append(files, tmp_newf)
                 return nil
             },
-            Args: []any{
-                user_tk.UserId,
-            },
+
+            Args: getfiles_stmt.Args(),
         },
     )
 
