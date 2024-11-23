@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Menu, Search, Share2, Plus, Layout, Edit } from "lucide-react";
-import { useLocation } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import styles from "./GalleryDashboard.module.css";
 import { UserButton } from "@/components/UserButton";
+import { NewGalleryButton } from '@/components/NewGalleryButton';
 
 const galleries = [
   {
@@ -39,14 +40,9 @@ const galleries = [
 
 export const GalleryDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [_, setLocation] = useLocation();
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const handleNewGallery = () => {
-    setLocation('/new/edit');
   };
 
   return (
@@ -62,10 +58,10 @@ export const GalleryDashboard = () => {
         <div className={styles.sidebarContent}>
           <h2 className={styles.sidebarTitle}>Menú</h2>
           <nav className={styles.sidebarNav}>
-            <button onClick={handleNewGallery} className={styles.sidebarButton}>
+            <Link href='/new/edit' className={styles.sidebarButton}>
               <Plus className={styles.sidebarIcon} />
               <span>Nueva Galería</span>
-            </button>
+            </Link>
             <button className={styles.sidebarButton}>
               <Layout className={styles.sidebarIcon} />
               <span>Desplegar Galería</span>
@@ -87,7 +83,10 @@ export const GalleryDashboard = () => {
             <Menu className={styles.menuIcon} />
             <span className={styles.srOnly}>Dashboard</span>
           </button>
-          <UserButton />
+          <div style={{ display: 'flex', flexDirection: 'row', gap: '24px' }}>
+            <NewGalleryButton />
+            <UserButton />
+          </div>
         </div>
       </header>
 
