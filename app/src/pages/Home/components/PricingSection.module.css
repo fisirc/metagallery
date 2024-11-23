@@ -1,28 +1,18 @@
 .pricingSection {
-  padding: 0rem 1rem;
-  max-width: 80%;
+  padding: 2rem 1rem;
+  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.imageContainer {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  height: 80vh;
 }
 
 .contentContainer {
-  flex: 2;
   text-align: center;
-  margin: 2.5rem;
-  margin-top: 0;
+  margin: 2.5rem auto;
+  padding: 0 1rem;
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
   font-weight: bold;
   margin-bottom: 1rem;
   margin-top: 0;
@@ -31,14 +21,45 @@
 .description {
   max-width: 48rem;
   margin: 0 auto 3rem;
-  font-size: 1.125rem;
+  font-size: clamp(0.875rem, 2vw, 1.125rem);
   color: #666;
+  padding: 0 1rem;
 }
 
 .cardContainer {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
   max-width: 100%;
   margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .pricingSection {
+    padding: 1rem 0.5rem;
+  }
+
+  .contentContainer {
+    margin: 1.5rem auto;
+  }
+
+  .description {
+    margin-bottom: 2rem;
+  }
+
+  .cardContainer {
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pricingSection {
+    padding: 1rem 0.25rem;
+  }
+
+  .cardContainer {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }
