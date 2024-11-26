@@ -24,7 +24,7 @@ func PostAuthLogin(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
     }
 
     type ResPayload struct {
-        Token    []byte              `json:"token"`
+        Token    string              `json:"token"`
         UserData dbutils.StillerUser `json:"userdata"`
     }
 
@@ -64,7 +64,7 @@ func PostAuthLogin(w http.ResponseWriter, r *http.Request, _ httprouter.Params) 
 
     res_payload.UserData = user_data
     res_payload.UserData.Bpasswd = ""
-    res_payload.Token = sign_encoded
+    res_payload.Token = string(sign_encoded)
     jsonexp.MarshalWrite(w, res_payload, jsonexp.DefaultOptionsV2())
 }
 
