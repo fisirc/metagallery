@@ -3,19 +3,22 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"stiller"
 	"stiller/internal/router"
+	"stiller/pkg/loggers"
 	"time"
 )
 
 func main() {
     new_router := router.NewStillerRouter()
     if new_router == nil {
-        log.Fatalln("[ ❌ ] invalid router, exiting...")
+        loggers.GenericErrLog(nil, "invalid router, exiting...")
+        os.Exit(-1)
     }
 
     log.Println(
-        "[ ✅ ] server started at address",
+        "[ok] server started at address",
         stiller.StillerConfig.Addr,
     )
 

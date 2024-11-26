@@ -2,21 +2,7 @@ package router
 
 import (
 	"net/http"
-	"stiller/internal/handlers/auth/newuser"
-	"stiller/internal/handlers/auth/userlogin"
-	"stiller/internal/handlers/auth/userverify"
-	"stiller/internal/handlers/file/filedel"
-	"stiller/internal/handlers/file/filedl"
-	"stiller/internal/handlers/file/filetree"
-	"stiller/internal/handlers/file/patchfile"
-	"stiller/internal/handlers/file/upload"
-	"stiller/internal/handlers/gallery/addgallery"
-	"stiller/internal/handlers/gallery/editslot"
-	"stiller/internal/handlers/gallery/galleryedit"
-	"stiller/internal/handlers/gallery/gallerytree"
-	"stiller/internal/handlers/template/addtemplate"
-	"stiller/internal/handlers/template/gettemplate"
-	"stiller/internal/handlers/userinfo"
+	"stiller/internal/handlers"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -31,77 +17,77 @@ var routes = [...]individualHandler{
     {
         path: "/template",
         method: http.MethodGet,
-        handlefunc: gettemplate.NetHandler,
+        handlefunc: handlers.GetTemplate,
     },
     {
         path: "/template/new",
         method: http.MethodPost,
-        handlefunc: addtemplate.NetHandler,
+        handlefunc: handlers.PostTemplateNew,
     },
     {
         path: "/gallery",
         method: http.MethodGet,
-        handlefunc: gallerytree.NetHandler,
+        handlefunc: handlers.GetGallery,
     },
     {
         path: "/gallery/edit",
         method: http.MethodPatch,
-        handlefunc: galleryedit.NetHandler,
+        handlefunc: handlers.PatchGalleryEdit,
     },
     {
         path: "/gallery/new",
         method: http.MethodPost,
-        handlefunc: addgallery.NetHandler,
+        handlefunc: handlers.PostGalleryNew,
     },
     {
         path: "/gallery/slot",
         method: http.MethodPatch,
-        handlefunc: editslot.Nethandler,
+        handlefunc: handlers.PatchGallerySlot,
     },
     {
         path: "/file",
         method: http.MethodGet,
-        handlefunc: filetree.Nethandler,
+        handlefunc: handlers.GetFile,
     },
     {
         path: "/file",
         method: http.MethodPatch,
-        handlefunc: patchfile.NetHandler,
+        handlefunc: handlers.PatchFile,
     },
     {
         path: "/file/new",
         method: http.MethodPost,
-        handlefunc: upload.NetHandler,
+        handlefunc: handlers.PostFileNew,
     },
     {
         path: "/file/dl/:file_id",
         method: http.MethodGet,
-        handlefunc: filedl.Nethandler,
+        handlefunc: handlers.GetFileDl,
     },
     {
         path: "/file/del/:file_id",
         method: http.MethodGet,
-        handlefunc: filedel.Nethandler,
+        handlefunc: handlers.GetFileDel,
     },
     {
         path: "/auth/newuser",
         method: http.MethodPost,
-        handlefunc: newuser.Nethandler,
+        handlefunc: handlers.PostAuthNewuser,
     },
     {
         path: "/auth/checkuser/:username",
         method: http.MethodGet,
-        handlefunc: userverify.NetHandler,
+        handlefunc: handlers.GetAuthCheckUser,
     },
     {
         path: "/auth/login",
         method: http.MethodPost,
-        handlefunc: userlogin.NetHandler,
+        handlefunc: handlers.PostAuthLogin,
     },
     {
-        path: "/info/",
+        path: "/auth/profile/:username",
         method: http.MethodGet,
-        handlefunc: userinfo.Nethandler,
+        handlefunc: handlers.GetUserinfo,
     },
 }
 
