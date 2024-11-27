@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { z } from 'zod';
 
 type UseLocalStorageProps<S extends z.ZodType<any>, O> = {
-    schema: S,
+    schema?: S,
     otherwise: O,
 };
 
@@ -20,12 +20,13 @@ const parseValue = <T>(value: any, schema: z.ZodType<T>): T | null => {
     }
 };
 
-export function useLocalStorage<S extends z.ZodType<z.infer<S>>, O = z.infer<S> | null>(
+export function useLocalStorage<S extends z.ZodType<z.infer<S>> = z.ZodNull, O = z.infer<S> | null>(
     key: string, { schema, otherwise }: UseLocalStorageProps<S, O>
 ) {
     const [value, _setValue] = useState(() => {
         const item = window.localStorage.getItem(key);
-        const parsedItem = item !== null ? parseValue(item, schema) : null;
+        const parsedItem = schema ? (item !== null ? parseValue(item, schema) : null) : item;
+
         if (parsedItem == null) {
             window.localStorage.setItem(key, JSON.stringify(otherwise));
             return otherwise;
@@ -41,7 +42,7 @@ export function useLocalStorage<S extends z.ZodType<z.infer<S>>, O = z.infer<S> 
         }
 
         let valToSerialize: O | z.TypeOf<S> = val;
-        if (opts && opts.strict) {
+        if (opts && opts.strict && schema) {
             valToSerialize = schema.parse(val);
         }
         window.localStorage.setItem(key, JSON.stringify(valToSerialize));
@@ -51,7 +52,7 @@ export function useLocalStorage<S extends z.ZodType<z.infer<S>>, O = z.infer<S> 
 
     const onLocalStorageChange = useCallback((e: StorageEvent) => {
         if (e.key === key) {
-            const parsed = parseValue(e.newValue, schema);
+            const parsed = schema ? parseValue(e.newValue, schema) : e.newValue;
             _setValue(parsed ?? otherwise);
         }
     }, [key, schema, otherwise]);

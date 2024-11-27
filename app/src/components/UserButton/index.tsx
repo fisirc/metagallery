@@ -1,3 +1,4 @@
+import { useUser } from '@/stores/useUser';
 import { Avatar, Menu } from '@mantine/core';
 import { IconLogout, IconSettings } from '@tabler/icons-react';
 import { useLocation } from 'wouter';
@@ -31,7 +32,7 @@ export const UserButton = () => {
       icon: IconLogout,
       label: 'Cerrar sesión',
       onClick: () => {
-        localStorage.removeItem('metagallery-token');
+        useUser.getState().logout();
         setLocation('/');
       },
     },
