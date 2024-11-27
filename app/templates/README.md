@@ -16,7 +16,7 @@ Template rooms 3D models:
 
   <https://sketchfab.com/3d-models/landscape-gallery-by-stoneysteiner-3702735762544e5796be4740cb6d5efc> by stoneysteiner
 
-- Gallery 3:
+- Gallery 3: Single sculpture
 
   ![Gallery 3 thumbnail](./gallery3/thumbnail.png)
 
@@ -29,7 +29,7 @@ Template rooms 3D models:
 
   ![Gallery 4 thumbnail](./gallery4/thumbnail.png)
 
-  <https://www.cgtrader.com/free-3d-models/interior/hall/art-gallery-2bb88c04-cbb8-4299-a054-29ca54b471ac> by cgtrader
+  <https://sketchfab.com/3d-models/vr-gallery-house-baked-8e3b280476eb4790af97e2abd3d9be59> by Elin
 
 ## Creating your template
 
@@ -54,12 +54,6 @@ Template rooms 3D models:
   ![Template 4](https://media.sketchfab.com/models/f962e5da8fed46508daec928dc740301/thumbnails/ce62aed288ea4f2eb338ae0b54ab0490/902d194cbb0a4902a797d8fb968f3f97.jpeg)
 
   <https://sketchfab.com/3d-models/wip-exhibition-room-f962e5da8fed46508daec928dc740301> by Loïc Norgeot
-
-- Template 5
-
-  ![Template 5](https://media.sketchfab.com/models/1e087aa25dc742e680accb15249bd6be/thumbnails/e608b0a0d90b4af5acbebfb63c9bfc74/673d8f8e71824115a2baef5d085d5e37.jpeg)
-
-  <https://sketchfab.com/3d-models/vr-gallery-house-baked-8e3b280476eb4790af97e2abd3d9be59> by Maxim Mavrichev
 
 - Template 6
 
