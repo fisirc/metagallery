@@ -5,6 +5,7 @@ import { Gallery3D } from './Gallery3D';
 import { Dashboard } from './Dashboard';
 import { useUser } from '@/stores/useUser';
 import { LoadingScreen } from '@/components/Overlays/LoadingScreen';
+import { useEditorStore } from '@/stores/editorAction';
 
 export const routes = [
   {
@@ -40,6 +41,7 @@ export const routes = [
     label: 'Editor',
     component: ({ params }: { params: { gallery: string } }) => {
       const { gallery } = params;
+      useEditorStore.setState({ gallery });
       return <Editor gallery={gallery}></Editor>;
     },
   },

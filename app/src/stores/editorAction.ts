@@ -7,6 +7,7 @@ import { UserContentFileElement } from '@/types';
  */
 interface EditorActionState {
   // Represents a sidebar element being dragged.
+  gallery: string | null,
   draggingFile: UserContentFileElement | null,
   isDraggingFileVisible: boolean,
   startDragging: (f: UserContentFileElement) => void,
@@ -18,6 +19,8 @@ export const useEditorStore = create<EditorActionState>()(
   (set, get) => ({
     draggingFile: null,
     isDraggingFileVisible: false,
+    gallery: null,
+    setGallery: (gallery: string) => set({ gallery }),
     startDragging: (file: UserContentFileElement) => set({ draggingFile: file, isDraggingFileVisible: true }),
     dropFile: () => {
       if (get().draggingFile) {

@@ -20,7 +20,8 @@ type PictureSlotProps = {
 
 export const PictureSlot = ({ idRef, v, res, props }: PictureSlotProps) => {
   const [hovering, setHovering] = useState(false);
-  const draggingElem = useEditorStore((state) => state.draggingFile);
+  const draggingElem = useEditorStore((s) => s.draggingFile);
+  const gallery = useEditorStore((s) => s.gallery);
   const dragging = draggingElem !== null;
 
   let src = res;
@@ -88,7 +89,7 @@ export const PictureSlot = ({ idRef, v, res, props }: PictureSlotProps) => {
               }
             }
           }
-          mutate('gallery/casa-fugaz');
+          mutate(`gallery/${gallery}`);
         }}
         onMouseEnter={() => {
           setHovering(true);
