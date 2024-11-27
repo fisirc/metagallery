@@ -1,45 +1,55 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Menu, Search, Share2, Plus, Layout, Edit } from "lucide-react";
 import { Link, useLocation } from 'wouter';
 import styles from "./GalleryDashboard.module.css";
 import { UserButton } from "@/components/UserButton";
 import { NewGalleryButton } from '@/components/NewGalleryButton';
+import { useUser } from '@/stores/useUser';
+import { useMantineTheme } from '@mantine/core';
 
 const galleries = [
   {
     title: "Salón cúpula",
     description: "Una colección que refleja el alma de la expresión",
-    image: "/placeholder.svg",
+    image: "/assets/examples/thumbnail.png",
   },
   {
     title: "Habitación de los muros",
     description: "Muros y más muros",
-    image: "/placeholder.svg",
+    image: "/assets/examples/thumbnail.png",
   },
   {
     title: "Salón vintage",
     description: "La colección perfecta para tu arte vintage",
-    image: "/placeholder.svg",
+    image: "/assets/examples/thumbnail.png",
   },
   {
     title: "Golden room",
     description: "Un espacio al estilo del golden hour",
-    image: "/placeholder.svg",
+    image: "/assets/examples/thumbnail.png",
   },
   {
     title: "Arte conexo",
     description: "Conectando el arte con la realidad",
-    image: "/placeholder.svg",
+    image: "/assets/examples/thumbnail.png",
   },
   {
     title: "Ronda de 3D",
     description: "Experiencia inmersiva en 3D",
-    image: "/placeholder.svg",
+    image: "/assets/examples/thumbnail.png",
   },
 ];
 
 export const GalleryDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const theme = useMantineTheme();
+  const [, setLocation] = useLocation();
+  const { user } = useUser();
+
+  if (!user) {
+    setLocation('/');
+    return null;
+  }
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -74,7 +84,9 @@ export const GalleryDashboard = () => {
         </div>
       </div>
 
-      <header className={styles.header}>
+      <header className={styles.header} style={{
+        backgroundColor: theme.white,
+      }}>
         <div className={styles.headerContent}>
           <button
             onClick={toggleSidebar}
@@ -92,7 +104,7 @@ export const GalleryDashboard = () => {
 
       <main className={styles.main}>
         <div className={styles.profileSection}>
-          <h1 className={styles.profileName}>Rodrigo Alva</h1>
+          <h1 className={styles.profileName}>{user.displayname}</h1>
           <div className={styles.searchContainer}>
             <Search className={styles.searchIcon} />
             <input
