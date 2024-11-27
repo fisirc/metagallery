@@ -3,7 +3,7 @@ import Button from './Button';
 import styles from './Header.module.css';
 import Popup from './PopUp/Popup';
 import popupStyles from './PopUp/Popup.module.css';
-import { useLocation } from 'wouter';
+import { useUser } from '@/stores/useUser';
 
 export const Header = () => {
   const [loginPopup, setLoginPopup] = useState(false);
@@ -21,35 +21,19 @@ export const Header = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
-  const [, setLocation] = useLocation();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setLoginError('');
 
-    try {
-      const response = await fetch('https://pandadiestro.xyz/services/stiller/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, pwd: password }),
-      });
-
-      if (!response.ok) {
-        const errorDetails = await response.text();
-        throw new Error(errorDetails || 'Failed to log in');
-      }
-
-      const token = await response.text();
-      console.log('Login successful. Token:', token);
-      localStorage.setItem('metagallery-token', token);
-      setLocation('/dashboard');
-    } catch (error: any) {
-      console.error('Login error details:', error);
+    const user = await useUser.getState().loginWithCredentials(username, password);
+    if (user) {
+      setLoginPopup(false);
+    } else {
+      setLoginError('Usuario o contraseña incorrectos');
     }
-
+    setIsLoading(false);
   };
 
   const resetLoginFlow = () => {
@@ -74,33 +58,12 @@ export const Header = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const response = await fetch('https://pandadiestro.xyz/services/stiller/auth/newuser', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          tier_id: 0,
-          username,
-          mail: email,
-          pwd: password,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorDetails = await response.text();
-        console.error('Failed to register:', errorDetails);
-        return;
-      }
-
-      const token = await response.text();
-      console.log('Registration successful. Token:', token);
-      localStorage.setItem('metagallery-token', token);
-      setLocation('/dashboard');
-    } catch (e) {
-      console.error('Failed to register:', e);
-    }
+    useUser.getState().register({
+      username,
+      password,
+      email,
+      displayname: 'Unknown user',
+    });
   }
 
   return (
@@ -126,8 +89,8 @@ export const Header = () => {
                     className={popupStyles.forminput}
                     id="username"
                     type="text"
-                    placeholder="Nombre de usuario"
-                    autoComplete='off'
+                    placeholder="usuario"
+                    autoComplete="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
@@ -143,6 +106,7 @@ export const Header = () => {
                     id="password"
                     type="password"
                     placeholder="Contraseña"
+                    autoComplete="current-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -191,7 +155,7 @@ export const Header = () => {
                     id="username"
                     type="text"
                     placeholder="Nombre de usuario"
-                    autoComplete='off'
+                    autoComplete="off"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
@@ -206,6 +170,7 @@ export const Header = () => {
                     id="mail"
                     type="email"
                     placeholder="user@example.com"
+                    autoComplete='email'
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -220,6 +185,7 @@ export const Header = () => {
                     id="password"
                     type="password"
                     placeholder="Contraseña"
+                    autoComplete="current-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -244,6 +210,7 @@ export const Header = () => {
                     id="address"
                     type="text"
                     placeholder="Dirección de Domicilio"
+                    autoComplete="address-line1"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     required
@@ -258,6 +225,7 @@ export const Header = () => {
                     id="postalcode"
                     type="text"
                     placeholder="Código Postal"
+                    autoComplete="postal-code"
                     value={postalCode}
                     onChange={(e) => setPostalCode(e.target.value)}
                   />
@@ -271,6 +239,7 @@ export const Header = () => {
                     id="card"
                     type="text"
                     placeholder="XXXX XXXX XXXX XXXX"
+                    autoComplete="cc-number"
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value)}
                     required
@@ -285,6 +254,7 @@ export const Header = () => {
                     id="cvv"
                     type="text"
                     placeholder="123"
+                    autoComplete="cc-csc"
                     value={cvv}
                     onChange={(e) => setCvv(e.target.value)}
                     required

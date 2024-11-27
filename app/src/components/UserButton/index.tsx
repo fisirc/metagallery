@@ -1,4 +1,5 @@
-import { Avatar, Menu } from '@mantine/core';
+import { useUser } from '@/stores/useUser';
+import { Avatar, Group, Menu, Text, UnstyledButton } from '@mantine/core';
 import { IconLogout, IconSettings } from '@tabler/icons-react';
 import { useLocation } from 'wouter';
 
@@ -19,7 +20,10 @@ const MenuItem = ({ icon: Icon, label, onClick }: MenuItemProps) => (
 );
 
 export const UserButton = () => {
+  const { user } = useUser();
   const [, setLocation] = useLocation();
+
+  if (!user) return null;
 
   const menuItems = [
     {
@@ -31,8 +35,7 @@ export const UserButton = () => {
       icon: IconLogout,
       label: 'Cerrar sesión',
       onClick: () => {
-        localStorage.removeItem('metagallery-token');
-        setLocation('/');
+        useUser.getState().logout();
       },
     },
   ];
@@ -43,13 +46,45 @@ export const UserButton = () => {
       offset={15}
     >
       <Menu.Target>
-        <Avatar
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
-          radius="xl"
-          style={{ cursor: 'pointer' }}
-        />
+        <UnstyledButton
+          style={{
+            borderRadius: 'var(--mantine-radius-sm)',
+          }}
+        >
+          <Group gap="xs" mr={4}>
+            <Avatar
+              src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
+              radius="xl"
+              style={{ cursor: 'pointer' }}
+            />
+            <div style={{ flex: 1, width: 130 }}>
+              <Text size="sm" fw={500} style={{ overflow: 'hidden', textOverflow: 'ellipsis', }}>
+                {user.displayname}
+              </Text>
+              <Text c="dimmed" size="xs" style={{ overflow: 'hidden', textOverflow: 'ellipsis', }}>
+                {user.mail}
+              </Text>
+            </div>
+          </Group>
+        </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>
+        <Group gap="xs" mr={4} m={6}>
+          <Avatar
+            src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
+            radius="xl"
+            style={{ cursor: 'pointer' }}
+            size={64}
+          />
+          <div style={{ flex: 1, width: 200 }}>
+            <Text size="xl" fw={500} style={{ overflow: 'hidden', textOverflow: 'ellipsis', }}>
+              {user.displayname}
+            </Text>
+            <Text c="dimmed" size="xs" style={{ overflow: 'hidden', textOverflow: 'ellipsis', }}>
+              {user.mail}
+            </Text>
+          </div>
+        </Group>
         {menuItems.map((item, index) => (
           <MenuItem
             key={index}

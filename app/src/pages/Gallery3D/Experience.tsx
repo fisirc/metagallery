@@ -16,14 +16,14 @@ export const Experience = ({ gallery }: { gallery: string }) => {
   useEffect(() => {
     window.setTimeout(() => {
       setGravityEnabled(true);
-    }, 500);
+    }, 1000);
   }, [])
 
   return (
     <>
       <Perf position="top-right" minimal />
       <ambientLight intensity={0.6} />
-      <axesHelper args={[10]} />
+      {/* <axesHelper args={[10]} /> */}
       {
         galleryData && galleryData.slots.map((slots) => {
           if (slots.type == '2d') {
@@ -38,6 +38,7 @@ export const Experience = ({ gallery }: { gallery: string }) => {
           if (slots.type == '3d') {
             return (
               <DynamicSculpture
+                key={slots.ref}
                 position={slots.v[0] as any}
                 glbUrl="/assets/3d/chihiro.glb"
                 rotation={[0, Math.PI / 4, 0]}

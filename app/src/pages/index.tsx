@@ -3,17 +3,37 @@ import { Home } from './Home';
 import { Editor } from './Editor';
 import { Gallery3D } from './Gallery3D';
 import { Dashboard } from './Dashboard';
+import { useUser } from '@/stores/useUser';
+import { LoadingScreen } from '@/components/Overlays/LoadingScreen';
 
 export const routes = [
   {
     href: '/',
     label: 'Welcome',
-    component: Home,
+    component: () => {
+      const { loading, user } = useUser();
+
+      if (loading || user) {
+        return <Redirect to="/dashboard" />;
+      }
+      return <Home />;
+    },
   },
   {
     href: '/dashboard',
     label: 'Dashboard router',
-    component: Dashboard,
+    component: () => {
+      const { loading, user } = useUser();
+
+      if (!loading && !user) {
+        return <Redirect to="/" />;
+      }
+
+      if (loading) {
+        return <LoadingScreen />
+      }
+      return <Dashboard />;
+    },
   },
   {
     href: ':gallery/edit',

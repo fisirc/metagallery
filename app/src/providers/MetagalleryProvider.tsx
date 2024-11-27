@@ -1,7 +1,10 @@
 import { create } from 'zustand';
 import { Modal, Portal } from '@mantine/core';
-import { ReactNode } from 'react';
-import { MODAL_PORTAL_ID } from '@/constants';
+import { ReactNode, useEffect } from 'react';
+import { MODAL_PORTAL_ID, TOKEN_LC_KEY } from '@/constants';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { z } from 'zod';
+import { useUser } from '@/stores/useUser';
 
 interface MetagalleryProviderStore {
   activeModals: Set<ReactNode>,
@@ -24,6 +27,18 @@ export const useMetagalleryStore = create<MetagalleryProviderStore>()(
 
 export const MetagalleryProvider = ({ children }: { children: ReactNode }) => {
   const modals = useMetagalleryStore((m) => m.activeModals);
+  const [token,] = useLocalStorage(TOKEN_LC_KEY, {
+    otherwise: null,
+  });
+
+  useEffect(() => {
+    console.log('🐢🐢🐢🐢', { token });
+    if (token) {
+      useUser.getState().loginWithToken(token);
+    } else {
+      useUser.getState().logout();
+    }
+  }, [token]);
 
   return (
     <>

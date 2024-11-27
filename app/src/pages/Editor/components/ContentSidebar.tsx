@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { IconSearch, IconUpload } from '@tabler/icons-react';
-import { primaryIconProps, secondaryIconProps } from '@/constants';
+import { primaryIconProps, secondaryIconProps, TOKEN_LC_KEY } from '@/constants';
 import { UserContentFileElement } from '@/types';
 import { useEditorStore } from '@/stores/editorAction';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -20,6 +20,7 @@ import QueryBoiler from '@/components/QueryBoiler/QueryBoiler';
 import axios from 'axios';
 import ContentSidebarElement from './ContentSidebarElement';
 import Empty from '@/components/Empty';
+import { useUser } from '@/stores/useUser';
 
 interface UploadImagePayload {
   "name": string;
@@ -81,7 +82,7 @@ const ContentMasonry = ({ filterInput }: { filterInput: string }) => {
       const res = await fetch('https://pandadiestro.xyz/services/stiller/file', {
         method: 'GET',
         headers: {
-          'token': localStorage.getItem('metagallery-token'),
+          'token': useUser.getState().token,
         } as any,
       });
       const data: UserContentFileElement[] = await res.json();
@@ -130,7 +131,7 @@ const SidebarContent = () => {
       const res = fetch('https://pandadiestro.xyz/services/stiller/file/new', {
         method: 'POST',
         headers: {
-          'token': localStorage.getItem('metagallery-token'),
+          'token': useUser.getState().token,
         } as any,
         body: formData,
       });

@@ -7,3 +7,7 @@ export function setCursor(cursor: CursorStyles) {
     document.body.style.cursor = cursor ?? lastCursor ?? 'unset';
     lastCursor = current;
 }
+
+export function panicIfNull<T>(value: T): asserts value is NonNullable<T> {
+    if (value == null) throw Error(`panic: null assertion failed`);
+}

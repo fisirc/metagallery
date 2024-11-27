@@ -2,6 +2,7 @@
   min-height: 100vh;
   background-color: white;
   position: relative;
+  margin-bottom: 32px;
 }
 
 .overlay {
@@ -70,6 +71,9 @@
 }
 
 .header {
+  top: 0;
+  z-index: 6969;
+  position: sticky;
   border-bottom: 1px solid #e5e5e5;
 }
 
@@ -147,6 +151,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
+  padding-bottom: 80px;
 }
 
 .profileSection {
@@ -231,6 +236,7 @@
 
 .galleryGrid {
   display: grid;
+  justify-items: center;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
 }
@@ -240,13 +246,13 @@
   border-radius: 0.5rem;
   overflow: hidden;
   border: 1px solid #e5e5e5;
-  width: 350px;
-  height: 275px;
+  max-width: 350px;
+  max-height: 275px;
 }
 
 .galleryImage {
   width: 100%;
-  height: auto;
+  height: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
 }
@@ -256,7 +262,7 @@
   inset: 0;
   background-color: rgba(0, 0, 0, 0.4);
   color: white;
-  opacity: 0;
+  opacity: 0.9;
   transition: opacity 0.3s ease;
   display: flex;
   flex-direction: column;
