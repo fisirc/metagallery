@@ -10,35 +10,41 @@ import { useMantineTheme } from '@mantine/core';
 const galleries = [
   {
     title: "Salón cúpula",
+    handle: 'salon-cupula',
     description: "Una colección que refleja el alma de la expresión",
     image: "/assets/examples/thumbnail.png",
   },
   {
     title: "Habitación de los muros",
+    handle: 'habitacion-muros',
     description: "Muros y más muros",
     image: "/assets/examples/thumbnail.png",
   },
   {
     title: "Salón vintage",
+    handle: 'salon-vintage',
     description: "La colección perfecta para tu arte vintage",
     image: "/assets/examples/thumbnail.png",
   },
   {
     title: "Golden room",
+    handle: 'golden-room',
     description: "Un espacio al estilo del golden hour",
     image: "/assets/examples/thumbnail.png",
   },
   {
     title: "Arte conexo",
+    handle: 'arte-conexo',
     description: "Conectando el arte con la realidad",
     image: "/assets/examples/thumbnail.png",
   },
   {
     title: "Ronda de 3D",
+    handle: 'ronda-3d',
     description: "Experiencia inmersiva en 3D",
     image: "/assets/examples/thumbnail.png",
   },
-];
+] as const;
 
 export const GalleryDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -126,7 +132,7 @@ export const GalleryDashboard = () => {
 
         <div className={styles.galleryGrid}>
           {galleries.map((gallery) => (
-            <div key={gallery.title} className={styles.galleryCard}>
+            <div key={gallery.handle} className={styles.galleryCard}>
               <img
                 src={gallery.image}
                 alt={gallery.title}
@@ -138,7 +144,11 @@ export const GalleryDashboard = () => {
                   {gallery.description}
                 </p>
                 <div className={styles.galleryActions}>
-                  <button className={styles.openButton}>Abrir</button>
+                  <button className={styles.openButton} onClick={() => {
+                    setLocation(`/${gallery.handle}/edit`);
+                  }}>
+                    Abrir
+                  </button>
                   <button className={styles.shareButton}>
                     <Share2 className={styles.shareIcon} />
                     Compartir
