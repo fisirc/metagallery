@@ -1,12 +1,8 @@
 package handlers
 
 import (
-	"archive/tar"
-	"bufio"
 	"net/http"
-	"os"
 	"stiller/pkg/dbutils"
-	"stiller/pkg/fsop"
 	"stiller/pkg/jwt"
 	"stiller/pkg/loggers"
 	"stiller/pkg/netwrappers"
@@ -35,6 +31,8 @@ func PostGalleryNew(w http.ResponseWriter, r *http.Request, params httprouter.Pa
     type ResPayload dbutils.StillerGallery
 
     req_payload := ReqPayload{}
+    res_payload := ResPayload{}
+
     unmarshal_err := jsonexp.UnmarshalRead(r.Body, &req_payload, jsonexp.DefaultOptionsV2())
     if loggers.RequestLog(unmarshal_err, "", http.StatusBadRequest, &w) {
         return
@@ -86,63 +84,51 @@ func PostGalleryNew(w http.ResponseWriter, r *http.Request, params httprouter.Pa
         return
     }
 
-    path := fsop.GetTemplatePath(req_payload.Template)
-    file, open_err := os.Open(path)
-    if loggers.RequestLog(open_err, "", http.StatusInternalServerError, &w) {
+    template_data, template_data_err := templates.GetTemplateData(req_payload.Template)
+    if loggers.RequestLog(template_data_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
-    defer file.Close()
+    gallery_slots := make(
+        []dbutils.StillerGallerySlot,
+        0,
+        len(template_data.Slots),
+    )
 
-    tar_reader := tar.NewReader(file)
-    _, read_err := tar_reader.Next()
-    if loggers.RequestLog(read_err, "", http.StatusInternalServerError, &w) {
-        return
-    }
-
-    buftar := bufio.NewReader(tar_reader)
-
-    templatefile_slots := []templates.MetatemplateSlot{}
-    slotunmarshal_exp := jsonexp.UnmarshalRead(buftar, &templatefile_slots, jsonexp.DefaultOptionsV2())
-    if loggers.RequestLog(slotunmarshal_exp, "", http.StatusInternalServerError, &w) {
-        return
-    }
-
-    insert_slots_stmt := sqlf.
+    new_gallery_slots_stmt := sqlf.
         InsertInto("galleryslot")
 
-    for index := range templatefile_slots {
-        insert_slots_stmt.NewRow().
+
+    for index := range template_data.Slots {
+        new_gallery_slots_stmt.
+        NewRow().
             Set("gallery", newgallery_id).
-            Set("slotid", templatefile_slots[index].Ref)
-    }
+            Set("slotid", template_data.Slots[index].Ref)
 
-    insert_slots_err := sqlitex.ExecuteTransient(dbconn, insert_slots_stmt.String(), &sqlitex.ExecOptions{
-        Args: insert_slots_stmt.Args(),
-    })
-
-    if loggers.RequestLog(insert_slots_err, "", http.StatusInternalServerError, &w) {
-        return
-    }
-
-    gallery_slots := make([]dbutils.StillerGallerySlot, 0, len(templatefile_slots))
-    for index := range templatefile_slots {
         gallery_slots = append(gallery_slots, dbutils.StillerGallerySlot{
-            Ref: templatefile_slots[index].Ref,
-            Type: templatefile_slots[index].Type,
-            Props: templatefile_slots[index].Props,
-            Vertices: templatefile_slots[index].Vertices,
+            MetatemplateSlot: template_data.Slots[index],
         })
     }
 
-    res_payload := dbutils.StillerGallery{
+    insert_slots_err := sqlitex.ExecuteTransient(dbconn, new_gallery_slots_stmt.String(), &sqlitex.ExecOptions{
+        Args: new_gallery_slots_stmt.Args(),
+    })
+
+    if loggers.RequestLog(insert_slots_err, "", http.StatusBadRequest, &w) {
+        return
+    }
+
+    res_payload = ResPayload{
         Id: newgallery_id,
-        Title: req_payload.Title,
-        Description: req_payload.Description,
         OwnerId: user_id,
         TemplateId: req_payload.Template,
         Slug: req_payload.Slug,
-        Slots: gallery_slots,
+        Title: req_payload.Title,
+        Description: req_payload.Description,
+        Data: dbutils.StillerGalleryData{
+            Origin: template_data.Origin,
+            Slots: gallery_slots,
+        },
     }
 
     marshal_err := jsonexp.MarshalWrite(w, res_payload, jsonexp.DefaultOptionsV2())

@@ -113,8 +113,15 @@ func PostAuthNewuser(w http.ResponseWriter, r *http.Request, _ httprouter.Params
         Passwd      string `json:"pwd"`
     }
 
-    rpayload := ReqPayload{}
-    unmarshal_err := jsonexp.UnmarshalRead(r.Body, &rpayload, jsonexp.DefaultOptionsV2())
+    type ResPayload struct {
+        Token    string              `json:"token"`
+        UserData dbutils.StillerUser `json:"userdata"`
+    }
+
+    req_payload := ReqPayload{}
+    res_payload := ResPayload{}
+
+    unmarshal_err := jsonexp.UnmarshalRead(r.Body, &req_payload, jsonexp.DefaultOptionsV2())
     if loggers.RequestLog(unmarshal_err, "", http.StatusBadRequest, &w) {
         return
     }
@@ -142,11 +149,11 @@ func PostAuthNewuser(w http.ResponseWriter, r *http.Request, _ httprouter.Params
 
     query_stmt := sqlf.Select(
         "newuser(?, ?, ?, ?, ?)",
-        rpayload.TierId,
-        rpayload.Username,
-        rpayload.Username,
-        rpayload.Mail,
-        rpayload.Passwd,
+        req_payload.TierId,
+        req_payload.Username,
+        req_payload.Username,
+        req_payload.Mail,
+        req_payload.Passwd,
     )
 
     defer query_stmt.Close()
@@ -165,6 +172,11 @@ func PostAuthNewuser(w http.ResponseWriter, r *http.Request, _ httprouter.Params
         Args: query_stmt.Args(),
     })
 
+    if new_tk.UserId == -1 {
+        loggers.RequestLog(nil, "no user was created", http.StatusInternalServerError, &w)
+        return
+    }
+
     if loggers.RequestLog(exec_err, "", http.StatusBadRequest, &w) {
         return
     }
@@ -175,13 +187,21 @@ func PostAuthNewuser(w http.ResponseWriter, r *http.Request, _ httprouter.Params
         return
     }
 
+    new_user, newuser_err := dbutils.GetUserById(new_tk.UserId, new_dbconn)
+    new_user.Bpasswd = ""
+    if loggers.RequestLog(newuser_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
+
     sign_encoded, sign_err := new_tk.Encode()
     if loggers.RequestLog(sign_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
-    w.WriteHeader(http.StatusOK)
-    w.Write(sign_encoded)
+    res_payload.UserData = new_user
+    res_payload.Token = string(sign_encoded)
+
+    jsonexp.MarshalWrite(w, res_payload, jsonexp.DefaultOptionsV2())
 }
 
 

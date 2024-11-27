@@ -43,7 +43,6 @@ create table metatemplatefile (
 create table template (
     id integer unique primary key autoincrement not null,
     tier integer not null references tier (id),
-    thumbnail integer not null references file (id),
     templatefile integer not null references metatemplatefile(id),
     title text not null,
     description text not null

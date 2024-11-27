@@ -26,12 +26,6 @@ func PostTemplateNew(w http.ResponseWriter, r *http.Request, params httprouter.P
 
     type ReqPayload dbutils.StillerTemplate
 
-    type TemplateType struct {
-        Tier        dbutils.StillerTier `form:"tier"`
-        Title       string              `form:"title"`
-        Description string              `form:"description"`
-    }
-
     user_token := r.Header.Get("token")
     user_tk, token_decode_err := jwt.Decode(user_token)
     if loggers.RequestLog(token_decode_err, "", http.StatusUnauthorized, &w) {
@@ -153,7 +147,6 @@ func PostTemplateNew(w http.ResponseWriter, r *http.Request, params httprouter.P
     InsertInto("template").
         NewRow().
             Set("tier", req_payload.TierId).
-            Set("thumbnail", req_payload.ThumbnailId).
             Set("title", req_payload.Title).
             Set("description", req_payload.Description).
             Set("templatefile", templatefile_id).

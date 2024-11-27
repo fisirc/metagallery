@@ -1,28 +1,24 @@
 package dbutils
 
 import (
-	"bufio"
 	"errors"
-	"io"
 	"log"
 	"stiller/pkg/templates"
 
-	jsonexp "github.com/go-json-experiment/json"
 	"github.com/leporo/sqlf"
 	"zombiezen.com/go/sqlite"
 	"zombiezen.com/go/sqlite/sqlitex"
 )
 
 var (
-    ErrUserNotFound = errors.New("not found")
+    ErrUserNotFound = errors.New("user not found")
+    ErrTemplateNotFound = errors.New("template not found")
 )
 
-func getSlot(gallery int, template_slot templates.MetatemplateSlot, conn *sqlite.Conn) StillerGallerySlot {
+func getGallerySlot(gallery int, template_slot templates.MetatemplateSlot, conn *sqlite.Conn) StillerGallerySlot {
     new_slot := StillerGallerySlot{
-        Ref:      template_slot.Ref,
-        Type:     template_slot.Type,
-        Props:    template_slot.Props,
-        Vertices: template_slot.Vertices,
+        RefId:    template_slot.Ref,
+        MetatemplateSlot: template_slot,
     }
 
     slotinfo_stmt := sqlf.
@@ -45,7 +41,7 @@ func getSlot(gallery int, template_slot templates.MetatemplateSlot, conn *sqlite
     return new_slot
 }
 
-func GetGallerySlots(gallery int, templatefile io.Reader) ([]StillerGallerySlot, error) {
+func GetGalleryData(gallery int) (*StillerGalleryData, error) {
     new_dbconn, dbconn_err := NewConn()
     if dbconn_err != nil {
         return nil, dbconn_err
@@ -53,23 +49,67 @@ func GetGallerySlots(gallery int, templatefile io.Reader) ([]StillerGallerySlot,
 
     defer CloseConn(new_dbconn)
 
-    buftar := bufio.NewReader(templatefile)
+    slots_iterator := sqlf.
+        Select("template").
+        From("gallery").
+        Where("id = ?", gallery)
 
-    templatefile_slots := []templates.MetatemplateSlot{}
-    slotunmarshal_exp := jsonexp.UnmarshalRead(buftar, &templatefile_slots, jsonexp.DefaultOptionsV2())
-    if slotunmarshal_exp != nil {
-        return nil, slotunmarshal_exp
+    template_id := int(-1)
+    sqlitex.ExecuteTransient(new_dbconn, slots_iterator.String(), &sqlitex.ExecOptions{
+        ResultFunc: func(stmt *sqlite.Stmt) error {
+            template_id = int(stmt.GetInt64("template"))
+            return nil
+        },
+
+        Args: slots_iterator.Args(),
+    })
+
+    if template_id == -1 {
+        return nil, ErrTemplateNotFound
     }
 
-    gallery_slots := make([]StillerGallerySlot, 0, len(templatefile_slots))
-    for index := range templatefile_slots {
-        gallery_slots = append(
-            gallery_slots,
-            getSlot(gallery, templatefile_slots[index], new_dbconn),
-        )
+    template_data, template_data_err := templates.GetTemplateData(template_id)
+    if template_data_err != nil {
+        return nil, template_data_err
     }
 
-    return gallery_slots, nil
+    template_index := make(map[string]*templates.MetatemplateSlot)
+    for index := range template_data.Slots {
+        slot := template_data.Slots[index]
+        template_index[slot.Ref] = &slot
+    }
+
+    qslot_iter_stmt := sqlf.
+        Select("*").
+        From("galleryslot")
+
+    slots := make([]StillerGallerySlot, 0, len(template_data.Slots))
+    slots_err := sqlitex.ExecuteTransient(new_dbconn, qslot_iter_stmt.String(), &sqlitex.ExecOptions{
+        ResultFunc: func(stmt *sqlite.Stmt) error {
+            ref := stmt.GetText("slotid")
+            slots = append(slots, StillerGallerySlot{
+                MetatemplateSlot: *template_index[ref],
+                ResId: int(stmt.GetInt64("res")),
+                Title: stmt.GetText("title"),
+                Description: stmt.GetText("description"),
+            })
+
+            return nil
+        },
+
+        Args: qslot_iter_stmt.Args(),
+    })
+
+    if slots_err != nil {
+        return nil, slots_err
+    }
+
+    data := &StillerGalleryData{
+        Origin: template_data.Origin,
+        Slots: slots,
+    }
+
+    return data, nil
 }
 
 func PushNewFile(fileptr *StillerFile) error {

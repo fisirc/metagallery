@@ -32,9 +32,9 @@ func GetTemplate(w http.ResponseWriter, r *http.Request, params httprouter.Param
 
     user_id := user_decoded.UserId
     tier_stmt := sqlf.
-    Select("tier").
-    From("user").
-    Where("id = ?", user_id)
+        Select("tier").
+            From("user").
+        Where("id = ?", user_id)
 
     dbconn, dbconn_err := dbutils.NewConn()
     if loggers.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
@@ -64,7 +64,7 @@ func GetTemplate(w http.ResponseWriter, r *http.Request, params httprouter.Param
 
     gettemplates_stmt := sqlf.
         Select("*").
-        From("template").
+            From("template").
         Where("tier <= ?", tier)
 
     templates := make([]dbutils.StillerTemplate, 0, 2)
@@ -74,7 +74,6 @@ func GetTemplate(w http.ResponseWriter, r *http.Request, params httprouter.Param
             new_template := dbutils.StillerTemplate{
                 Id: int(stmt.GetInt64("id")),
                 TierId: int(stmt.GetInt64("tier")),
-                ThumbnailId: int(stmt.GetInt64("thumbnail")),
                 TemplateId: int(stmt.GetInt64("template")),
                 Title: stmt.GetText("title"),
                 Description: stmt.GetText("description"),

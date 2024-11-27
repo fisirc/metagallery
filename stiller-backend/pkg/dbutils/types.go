@@ -1,5 +1,7 @@
 package dbutils
 
+import "stiller/pkg/templates"
+
 type StillerFileType uint8
 const (
     Image StillerFileType = iota
@@ -57,20 +59,22 @@ type StillerMetatemplatefile struct {
 type StillerTemplate struct {
     Id          int    `json:"id"`
     TierId      int    `json:"tier"`
-    ThumbnailId int    `json:"thumbnail"`
     TemplateId  int    `json:"templatefile"`
     Title       string `json:"title"`
     Description string `json:"description"`
 }
 
 type StillerGallerySlot struct {
-    ResId       int         `json:"res"`
-    Title       string      `json:"title"`
-    Description string      `json:"description"`
-    Ref         string      `json:"ref"`
-    Type        string      `json:"type"`
-    Props       interface{} `json:"props"`
-    Vertices    [][]float64 `json:"v"`
+    templates.MetatemplateSlot
+    RefId       string `json:"ref"`
+    ResId       int    `json:"res"`
+    Title       string `json:"title"`
+    Description string `json:"description"`
+}
+
+type StillerGalleryData struct {
+    Origin []float64            `json:"origin"`
+    Slots  []StillerGallerySlot `json:"slots"`
 }
 
 type StillerGallery struct {
@@ -80,6 +84,6 @@ type StillerGallery struct {
     OwnerId      int                  `json:"ownerid"`
     TemplateId   int                  `json:"templateid"`
     Slug         string               `json:"slug"`
-    Slots        []StillerGallerySlot `json:"slots"`
+    Data         StillerGalleryData   `json:"slots"`
 }
 

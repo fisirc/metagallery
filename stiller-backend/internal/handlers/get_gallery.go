@@ -1,12 +1,8 @@
 package handlers
 
 import (
-	"archive/tar"
-	"bufio"
 	"net/http"
-	"os"
 	"stiller/pkg/dbutils"
-	"stiller/pkg/fsop"
 	"stiller/pkg/jwt"
 	"stiller/pkg/loggers"
 	"stiller/pkg/netwrappers"
@@ -49,28 +45,11 @@ func GetGallery(w http.ResponseWriter, r *http.Request, params httprouter.Params
     exec_err := sqlitex.ExecuteTransient(new_dbconn, get_galleries.String(), &sqlitex.ExecOptions{
         ResultFunc: func(stmt *sqlite.Stmt) error {
             gall_template := int(stmt.GetInt64("template"))
+
             gall_id := int(stmt.GetInt64("id"))
-
-            template_path := fsop.GetTemplatePath(gall_template)
-            file, open_err := os.Open(template_path)
-            if loggers.RequestLog(open_err, "", http.StatusInternalServerError, &w) {
-                return open_err
-            }
-
-            defer file.Close()
-
-            tar_reader := tar.NewReader(file)
-            _, read_err := tar_reader.Next()
-            if loggers.RequestLog(read_err, "", http.StatusInternalServerError, &w) {
-                return read_err
-            }
-
-            buftar := bufio.NewReader(tar_reader)
-
-
-            new_gallery_slots, newgall_slots_err := dbutils.GetGallerySlots(gall_id, buftar)
-            if loggers.RequestLog(newgall_slots_err, "", http.StatusInternalServerError, &w) {
-                return newgall_slots_err
+            gallery_data, slots_err := dbutils.GetGalleryData(gall_id)
+            if slots_err != nil {
+                return slots_err
             }
 
             gallery := dbutils.StillerGallery{
@@ -80,7 +59,7 @@ func GetGallery(w http.ResponseWriter, r *http.Request, params httprouter.Params
                 Description: stmt.GetText("description"),
                 TemplateId: gall_template,
                 Slug: stmt.GetText("slug"),
-                Slots: new_gallery_slots,
+                Data: *gallery_data,
             }
 
             galleries = append(galleries, gallery)

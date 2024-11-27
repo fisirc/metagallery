@@ -20,6 +20,11 @@ var routes = [...]individualHandler{
         handlefunc: handlers.GetTemplate,
     },
     {
+        path: "/template/info/:template_id/:field",
+        method: http.MethodGet,
+        handlefunc: handlers.GetTemplateInfo,
+    },
+    {
         path: "/template/new",
         method: http.MethodPost,
         handlefunc: handlers.PostTemplateNew,
@@ -30,14 +35,14 @@ var routes = [...]individualHandler{
         handlefunc: handlers.GetGallery,
     },
     {
-        path: "/gallery/edit",
-        method: http.MethodPatch,
-        handlefunc: handlers.PatchGalleryEdit,
-    },
-    {
         path: "/gallery/new",
         method: http.MethodPost,
         handlefunc: handlers.PostGalleryNew,
+    },
+    {
+        path: "/gallery/edit",
+        method: http.MethodPatch,
+        handlefunc: handlers.PatchGalleryEdit,
     },
     {
         path: "/gallery/slot",
