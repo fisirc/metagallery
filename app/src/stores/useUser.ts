@@ -105,7 +105,7 @@ export const useUser = create<MetagalleryUserState>()(
           body: JSON.stringify({
             tier_id: 0,
             username,
-            displayname: displayname,
+            // displayname: displayname,
             mail: email,
             pwd: password,
           }),
@@ -116,8 +116,11 @@ export const useUser = create<MetagalleryUserState>()(
           throw new Error(`Failed to register: ${errorDetails}`);
         }
 
-        const token = await response.text();
-        return get().loginWithToken(token);
+        const data = await response.json() as {
+          token: string,
+          userdata: MetagalleryUser,
+        };
+        return get().loginWithToken(data.token);
       } catch (e) {
         get().logout();
         console.error('Failed to register:', e);
