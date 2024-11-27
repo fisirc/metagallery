@@ -33,7 +33,6 @@ export const UserButton = () => {
       label: 'Cerrar sesión',
       onClick: () => {
         useUser.getState().logout();
-        setLocation('/');
       },
     },
   ];
