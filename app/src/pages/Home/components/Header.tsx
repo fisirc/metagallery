@@ -4,6 +4,7 @@ import styles from './Header.module.css';
 import Popup from './PopUp/Popup';
 import popupStyles from './PopUp/Popup.module.css';
 import { useUser } from '@/stores/useUser';
+import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
 
 export const Header = () => {
   const [loginPopup, setLoginPopup] = useState(false);
@@ -58,12 +59,20 @@ export const Header = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    useUser.getState().register({
+    setIsLoading(true);
+    const newUser = await useUser.getState().register({
       username,
       password,
       email,
       displayname: 'Unknown user',
     });
+    setIsLoading(false);
+    if (!newUser) {
+      setRegisterStep(1);
+      setLoginError('Error al crear usuario');
+      return;
+    }
+    useMetagalleryStore.getState().confetti(1000);
   }
 
   return (
@@ -138,7 +147,9 @@ export const Header = () => {
           )}
         </Popup>
 
-        <Button variant="primary" size="large" onClick={() => setRegisterPopup(true)}>Comienza ahora</Button>
+        <Button variant="primary" size="large" onClick={() => {
+          setRegisterPopup(true);
+        }}>Comienza ahora</Button>
 
         <Popup trigger={registerPopup} setTrigger={resetRegisterFlow}>
           {registerStep === 1 ? (
@@ -210,7 +221,7 @@ export const Header = () => {
                     id="address"
                     type="text"
                     placeholder="Dirección de Domicilio"
-                    autoComplete="address-line1"
+                    autoComplete="street-address"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     required
@@ -268,8 +279,10 @@ export const Header = () => {
                   >
                     Atrás
                   </button>
-                  <button className={popupStyles.buttonStart} type="submit">
-                    Comenzar
+                  <button className={popupStyles.buttonStart} type="submit" disabled={isLoading}>
+                    {
+                      isLoading ? 'Registrando...' : 'Comenzar'
+                    }
                   </button>
                 </div>
               </form>
