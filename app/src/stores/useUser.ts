@@ -20,6 +20,17 @@ interface MetagalleryUserState {
   loading: boolean,
   loginWithCredentials: (username: string, password: string) => Promise<MetagalleryUser | null>,
   loginWithToken: (token: string) => Promise<MetagalleryUser | null>,
+  register: ({
+    username,
+    password,
+    email,
+    displayname,
+  }: {
+    username: string,
+    password: string,
+    email: string,
+    displayname: string
+  }) => Promise<MetagalleryUser | null>,
   logout: () => void,
 }
 
@@ -81,6 +92,35 @@ export const useUser = create<MetagalleryUserState>()(
       } catch (e) {
         get().logout();
         console.error('Failed to log in:', e);
+        return null;
+      }
+    },
+    register: async ({ username, password, email, displayname }) => {
+      try {
+        const response = await fetch('https://pandadiestro.xyz/services/stiller/auth/newuser', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            tier_id: 0,
+            username,
+            displayname: displayname,
+            mail: email,
+            pwd: password,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorDetails = await response.text();
+          throw new Error(`Failed to register: ${errorDetails}`);
+        }
+
+        const token = await response.text();
+        return get().loginWithToken(token);
+      } catch (e) {
+        get().logout();
+        console.error('Failed to register:', e);
         return null;
       }
     },

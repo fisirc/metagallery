@@ -58,31 +58,12 @@ export const Header = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const response = await fetch('https://pandadiestro.xyz/services/stiller/auth/newuser', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          tier_id: 0,
-          username,
-          mail: email,
-          pwd: password,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorDetails = await response.text();
-        throw new Error(`Failed to register: ${errorDetails}`);
-      }
-
-      const token = await response.text();
-      useUser.getState().loginWithToken(token);
-    } catch (e) {
-      useUser.getState().logout();
-      console.error('Failed to register:', e);
-    }
+    useUser.getState().register({
+      username,
+      password,
+      email,
+      displayname: 'Unknown user',
+    });
   }
 
   return (
@@ -108,7 +89,7 @@ export const Header = () => {
                     className={popupStyles.forminput}
                     id="username"
                     type="text"
-                    placeholder="Nombre de usuario"
+                    placeholder="usuario"
                     autoComplete="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
