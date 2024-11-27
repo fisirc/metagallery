@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
 import { Modal, Button, Text, Loader, Notification, Group } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
-import { useWindowSize } from 'react-use';
-import Confetti from 'react-confetti';
+import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
 
 type DeployModalProps = {
   isOpen: boolean;
@@ -13,19 +11,13 @@ type DeployModalProps = {
 };
 
 export const DeployModal = ({ isOpen, onClose, onDeploy, loading, error }: DeployModalProps) => {
-  const [showConfetti, setShowConfetti] = useState(false);
-  const { width, height } = useWindowSize();
-
   const handleDeploy = async () => {
-    setShowConfetti(false); // Reset confetti
     await onDeploy();
-    setShowConfetti(true); // Show confetti on success
-    setTimeout(() => setShowConfetti(false), 5000); // Hide confetti after 3 seconds
+    useMetagalleryStore.getState().confetti(2000);
   };
 
   return (
     <>
-      {showConfetti && <Confetti width={width} height={height} />}
       <Modal opened={isOpen} onClose={onClose} title="Confirmar Despliegue" centered>
         <Text>¿Estás seguro de que quieres desplegar el proyecto?</Text>
         <Group mt="md" justify="flex-end">
