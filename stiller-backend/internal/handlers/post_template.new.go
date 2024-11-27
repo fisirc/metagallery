@@ -26,6 +26,12 @@ func PostTemplateNew(w http.ResponseWriter, r *http.Request, params httprouter.P
 
     type ReqPayload dbutils.StillerTemplate
 
+    type TemplateType struct {
+        Tier        dbutils.StillerTier `form:"tier"`
+        Title       string              `form:"title"`
+        Description string              `form:"description"`
+    }
+
     user_token := r.Header.Get("token")
     user_tk, token_decode_err := jwt.Decode(user_token)
     if loggers.RequestLog(token_decode_err, "", http.StatusUnauthorized, &w) {
@@ -51,37 +57,23 @@ func PostTemplateNew(w http.ResponseWriter, r *http.Request, params httprouter.P
         return
     }
 
-    thumbnail_str := r.FormValue("thumbnail")
-    if len(thumbnail_str) == 0 {
-        loggers.RequestLog(nil, "empty thumbnail", http.StatusBadRequest, &w)
-        return
-    }
-
-    title_str := r.FormValue("title")
-    if len(title_str) == 0 {
+    req_payload.Title = r.FormValue("title")
+    if len(req_payload.Title) == 0 {
         loggers.RequestLog(nil, "empty title", http.StatusBadRequest, &w)
         return
     }
 
-    description_str := r.FormValue("description")
-    if len(description_str) == 0 {
+    req_payload.Description = r.FormValue("description")
+    if len(req_payload.Description) == 0 {
         loggers.RequestLog(nil, "empty description", http.StatusBadRequest, &w)
         return
     }
 
-    var err error
-    req_payload.TierId, err = strconv.Atoi(tier_str)
-    if loggers.RequestLog(err, "", http.StatusBadRequest, &w) {
+    var tier_err error
+    req_payload.TierId, tier_err = strconv.Atoi(tier_str)
+    if loggers.RequestLog(tier_err, "", http.StatusBadRequest, &w) {
         return
     }
-
-    req_payload.ThumbnailId, err = strconv.Atoi(thumbnail_str)
-    if loggers.RequestLog(err, "", http.StatusBadRequest, &w) {
-        return
-    }
-
-    req_payload.Title = title_str
-    req_payload.Description = description_str
 
     new_dbconn, dbconn_err := dbutils.NewConn()
     if loggers.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
@@ -116,51 +108,35 @@ func PostTemplateNew(w http.ResponseWriter, r *http.Request, params httprouter.P
     }
 
     abs_path := fsop.GetTemplatePath(templatefile_id)
-
     tarfile, tarball_err := os.Create(abs_path)
     if loggers.RequestLog(tarball_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
     tarball_writer := tar.NewWriter(tarfile)
+    file_keys := [...]string{ "data", "scene", "thumbnail", "topview" }
+    for index := range file_keys {
+        file_reader, file_header, file_err := r.FormFile(file_keys[index])
+        if loggers.RequestLog(file_err, "", http.StatusBadRequest, &w) {
+            return
+        }
 
-    slots_file, slots_header, slotsfile_err := r.FormFile("slots")
-    if loggers.RequestLog(slotsfile_err, "", http.StatusBadRequest, &w) {
-        return
-    }
+        buf_file := bufio.NewReader(file_reader)
+        write_err := tarop.TarPushFile(
+            tarball_writer,
+            buf_file,
+            file_header.Filename,
+            file_header.Size,
+        )
 
-    defer slots_file.Close()
+        if loggers.RequestLog(write_err, "", http.StatusInternalServerError, &w) {
+            return
+        }
 
-    model_file, model_header, modelfile_err := r.FormFile("model")
-    if loggers.RequestLog(modelfile_err, "", http.StatusBadRequest, &w) {
-        return
-    }
-
-    defer model_file.Close()
-
-    bufslots := bufio.NewReader(slots_file)
-    modelslots := bufio.NewReader(model_file)
-
-    writeslot_err := tarop.TarPushFile(
-        tarball_writer,
-        bufslots,
-        slots_header.Filename,
-        slots_header.Size,
-    )
-
-    if loggers.RequestLog(writeslot_err, "", http.StatusInternalServerError, &w) {
-        return
-    }
-
-    writemodel_err := tarop.TarPushFile(
-        tarball_writer,
-        modelslots,
-        model_header.Filename,
-        model_header.Size,
-    )
-
-    if loggers.RequestLog(writemodel_err, "", http.StatusInternalServerError, &w) {
-        return
+        close_err := file_reader.Close()
+        if loggers.RequestLog(close_err, "", http.StatusInternalServerError, &w) {
+            return
+        }
     }
 
     close_tarball_writer :=  tarball_writer.Close()

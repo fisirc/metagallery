@@ -75,14 +75,14 @@ var routes = [...]individualHandler{
         handlefunc: handlers.PostAuthNewuser,
     },
     {
-        path: "/auth/checkuser/:username",
-        method: http.MethodGet,
-        handlefunc: handlers.GetAuthCheckUser,
-    },
-    {
         path: "/auth/login",
         method: http.MethodPost,
         handlefunc: handlers.PostAuthLogin,
+    },
+    {
+        path: "/auth/profile/",
+        method: http.MethodGet,
+        handlefunc: handlers.GetUserinfo,
     },
     {
         path: "/auth/profile/:username",
