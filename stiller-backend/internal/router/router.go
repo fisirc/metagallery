@@ -37,7 +37,7 @@ var routes = [...]individualHandler{
     {
         path: "/galleryall",
         method: http.MethodGet,
-        handlefunc: handlers.GetGallery,
+        handlefunc: handlers.GetAllGallery,
     },
     {
         path: "/gallery/new",
