@@ -1,7 +1,14 @@
 import useSWR from 'swr';
 import { UserContentFileElement } from '@/types';
+import { useUser } from '@/stores/useUser';
 
 type ArgsType<T> = T extends (...args: infer U) => any ? U : never;
+
+type ApiResponse<T> = {
+    data: T;
+    code: number;
+    headers?: Headers;
+};
 
 const mockedUserMedia = [
     {
@@ -207,37 +214,49 @@ export const galleryResponse = {
 };
 
 // const fetcher = (...args: ArgsType<typeof fetch>) => fetch(...args).then(res => res.json());
-const fetcher = async (...args: ArgsType<typeof fetch>) => {
+const fetcher = async <T>(...args: ArgsType<typeof fetch>): Promise<ApiResponse<T>> => {
     const [path] = args;
     await new Promise(resolve => setTimeout(resolve, 200));
 
-    console.log('REFETCHING SHIT', galleryResponse.slots)
-
-    if (typeof path !== 'string') {
-        throw new Error('Invalid path');
-    }
-
-    if (path === 'gallery/media') {
-        return mockedUserMedia;
-    }
-    if (path.startsWith('gallery/')) {
+    // if (path.endsWith('gallery/media')) {
+    //     return {
+    //         data: mockedUserMedia as T,
+    //         code: 200,
+    //     };
+    // }
+    if (path.toString().includes('gallery/')) {
         // const gallery = path.split('/')[1];
-        return galleryResponse;
+        return {
+            data: galleryResponse as T,
+            code: 200,
+        };
     }
 
-    throw new Error('404');
+    const response = await fetch(...args);
+    const data = await response.json();
+
+    return {
+        data,
+        code: response.status,
+        headers: response.headers,
+    }
 };
 
-export function useApi<T, E = any>(path: string, options?: RequestInit) {
+export function useApi<T, E = any>(path: string, options: RequestInit = {}) {
     // @ts-ignore
-    const { data, error, isLoading, isValidating, mutate } = useSWR<T, E>(
+    const { data: response, error, isLoading, isValidating, mutate } = useSWR<ApiResponse<T>, E>(
         path, (key: string) => {
-            return fetcher(key, options);
+            options.headers = {
+                token: useUser.getState().token ?? 'invalid-token',
+                ...options.headers,
+            }
+            const url = `https://pandadiestro.xyz/services/stiller${key.startsWith('/') ? key : `/${key}`}`;
+            return fetcher<T>(url, options);
         }, { revalidateOnFocus: false },
     );
 
     return {
-        data,
+        response,
         error,
         isLoading,
         isValidating,

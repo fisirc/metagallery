@@ -9,7 +9,7 @@ import { DynamicPainting } from './components/gallery/DynamicPainting';
 import { DynamicSculpture } from './components/gallery/DynamicSculpture';
 
 export const Experience = ({ gallery }: { gallery: string }) => {
-  const { data: galleryData } = useApi<typeof galleryResponse>(`gallery/${gallery}`);
+  const { response } = useApi<typeof galleryResponse>(`/gallery/${gallery}`);
 
   const [gravityEnabled, setGravityEnabled] = useState(false);
 
@@ -25,7 +25,7 @@ export const Experience = ({ gallery }: { gallery: string }) => {
       <ambientLight intensity={0.6} />
       {/* <axesHelper args={[10]} /> */}
       {
-        galleryData && galleryData.slots.map((slots) => {
+        response && response.data.slots.map((slots) => {
           if (slots.type == '2d') {
             return (
               <DynamicPainting

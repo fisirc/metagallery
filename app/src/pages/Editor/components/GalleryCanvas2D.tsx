@@ -26,7 +26,7 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
   const [image,] = useImage('/assets/examples/topview.svg');
   const draggingElem = useEditorStore((state) => state.draggingFile);
   const stageRef = useRef<Konva.Stage>(null);
-  const { data: galleryData } = useApi<typeof galleryResponse>(`gallery/${gallery}`);
+  const { response } = useApi<typeof galleryResponse>(`/gallery/${gallery}`);
 
   const handleViewportResize = () => {
     const bounds = document.getElementById('canvas')?.getBoundingClientRect();
@@ -96,9 +96,9 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
         <Layer>
           <Image image={image} />
         </Layer>
-        <Layer scale={SLOTS_SCALE} offsetX={galleryData?.origin[0]} offsetY={galleryData?.origin[1]}>
+        <Layer scale={SLOTS_SCALE} offsetX={response?.data.origin[0]} offsetY={response?.data.origin[1]}>
           {
-            galleryData && galleryData.slots.map((block, i) => {
+            response && response.data.slots.map((block, i) => {
               if (block.type == '2d') {
                 return (
                   <PictureSlot
