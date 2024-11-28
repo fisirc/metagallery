@@ -89,6 +89,7 @@ func GetGalleryData(gallery int) (*StillerGalleryData, error) {
             ref := stmt.GetText("slotid")
             slots = append(slots, StillerGallerySlot{
                 MetatemplateSlot: *template_index[ref],
+                RefId: ref,
                 ResId: int(stmt.GetInt64("res")),
                 Title: stmt.GetText("title"),
                 Description: stmt.GetText("description"),
