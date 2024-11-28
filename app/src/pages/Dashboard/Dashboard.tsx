@@ -6,55 +6,26 @@ import { UserButton } from "@/components/UserButton";
 import { NewGalleryButton } from '@/components/NewGalleryButton';
 import { useUser } from '@/stores/useUser';
 import { useMantineTheme } from '@mantine/core';
+import { LoadingScreen } from '@/components/Overlays/LoadingScreen';
 
-const galleries = [
-  {
-    title: "Salón cúpula",
-    handle: 'salon-cupula',
-    description: "Una colección que refleja el alma de la expresión",
-    image: "/assets/examples/thumbnail.png",
-  },
-  {
-    title: "Habitación de los muros",
-    handle: 'habitacion-muros',
-    description: "Muros y más muros",
-    image: "/assets/examples/thumbnail.png",
-  },
-  {
-    title: "Salón vintage",
-    handle: 'salon-vintage',
-    description: "La colección perfecta para tu arte vintage",
-    image: "/assets/examples/thumbnail.png",
-  },
-  {
-    title: "Golden room",
-    handle: 'golden-room',
-    description: "Un espacio al estilo del golden hour",
-    image: "/assets/examples/thumbnail.png",
-  },
-  {
-    title: "Arte conexo",
-    handle: 'arte-conexo',
-    description: "Conectando el arte con la realidad",
-    image: "/assets/examples/thumbnail.png",
-  },
-  {
-    title: "Ronda de 3D",
-    handle: 'ronda-3d',
-    description: "Experiencia inmersiva en 3D",
-    image: "/assets/examples/thumbnail.png",
-  },
-] as const;
+import { useEffect } from 'react';
 
 export const GalleryDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const theme = useMantineTheme();
   const [, setLocation] = useLocation();
-  const { user } = useUser();
+  const { user, galleries, fetchGalleries, loading } = useUser();
 
-  if (!user) {
-    setLocation('/');
-    return null;
+  useEffect(() => {
+    if (user) {
+      fetchGalleries();
+    } else {
+      setLocation('/');
+    }
+  }, [user, fetchGalleries, setLocation]);
+
+  if (!user || loading) {
+    return <LoadingScreen />;
   }
 
   const toggleSidebar = () => {
@@ -107,7 +78,6 @@ export const GalleryDashboard = () => {
           </div>
         </div>
       </header>
-
       <main className={styles.main}>
         <div className={styles.profileSection}>
           <h1 className={styles.profileName}>{user.displayname}</h1>
@@ -119,7 +89,6 @@ export const GalleryDashboard = () => {
               className={styles.searchInput}
             />
           </div>
-
           <div className={styles.filters}>
             <button className={`${styles.filterButton} ${styles.active}`}>
               Mis proyectos
@@ -131,24 +100,20 @@ export const GalleryDashboard = () => {
         </div>
 
         <div className={styles.galleryGrid}>
-          {galleries.map((gallery) => (
-            <div key={gallery.handle} className={styles.galleryCard}>
+          {galleries?.map((gallery) => (
+            <div key={gallery.id} className={styles.galleryCard}>
               <img
-                src={gallery.image}
+                src={gallery.thumbnail}
                 alt={gallery.title}
                 className={styles.galleryImage}
               />
               <div className={styles.galleryOverlay}>
                 <h2 className={styles.galleryTitle}>{gallery.title}</h2>
-                <p className={styles.galleryDescription}>
-                  {gallery.description}
-                </p>
+                <p className={styles.galleryDescription}>{gallery.description}</p>
                 <div className={styles.galleryActions}>
-                  <button className={styles.openButton} onClick={() => {
-                    setLocation(`/${gallery.handle}/edit`);
-                  }}>
+                  <Link href={`/${gallery.slug}/edit`} className={styles.openButton}>
                     Abrir
-                  </button>
+                  </Link>
                   <button className={styles.shareButton}>
                     <Share2 className={styles.shareIcon} />
                     Compartir

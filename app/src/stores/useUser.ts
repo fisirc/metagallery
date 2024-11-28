@@ -32,6 +32,8 @@ interface MetagalleryUserState {
     displayname: string
   }) => Promise<MetagalleryUser | null>,
   logout: () => void,
+  galleries: Array<{ id: number; title: string; description: string, slug: string, templateid: number, thumbnail: string }> | null;
+  fetchGalleries: () => Promise<void>;
 }
 
 const token = window.localStorage.getItem(TOKEN_LC_KEY);
@@ -41,6 +43,7 @@ export const useUser = create<MetagalleryUserState>()(
     user: null,
     token: token,
     loading: Boolean(token), // No loading if no token
+    galleries: null,
     loginWithCredentials: async (username, password) => {
       try {
         const response = await fetch('https://pandadiestro.xyz/services/stiller/auth/login', {
@@ -130,6 +133,55 @@ export const useUser = create<MetagalleryUserState>()(
     logout() {
       window.localStorage.removeItem(TOKEN_LC_KEY);
       set({ user: null, loading: false, token: null });
+    },
+    fetchGalleries: async () => {
+      try {
+        const { token } = get();
+        if (!token) throw new Error('No token available');
+        const galleryResponse = await fetch('https://pandadiestro.xyz/services/stiller/gallery', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            token,
+          },
+        });
+        if (!galleryResponse.ok) throw new Error('Failed to fetch galleries');
+        const galleries = await galleryResponse.json();
+        const galleriesWithThumbnails = await Promise.all(
+          galleries.map(async (gallery: any) => {
+            try {
+              const thumbnailResponse = await fetch(
+                `https://pandadiestro.xyz/services/stiller/template/info/${gallery.templateid}/thumbnail`,
+                {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    token,
+                  },
+                }
+              );
+
+              if (!thumbnailResponse.ok) {
+                console.warn(`Failed to fetch thumbnail for template ID ${gallery.templateid}`);
+                return { ...gallery, thumbnail: '/assets/examples/thumbnail.png' };
+              }
+
+              const blob = await thumbnailResponse.blob();
+              const thumbnail = URL.createObjectURL(blob);
+              return { ...gallery, thumbnail };
+
+            } catch (error) {
+              console.error(`Error fetching thumbnail for template ID ${gallery.templateid}:`, error);
+              return { ...gallery, thumbnail: '/assets/examples/thumbnail.png' };
+            }
+          })
+        );
+
+        set({ galleries: galleriesWithThumbnails });
+      } catch (error) {
+        console.error('Error fetching galleries:', error);
+        set({ galleries: null });
+      }
     },
   }),
 );

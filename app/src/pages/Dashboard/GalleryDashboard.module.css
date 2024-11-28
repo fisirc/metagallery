@@ -297,6 +297,7 @@
   font-size: 0.875rem;
   border: none;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .openButton {
