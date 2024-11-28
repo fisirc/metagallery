@@ -58,7 +58,7 @@ func PostGalleryNew(w http.ResponseWriter, r *http.Request, params httprouter.Pa
     newgallery_query, newgallery_args := newgallery_stmt.String(), newgallery_stmt.Args()
 
     dbconn, dbconn_err := dbutils.NewConn()
-    if loggers.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
+    if loggers.RequestLog(dbconn_err, "", http.StatusConflict, &w) {
         return
     }
 
