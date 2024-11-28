@@ -75,9 +75,10 @@ export const PictureSlot = ({ idRef, v, res, props }: PictureSlotProps) => {
         fill={dragging ? '#fcf3de' : (hovering ? '#e1e3e5' : '#f1f3f5')}
         strokeWidth={FRAME_STROKE_WIDTH}
         onClick={() => {
-          useMetagalleryStore.getState().openModal(
-            <Text>Hawk tuah!</Text>
-          );
+          useMetagalleryStore.getState().openModal({
+            id: 'picture-slot-modal',
+            child: <Text>Hawk tuah!</Text>
+          });
         }}
         onMouseUp={() => {
           const dropped = hovering && dragging;

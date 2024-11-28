@@ -74,9 +74,12 @@ const ContentSidebarElement = ({ element }: { element: UserContentFileElement })
                 <Menu.Dropdown>
                   <Menu.Item
                     leftSection={<IconEdit style={{ width: rem(14) }} />}
-                    onClick={() => useMetagalleryStore.getState().openModal(
-                      <FileEditor element={element} />
-                    )}
+                    onClick={() => {
+                      useMetagalleryStore.getState().openModal({
+                        id: 'file-editor-modal',
+                        child: <FileEditor element={element} />
+                      })
+                    }}
                   >
                     Editar
                   </Menu.Item>

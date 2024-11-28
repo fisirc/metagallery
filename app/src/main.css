@@ -4,6 +4,10 @@
 
 body {}
 
+input:focus {
+  outline: none;
+}
+
 * {
   margin: 0;
   padding: 0;

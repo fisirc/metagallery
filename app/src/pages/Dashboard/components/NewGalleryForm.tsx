@@ -1,8 +1,9 @@
-import { Button, FileButton, Group, ScrollArea, Text, TextInput } from "@mantine/core";
+import { useMetagalleryStore } from "@/providers/MetagalleryProvider";
+import { Button, Stack, Text, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconSearch, IconUpload } from "@tabler/icons-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect } from "react";
 
 type NewGalleryPayload = {
   template: number;
@@ -11,15 +12,52 @@ type NewGalleryPayload = {
   description: string;
 };
 
-export const NewGalleryForm = () => {
-  const [filterInput, setFilterInput] = useState('');
+let __shitty_toggle = false;
+let __shitty_dirty_slug = false;
+
+const normalizeName = (name: string) => {
+  let normalized = name.toLowerCase().replace(/ /g, '-');
+  return normalized.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+export const NewGalleryForm = ({ modalKey }: { modalKey: string }) => {
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    __shitty_toggle = false;
+    __shitty_dirty_slug = false;
+  }, []);
+
   const form = useForm({
+    onValuesChange(values, previous) {
+      if (__shitty_toggle) {
+        __shitty_toggle = false;
+        return;
+      }
+
+      if (values.slug != previous.slug) {
+        __shitty_dirty_slug = true;
+        __shitty_toggle = false;
+      }
+
+      if (values.title != previous.title && !__shitty_dirty_slug) {
+        __shitty_toggle = true;
+        form.setFieldValue('slug', normalizeName(values.title));
+        form.setDirty({ slug: false });
+      }
+    },
     initialValues: {
       title: 'Mi nueva galería',
-      slug: '',
+      slug: 'mi-nueva-galeria',
       description: '',
       templateId: 0,
+    },
+    validate: {
+      title: (value) => {
+        if (value.length < 3) {
+          return 'El título debe tener al menos 4 caracteres';
+        }
+      }
     }
   });
 
@@ -52,53 +90,57 @@ export const NewGalleryForm = () => {
       description: values.description,
       template: values.templateId,
     });
+    useMetagalleryStore.getState().closeModal(modalKey);
   });
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="stack gap-lg">
-        <div className="stack gap-sm">
-          <TextInput
-            label="Título"
-            placeholder="Título de la obra"
-            required
-            {...form.getInputProps('title')}
-            key={form.key('title')}
-          />
-          <TextInput
-            label="Descripción"
-            required
-            placeholder="Descripción de la obra"
-            {...form.getInputProps('description')}
-            key={form.key('description')}
-          />
-          <TextInput
-            label="URL"
-            placeholder="mi-galeria"
-            required
-            styles={{
-              section: {
-                width: 60,
-                color: 'gray',
-              },
-              input: {
-                paddingInlineStart: 187,
-              }
-            }}
-            {...form.getInputProps('slug')}
-            leftSection={<Text w={40}>metagallery.pages.dev/</Text>}
-            key={form.key('slug')}
-          />
+    <Stack>
+      <Text size="xl" fw={700}>Crear nueva galería</Text>
+      <form onSubmit={handleSubmit}>
+        <div className="stack gap-lg">
+          <div className="stack gap-sm">
+            <TextInput
+              placeholder="Título de la obra"
+              variant="filled"
+              description="Título de tu galería"
+              required
+              {...form.getInputProps('title',)}
+              key={form.key('title')}
+            />
+            <TextInput
+              placeholder="Descripción de la obra"
+              variant="filled"
+              description="Descripción"
+              required
+              {...form.getInputProps('description')}
+              key={form.key('description')}
+            />
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div>
+                <Text c={'dimmed'}>metagallery.pages.dev/</Text>
+              </div>
+              <div>
+                <input
+                  key={form.key('slug')}
+                  style={{
+                    border: 'none',
+                  }}
+                  {...form.getInputProps('slug')}
+                />
+              </div>
+            </div>
+          </div>
+          <Button
+            type="submit"
+            variant="primary"
+            // disabled={!form.isDirty()}
+            // disabled={!form.isDirty()}
+            bg={form.isDirty() ? 'black' : 'gray.7'}
+          >
+            Crear galería
+          </Button>
         </div>
-        <Button
-          type="submit"
-          variant="primary"
-          disabled={!form.isDirty()}
-          bg={form.isDirty() ? 'black' : 'gray.7'}
-        >
-          Actualizar
-        </Button>
-      </div>
-    </form>
+      </form>
+    </Stack>
   );
 }
