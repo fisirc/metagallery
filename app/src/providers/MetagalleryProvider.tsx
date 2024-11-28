@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Modal, ModalProps, Portal } from '@mantine/core';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { MODAL_PORTAL_ID, TOKEN_LC_KEY } from '@/constants';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useUser } from '@/stores/useUser';
@@ -10,7 +10,6 @@ import ReactConfetti from 'react-confetti';
 type ModalProps2 = Omit<ModalProps, 'opened' | 'onClose'> & {
   id: string,
   child: ReactNode,
-  opened?: boolean,
   onClose?: () => void,
 };
 
@@ -57,6 +56,46 @@ export const useMetagalleryStore = create<MetagalleryProviderStore>()(
   }),
 );
 
+const ModalWrapper = ({ modalKey, modalProps, children }: { modalKey: string, modalProps?: ModalProps2, children: ReactNode }) => {
+  const modals = useMetagalleryStore((m) => m.activeModals);
+  const [isOpen, setOpened] = useState(false);
+
+  useEffect(() => {
+    setOpened(true);
+  }, []);
+
+  const { onClose, ...props } = modalProps ?? {
+    opened: true,
+    onClose: () => { },
+  };
+
+  return (
+    <Modal
+      style={{
+        zIndex: 69696969,
+      }}
+      opened={isOpen}
+      closeOnClickOutside={true}
+      onExitTransitionEnd={() => {
+        const newModals = new Map(modals);
+        newModals.delete(modalKey);
+
+        useMetagalleryStore.setState({
+          activeModals: newModals,
+        });
+
+        onClose?.();
+      }}
+      onClose={() => {
+        setOpened(false);
+      }}
+      {...props}
+    >
+      {children}
+    </Modal>
+  );
+}
+
 export const MetagalleryProvider = ({ children }: { children: ReactNode }) => {
   const modals = useMetagalleryStore((m) => m.activeModals);
   const showingConfetti = useMetagalleryStore((m) => m.showingConfetti);
@@ -79,37 +118,45 @@ export const MetagalleryProvider = ({ children }: { children: ReactNode }) => {
       <Portal target={`#${MODAL_PORTAL_ID}`}>
         {
           Array.from(modals.entries()).map(([key, modal], i) => {
-            const { opened, onClose, ...props } = modal.props ?? {
-              opened: true,
-              onClose: () => { },
-            };
-
-            console.log({ opened, onClose, props })
-
             return (
-              <Modal
-                key={i}
-                style={{
-                  zIndex: 69696969,
-                }}
-                opened={opened ?? true}
-                closeOnClickOutside={true}
-                onClose={() => {
-                  console.log('🐢🐢🐢🐢🐢🐢', onClose)
-                  const newModals = new Map(modals);
-                  newModals.delete(key);
-
-                  useMetagalleryStore.setState({
-                    activeModals: newModals,
-                  });
-
-                  onClose?.();
-                }}
-                {...props}
-              >
+              <ModalWrapper key={key} modalKey={key} modalProps={modal.props}>
                 {modal.el}
-              </Modal>
+              </ModalWrapper>
             );
+            // const [isOpen, setOpened] = useState(true);
+
+            // useEffect(() => {
+            //   setOpened(true);
+            // }, []);
+
+            // const { onClose, ...props } = modal.props ?? {
+            //   opened: true,
+            //   onClose: () => { },
+            // };
+
+            // return (
+            //   <Modal
+            //     key={key}
+            //     style={{
+            //       zIndex: 69696969,
+            //     }}
+            //     opened={isOpen}
+            //     closeOnClickOutside={true}
+            //     onClose={() => {
+            //       const newModals = new Map(modals);
+            //       newModals.delete(key);
+
+            //       useMetagalleryStore.setState({
+            //         activeModals: newModals,
+            //       });
+
+            //       onClose?.();
+            //     }}
+            //     {...props}
+            //   >
+            //     {modal.el}
+            //   </Modal>
+            // );
           })
         }
       </Portal>
