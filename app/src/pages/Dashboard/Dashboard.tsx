@@ -1,16 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, Search, Share2, Plus, Layout, Edit, Copy, Check } from "lucide-react";
-import { Link, useLocation } from 'wouter';
+import React, { useState, useEffect } from "react";
+import {
+  Menu,
+  Search,
+  Share2,
+  Plus,
+  Layout,
+  Edit,
+  Copy,
+  Check,
+} from "lucide-react";
+import { Link, useLocation } from "wouter";
+import { Modal, useMantineTheme } from "@mantine/core";
+import { NewGalleryForm } from "@/pages/Dashboard/components/NewGalleryForm";
+import { useUser } from "@/stores/useUser";
 import styles from "./GalleryDashboard.module.css";
+import { LoadingScreen } from "@/components/Overlays/LoadingScreen";
+import Popup from "@/pages/Home/components/PopUp/Popup";
+import popupStyles from "@/pages/Home/components/PopUp/Popup.module.css";
+import { NewGalleryButton } from "@/components/NewGalleryButton";
 import { UserButton } from "@/components/UserButton";
-import { NewGalleryButton } from '@/components/NewGalleryButton';
-import { useUser } from '@/stores/useUser';
-import { useMantineTheme } from '@mantine/core';
-import { LoadingScreen } from '@/components/Overlays/LoadingScreen';
-import Popup from '@/pages/Home/components/PopUp/Popup';
-import popupStyles from '@/pages/Home/components/PopUp/Popup.module.css';
 
-const ShareGalleryPopup = ({ trigger, setTrigger, gallerySlug }: { trigger: boolean, setTrigger: (value: boolean) => void, gallerySlug: string }) => {
+const ShareGalleryPopup = ({
+  trigger,
+  setTrigger,
+  gallerySlug,
+}: {
+  trigger: boolean;
+  setTrigger: (value: boolean) => void;
+  gallerySlug: string;
+}) => {
   const [copied, setCopied] = useState(false);
   const shareLink = `https://metagallery.pages.dev/${gallerySlug}`;
 
@@ -32,34 +50,30 @@ const ShareGalleryPopup = ({ trigger, setTrigger, gallerySlug }: { trigger: bool
       <p className={popupStyles.description}>
         Comparte el enlace de tu galería con otros
       </p>
-      <div className={popupStyles.formgroup} style={{ position: 'relative' }}>
+      <div className={popupStyles.formgroup} style={{ position: "relative" }}>
         <label className={popupStyles.label} htmlFor="galleryLink">
           Enlace de la Galería
         </label>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
           <input
             id="galleryLink"
             className={popupStyles.forminput}
             type="text"
             value={shareLink}
             readOnly
-            style={{ paddingRight: '40px', fontSize: '14px' }}
+            style={{ paddingRight: "40px", fontSize: "14px" }}
           />
           <button
             onClick={handleCopyLink}
             style={{
-              position: 'absolute',
-              right: '10px',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
+              position: "absolute",
+              right: "10px",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
             }}
           >
-            {copied ? (
-              <Check color="green" size={20} />
-            ) : (
-              <Copy size={20} />
-            )}
+            {copied ? <Check color="green" size={20} /> : <Copy size={20} />}
           </button>
         </div>
       </div>
@@ -73,7 +87,8 @@ const ShareGalleryPopup = ({ trigger, setTrigger, gallerySlug }: { trigger: bool
 export const GalleryDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sharePopupOpen, setSharePopupOpen] = useState(false);
-  const [currentGallerySlug, setCurrentGallerySlug] = useState('');
+  const [currentGallerySlug, setCurrentGallerySlug] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const theme = useMantineTheme();
   const [, setLocation] = useLocation();
   const { user, galleries, fetchGalleries, loading } = useUser();
@@ -82,7 +97,7 @@ export const GalleryDashboard = () => {
     if (user) {
       fetchGalleries();
     } else {
-      setLocation('/');
+      setLocation("/");
     }
   }, [user, fetchGalleries, setLocation]);
 
@@ -101,15 +116,24 @@ export const GalleryDashboard = () => {
 
   return (
     <div className={styles.container}>
-      {isSidebarOpen && <div className={styles.overlay} onClick={toggleSidebar} />}
-      <div className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : ''}`}>
+      {isSidebarOpen && (
+        <div className={styles.overlay} onClick={toggleSidebar} />
+      )}
+      <div
+        className={`${styles.sidebar} ${
+          isSidebarOpen ? styles.sidebarOpen : ""
+        }`}
+      >
         <div className={styles.sidebarContent}>
           <h2 className={styles.sidebarTitle}>Menú</h2>
           <nav className={styles.sidebarNav}>
-            <Link href="/new/edit" className={styles.sidebarButton}>
+            <button
+              className={styles.sidebarButton}
+              onClick={() => setIsModalOpen(true)}
+            >
               <Plus className={styles.sidebarIcon} />
               <span>Nueva Galería</span>
-            </Link>
+            </button>
             <button className={styles.sidebarButton}>
               <Layout className={styles.sidebarIcon} />
               <span>Desplegar Galería</span>
@@ -128,7 +152,7 @@ export const GalleryDashboard = () => {
             <Menu className={styles.menuIcon} />
             <span className={styles.srOnly}>Dashboard</span>
           </button>
-          <div style={{ display: 'flex', gap: '24px' }}>
+          <div style={{ display: "flex", gap: "24px" }}>
             <NewGalleryButton />
             <UserButton />
           </div>
@@ -147,8 +171,14 @@ export const GalleryDashboard = () => {
             />
           </div>
           <div className={styles.filters}>
-            <button className={`${styles.filterButton} ${styles.active}`}>Mis proyectos</button>
-            <button className={styles.filterButton}>Proyectos de la comunidad</button>
+            <button
+              className={`${styles.filterButton} ${styles.active}`}
+            >
+              Mis proyectos
+            </button>
+            <button className={styles.filterButton}>
+              Proyectos de la comunidad
+            </button>
           </div>
         </div>
 
@@ -162,18 +192,45 @@ export const GalleryDashboard = () => {
               />
               <div className={styles.galleryOverlay}>
                 <h2 className={styles.galleryTitle}>{gallery.title}</h2>
-                <p className={styles.galleryDescription}>{gallery.description}</p>
+                <p className={styles.galleryDescription}>
+                  {gallery.description}
+                </p>
                 <div className={styles.galleryActions}>
-                  <Link href={`/${gallery.slug}/edit`} className={styles.openButton}>
+                  <Link
+                    href={`/${gallery.slug}/edit`}
+                    className={styles.openButton}
+                  >
                     Abrir
                   </Link>
-                  <button onClick={() => handleShareGallery(gallery.slug)} className={styles.shareButton}>Compartir</button>
+                  <button
+                    onClick={() => handleShareGallery(gallery.slug)}
+                    className={styles.shareButton}
+                  >
+                    Compartir
+                  </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
       </main>
+
+      <Modal
+        opened={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        centered
+        withCloseButton={false}
+        size="auto"
+        overlayProps={{
+          backgroundOpacity: 0.55,
+          blur: 3,
+        }}
+        style={{
+          overflow: "hidden",
+        }}
+      >
+        <NewGalleryForm modalKey={"new-gallery-modal"} />
+      </Modal>
 
       <ShareGalleryPopup
         trigger={sharePopupOpen}
