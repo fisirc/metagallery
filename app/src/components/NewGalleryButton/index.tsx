@@ -13,10 +13,15 @@ export const NewGalleryButton = () => {
           id: 'new-gallery-modal',
           centered: true,
           withCloseButton: false,
+          size: 'auto',
           overlayProps: {
             backgroundOpacity: 0.55,
             blur: 3,
           },
+          style: {
+            overflow: 'hidden',
+          },
+          pos: 'relative',
           child: (
             <NewGalleryForm modalKey={'new-gallery-modal'} />
           ),

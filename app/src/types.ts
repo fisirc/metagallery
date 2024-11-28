@@ -6,6 +6,14 @@ export interface UserContentFileElement {
   description?: string,
 }
 
+export interface TemplateListItem {
+  id: number,
+  tier: number,
+  templatefile: number,
+  title: string,
+  description: string,
+}
+
 export type SlotVertex = readonly [number, number, number];
 
 export type SlotVertices = readonly [SlotVertex, SlotVertex, SlotVertex, SlotVertex]

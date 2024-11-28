@@ -123,40 +123,6 @@ export const MetagalleryProvider = ({ children }: { children: ReactNode }) => {
                 {modal.el}
               </ModalWrapper>
             );
-            // const [isOpen, setOpened] = useState(true);
-
-            // useEffect(() => {
-            //   setOpened(true);
-            // }, []);
-
-            // const { onClose, ...props } = modal.props ?? {
-            //   opened: true,
-            //   onClose: () => { },
-            // };
-
-            // return (
-            //   <Modal
-            //     key={key}
-            //     style={{
-            //       zIndex: 69696969,
-            //     }}
-            //     opened={isOpen}
-            //     closeOnClickOutside={true}
-            //     onClose={() => {
-            //       const newModals = new Map(modals);
-            //       newModals.delete(key);
-
-            //       useMetagalleryStore.setState({
-            //         activeModals: newModals,
-            //       });
-
-            //       onClose?.();
-            //     }}
-            //     {...props}
-            //   >
-            //     {modal.el}
-            //   </Modal>
-            // );
           })
         }
       </Portal>
