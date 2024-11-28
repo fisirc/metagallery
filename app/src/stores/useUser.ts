@@ -33,7 +33,8 @@ interface MetagalleryUserState {
   }) => Promise<MetagalleryUser | null>,
   logout: () => void,
   galleries: Array<{ id: number; title: string; description: string, slug: string, templateid: number, thumbnail: string }> | null;
-  fetchGalleries: () => Promise<void>;
+  fetchUserGalleries: () => Promise<void>;
+  fetchCommunityGalleries: () => Promise<Array<{ ownerid: number; title: string; thumbnail: string, slug: string }>>;
 }
 
 const token = window.localStorage.getItem(TOKEN_LC_KEY);
@@ -134,7 +135,7 @@ export const useUser = create<MetagalleryUserState>()(
       window.localStorage.removeItem(TOKEN_LC_KEY);
       set({ user: null, loading: false, token: null });
     },
-    fetchGalleries: async () => {
+    fetchUserGalleries: async () => {
       try {
         const { token } = get();
         if (!token) throw new Error('No token available');
@@ -181,6 +182,58 @@ export const useUser = create<MetagalleryUserState>()(
       } catch (error) {
         console.error('Error fetching galleries:', error);
         set({ galleries: null });
+      }
+    },
+    fetchCommunityGalleries: async () => {
+      try {
+        const { token } = get();
+        if (!token) throw new Error('No token available');
+
+        const response = await fetch('https://pandadiestro.xyz/services/stiller/galleryall', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            token,
+          },
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch community galleries');
+
+        const galleries = await response.json();
+
+        const communityGalleriesWithThumbnails = await Promise.all(
+          galleries.map(async (gallery: any) => {
+            try {
+              const thumbnailResponse = await fetch(
+                `https://pandadiestro.xyz/services/stiller/template/info/${gallery.templateid}/thumbnail`,
+                {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    token,
+                  },
+                }
+              );
+              if (!thumbnailResponse.ok) {
+                console.warn(`Failed to fetch thumbnail for template ID ${gallery.templateid}`);
+                return { ...gallery, thumbnail: '/assets/examples/thumbnail.png' };
+              }
+
+              const blob = await thumbnailResponse.blob();
+              const thumbnail = URL.createObjectURL(blob);
+
+              return { ownerid: gallery.ownerid, title: gallery.title, thumbnail, slug: gallery.slug };
+            } catch (error) {
+              console.error(`Error fetching thumbnail for template ID ${gallery.templateid}:`, error);
+              return { ownerid: gallery.ownerid, title: gallery.title, thumbnail: '/assets/examples/thumbnail.png' };
+            }
+          })
+        );
+
+        return communityGalleriesWithThumbnails;
+      } catch (error) {
+        console.error('Error fetching community galleries:', error);
+        return [];
       }
     },
   }),

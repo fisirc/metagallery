@@ -1,14 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  Menu,
-  Search,
-  Share2,
-  Plus,
-  Layout,
-  Edit,
-  Copy,
-  Check,
-} from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, Search, Plus, Layout, Edit, Copy, Check } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { Modal, useMantineTheme } from "@mantine/core";
 import { NewGalleryForm } from "@/pages/Dashboard/components/NewGalleryForm";
@@ -89,9 +80,19 @@ export const GalleryDashboard = () => {
   const [sharePopupOpen, setSharePopupOpen] = useState(false);
   const [currentGallerySlug, setCurrentGallerySlug] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [communityGalleries, setCommunityGalleries] = useState<
+    Array<{ ownerid: number; title: string; thumbnail: string, slug: string }>
+  >([]);
+  const [showCommunityProjects, setShowCommunityProjects] = useState(false);
   const theme = useMantineTheme();
   const [, setLocation] = useLocation();
-  const { user, galleries, fetchGalleries, loading } = useUser();
+  const {
+    user,
+    galleries,
+    fetchUserGalleries: fetchGalleries,
+    fetchCommunityGalleries,
+    loading,
+  } = useUser();
 
   useEffect(() => {
     if (user) {
@@ -108,6 +109,16 @@ export const GalleryDashboard = () => {
   const handleShareGallery = (gallerySlug: string) => {
     setCurrentGallerySlug(gallerySlug);
     setSharePopupOpen(true);
+  };
+
+  const loadCommunityProjects = async () => {
+    try {
+      const communityGalleries = await fetchCommunityGalleries();
+      setCommunityGalleries(communityGalleries);
+      setShowCommunityProjects(true);
+    } catch (error) {
+      console.error("Error loading community galleries:", error);
+    }
   };
 
   if (!user || loading) {
@@ -172,46 +183,78 @@ export const GalleryDashboard = () => {
           </div>
           <div className={styles.filters}>
             <button
-              className={`${styles.filterButton} ${styles.active}`}
+              className={`${styles.filterButton} ${
+                !showCommunityProjects ? styles.active : ""
+              }`}
+              onClick={() => setShowCommunityProjects(false)}
             >
               Mis proyectos
             </button>
-            <button className={styles.filterButton}>
+            <button
+              className={`${styles.filterButton} ${
+                showCommunityProjects ? styles.active : ""
+              }`}
+              onClick={loadCommunityProjects}
+            >
               Proyectos de la comunidad
             </button>
           </div>
         </div>
 
         <div className={styles.galleryGrid}>
-          {galleries?.map((gallery) => (
-            <div key={gallery.id} className={styles.galleryCard}>
-              <img
-                src={gallery.thumbnail}
-                alt={gallery.title}
-                className={styles.galleryImage}
-              />
-              <div className={styles.galleryOverlay}>
-                <h2 className={styles.galleryTitle}>{gallery.title}</h2>
-                <p className={styles.galleryDescription}>
-                  {gallery.description}
-                </p>
-                <div className={styles.galleryActions}>
-                  <Link
-                    href={`/${gallery.slug}/edit`}
-                    className={styles.openButton}
-                  >
-                    Abrir
-                  </Link>
-                  <button
-                    onClick={() => handleShareGallery(gallery.slug)}
-                    className={styles.shareButton}
-                  >
-                    Compartir
-                  </button>
+          {showCommunityProjects
+            ? communityGalleries.map((gallery, index) => (
+                <div key={index} className={styles.galleryCard}>
+                  <img
+                    src={gallery.thumbnail}
+                    alt={gallery.title}
+                    className={styles.galleryImage}
+                  />
+                  <div className={styles.galleryOverlay}>
+                    <h2 className={styles.galleryTitle}>{gallery.title}</h2>
+                    <p className={styles.galleryDescription}>
+                      Creador: {gallery.ownerid}
+                    </p>
+                    <div className={styles.galleryActions}>
+                      <Link
+                        href={`/${gallery.slug}`}
+                        className={styles.openButton}
+                      >
+                        Visitar
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              ))
+            : galleries?.map((gallery) => (
+                <div key={gallery.id} className={styles.galleryCard}>
+                  <img
+                    src={gallery.thumbnail}
+                    alt={gallery.title}
+                    className={styles.galleryImage}
+                  />
+                  <div className={styles.galleryOverlay}>
+                    <h2 className={styles.galleryTitle}>{gallery.title}</h2>
+                    <p className={styles.galleryDescription}>
+                      {gallery.description}
+                    </p>
+                    <div className={styles.galleryActions}>
+                      <Link
+                        href={`/${gallery.slug}/edit`}
+                        className={styles.openButton}
+                      >
+                        Abrir
+                      </Link>
+                      <button
+                        onClick={() => handleShareGallery(gallery.slug)}
+                        className={styles.shareButton}
+                      >
+                        Compartir
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
         </div>
       </main>
 
@@ -240,5 +283,3 @@ export const GalleryDashboard = () => {
     </div>
   );
 };
-
-export default GalleryDashboard;
