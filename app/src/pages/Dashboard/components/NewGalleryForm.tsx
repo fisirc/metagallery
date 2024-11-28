@@ -93,6 +93,8 @@ export const NewGalleryForm = ({ modalKey }: { modalKey: string }) => {
     useMetagalleryStore.getState().closeModal(modalKey);
   });
 
+  const creationEnabled = form.values.title.length > 3 && form.values.slug.length > 3 && form.values.description.length > 3;
+
   return (
     <Stack>
       <Text size="xl" fw={700}>Crear nueva galería</Text>
@@ -133,9 +135,12 @@ export const NewGalleryForm = ({ modalKey }: { modalKey: string }) => {
           <Button
             type="submit"
             variant="primary"
-            // disabled={!form.isDirty()}
-            // disabled={!form.isDirty()}
-            bg={form.isDirty() ? 'black' : 'gray.7'}
+            disabled={!creationEnabled}
+            bg={
+              creationEnabled
+                ? 'black'
+                : 'gray.7'
+            }
           >
             Crear galería
           </Button>
