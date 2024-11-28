@@ -58,11 +58,11 @@ func PostGalleryNew(w http.ResponseWriter, r *http.Request, params httprouter.Pa
     newgallery_query, newgallery_args := newgallery_stmt.String(), newgallery_stmt.Args()
 
     dbconn, dbconn_err := dbutils.NewConn()
-    if loggers.RequestLog(dbconn_err, "", http.StatusConflict, &w) {
+    defer dbutils.CloseConn(dbconn)
+
+    if loggers.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
         return
     }
-
-    defer dbutils.CloseConn(dbconn)
 
     newgallery_id := int(-1)
     exec_err := sqlitex.ExecuteTransient(dbconn, newgallery_query, &sqlitex.ExecOptions{
@@ -74,7 +74,7 @@ func PostGalleryNew(w http.ResponseWriter, r *http.Request, params httprouter.Pa
         Args: newgallery_args,
     })
 
-    if loggers.RequestLog(exec_err, "", http.StatusBadRequest, &w) {
+    if loggers.RequestLog(exec_err, "", http.StatusConflict, &w) {
         return
     }
 
