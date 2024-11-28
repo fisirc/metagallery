@@ -129,7 +129,7 @@ export const MetagalleryProvider = ({ children }: { children: ReactNode }) => {
       {children}
       <ReactConfetti
         numberOfPieces={showingConfetti ? 200 : 0}
-        width={width}
+        width={width - 24}
         height={height}
       />
     </>
