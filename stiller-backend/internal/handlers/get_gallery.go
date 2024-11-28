@@ -39,7 +39,7 @@ func GetGallery(w http.ResponseWriter, r *http.Request, params httprouter.Params
     get_galleries := sqlf.
         Select("*").
         From("gallery").
-        Where("owner_id = ?", user_id)
+        Where("owner = ?", user_id)
 
     galleries := make([]dbutils.StillerGallery, 0, 2)
     exec_err := sqlitex.ExecuteTransient(new_dbconn, get_galleries.String(), &sqlitex.ExecOptions{
