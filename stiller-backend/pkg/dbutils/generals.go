@@ -81,7 +81,8 @@ func GetGalleryData(gallery int) (*StillerGalleryData, error) {
 
     qslot_iter_stmt := sqlf.
         Select("*").
-        From("galleryslot")
+        From("galleryslot").
+        Where("gallery = ?", gallery)
 
     slots := make([]StillerGallerySlot, 0, len(template_data.Slots))
     slots_err := sqlitex.ExecuteTransient(new_dbconn, qslot_iter_stmt.String(), &sqlitex.ExecOptions{
