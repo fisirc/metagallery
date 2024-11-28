@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"stiller/pkg/jwt"
 	"stiller/pkg/loggers"
 	"stiller/pkg/netwrappers"
 	"stiller/pkg/templates"
@@ -13,12 +12,6 @@ import (
 
 func GetTemplateInfo(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
     if netwrappers.CORS(w, r) {
-        return
-    }
-
-    user_token := r.Header.Get("token")
-    _, token_decode_err := jwt.Decode(user_token)
-    if loggers.RequestLog(token_decode_err, "", http.StatusUnauthorized, &w) {
         return
     }
 
