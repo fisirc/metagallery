@@ -8,8 +8,10 @@ import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
 import { useTranslation, Trans } from 'react-i18next';
 import { Grab } from 'lucide-react';
 import ThemeSwitcher from '@/components/DarkerMode/themeSwitcher';
+import { usePopupContext } from './PopUpContext';
 
 export const Header = () => {
+  const { isRegisterPopupOpen, closeRegisterPopup } = usePopupContext();
   const { t } = useTranslation();
   const [loginPopup, setLoginPopup] = useState(false);
   const [registerPopup, setRegisterPopup] = useState(false);
@@ -159,7 +161,7 @@ export const Header = () => {
           {t('call_to_action')}
         </Button>
 
-        <Popup trigger={registerPopup} setTrigger={resetRegisterFlow}>
+        <Popup trigger={isRegisterPopupOpen} setTrigger={closeRegisterPopup}>
           {registerStep === 1 ? (
             <>
               <h3 className={popupStyles.title}>Registro de usuario</h3>

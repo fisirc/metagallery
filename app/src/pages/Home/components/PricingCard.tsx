@@ -1,4 +1,5 @@
 import Button from './Button';
+import { usePopupContext } from './PopUpContext';
 import styles from './PricingCard.module.css';
 import { useTranslation, Trans } from 'react-i18next';
 
@@ -9,7 +10,9 @@ interface PricingCardProps {
 }
 
 const PricingCard = ({ title, price, features }: PricingCardProps) => {
+  const { openRegisterPopup } = usePopupContext();
   const { t } = useTranslation();
+
   return (
     <div className={styles.card}>
       <h3 className={styles.title}>{title}</h3>
@@ -19,7 +22,7 @@ const PricingCard = ({ title, price, features }: PricingCardProps) => {
           <li key={index} className={styles.feature}>{feature}</li>
         ))}
       </ul>
-      <Button variant="primary" className={styles.button}>
+      <Button variant="primary" className={styles.button} onClick={openRegisterPopup}>
         {t('call_to_action')}
       </Button>
     </div>
