@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Group, Button } from '@mantine/core';
+import { Group, Button, useMantineTheme, useMantineColorScheme } from '@mantine/core';
 import { IconShare, IconPlayerPlay, IconPlayerStop } from '@tabler/icons-react';
 import { primaryIconProps } from '@/constants';
 import { DeployModal } from './modals/DeployModal';
@@ -12,18 +12,14 @@ export const MainButtons = ({ onPreviewButton, closePreviewButton, isPreviewing 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === 'dark';
+
   const handleDeploy = async () => {
     setLoading(true);
     setError(null);
     try {
-      // const response = await fetch('/api/deploy', { method: 'POST' });
-      //if (response.ok) {
       setModalOpen(false);
-      // confetti(); 
-      //} else {
-      //const errorData = await response.json();
-      //setError(errorData.message || 'Error al desplegar');
-      //}
     } catch (e) {
       setError('No se pudo conectar con el servidor');
     } finally {
@@ -38,7 +34,7 @@ export const MainButtons = ({ onPreviewButton, closePreviewButton, isPreviewing 
         <Button
           leftSection={<IconShare {...primaryIconProps} />}
           onClick={() => setModalOpen(true)}
-          color="blue"
+          color="black"
           variant="outline"
           style={{ color: 'var(--mantine-color-black-7)', borderColor: 'var(--mantine-color-black-7)' }}
         >
@@ -55,11 +51,12 @@ export const MainButtons = ({ onPreviewButton, closePreviewButton, isPreviewing 
           </Button>
         ) : (
           <Button
-            variant="outline"
             style={{
-              color: 'var(--mantine-color-white-7)',
-              borderColor: 'var(--mantine-color-black-7)',
+              backgroundColor: dark ? 'white' : 'black',
+              color: dark ? 'black' : 'white',            
+              border: 'none',                             
             }}
+            variant="filled" 
             onClick={onPreviewButton}
             leftSection={<IconPlayerPlay {...primaryIconProps} />}
           >

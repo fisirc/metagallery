@@ -1,6 +1,6 @@
 import Konva from 'konva';
 import useImage from 'use-image';
-import { Box } from '@mantine/core';
+import { Box, useMantineColorScheme } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
 import { Image, Layer, Rect, Stage } from 'react-konva';
 import { setCursor } from '@/utils';
@@ -30,6 +30,9 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
 
   const [topViewUrl, setTopViewUrl] = useState('');
   const [image,] = useImage(topViewUrl);
+
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === 'dark';
 
   const handleViewportResize = () => {
     const bounds = document.getElementById('canvas')?.getBoundingClientRect();
@@ -63,7 +66,7 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
       mb="16px"
       mih="100%"
       bd="1px solid var(--mantine-color-gray-4)"
-      bg={draggingElem ? '#d8d8d8' : '#e4e4e4'}
+      bg={draggingElem ? (dark ? '#555555' : '#d8d8d8') : (dark ? '#333333' : '#e4e4e4')}
       style={{
         borderRadius: 'var(--mantine-radius-md)',
         overflow: 'hidden',

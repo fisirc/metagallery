@@ -9,6 +9,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { Grab } from 'lucide-react';
 import ThemeSwitcher from '@/components/DarkerMode/themeSwitcher';
 import { usePopupContext } from './PopUpContext';
+import { useMantineColorScheme } from '@mantine/core';
 
 export const Header = () => {
   const { isRegisterPopupOpen, closeRegisterPopup } = usePopupContext();
@@ -28,6 +29,9 @@ export const Header = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
+
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === 'dark';
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

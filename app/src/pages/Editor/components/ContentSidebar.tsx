@@ -8,6 +8,7 @@ import {
   TextInput,
   ScrollArea,
   FileButton,
+  useMantineColorScheme,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { IconSearch, IconUpload } from '@tabler/icons-react';
@@ -120,6 +121,8 @@ const ContentMasonry = ({ filterInput }: { filterInput: string }) => {
 const SidebarContent = () => {
   const [filterInput, setFilterInput] = useState('');
   const queryClient = useQueryClient();
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === 'dark';
 
   const uploadFileMutation = useMutation({
     mutationFn: (data: UploadImagePayload) => {
@@ -178,7 +181,11 @@ const SidebarContent = () => {
         flex={1}
         bg="gray.1"
         p={8}
-        style={{ borderRadius: 'var(--mantine-radius-md)' }}
+        style={{
+          borderRadius: 'var(--mantine-radius-md)',
+          backgroundColor: dark ? 'black' : '#e5e5e5',
+          color: dark ? '#e5e5e5' : 'black', 
+        }}
       >
         <ContentMasonry filterInput={filterInput} />
       </ScrollArea>
