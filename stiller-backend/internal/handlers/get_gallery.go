@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"stiller/pkg/dbutils"
 	"stiller/pkg/jwt"
@@ -15,6 +16,7 @@ import (
 )
 
 func GetGallery(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+    log.Println("[info] GET /gallery/")
     if netwrappers.CORS(w, r) {
         return
     }

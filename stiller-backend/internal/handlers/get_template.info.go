@@ -26,6 +26,11 @@ func GetTemplateInfo(w http.ResponseWriter, r *http.Request, params httprouter.P
     case "data", "scene", "thumbnail", "topview":
         templates.WriteTemplateSubfile(w, metatemplate_field, template_id)
 
+    // if fieldnamae is topview add header image/svg+xml
+    if metatemplate_field == "topview" {
+        w.Header().Add("Content-Type", "image/svg+xml")
+    }
+
     default:
         loggers.RequestLog(nil, "not a valid field", http.StatusNotFound, &w)
         return
