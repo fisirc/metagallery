@@ -27,7 +27,7 @@ export const Experience = ({ gallery }: { gallery: string }) => {
       {/* <axesHelper args={[10]} /> */}
       {
         response && response.data.slots.slots.map((slot) => {
-          const res = slot.res == 0 ? `https://pandadiestro.xyz/services/stiller/file/dl/${slot.res}` : null;
+          const res = slot.res !== 0 ? `https://pandadiestro.xyz/services/stiller/file/dl/${slot.res}` : null;
 
           if (slot.type == '2d') {
             return (
