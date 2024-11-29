@@ -9,7 +9,7 @@ import { CORNER_RADIUS, FRAME_STROKE_WIDTH, noImageSrc } from '@/constants';
 import { JSONValue, SlotVertices } from '@/types';
 import { cosine, getFrameAngle, getFrameHeight, getFrameWidth, sine, v3tov2 } from '@/pages/Editor/utils';
 import { mutate } from 'swr';
-import { galleryResponse } from '@/hooks/useApi';
+import { useUser } from '@/stores/useUser';
 
 type PictureSlotProps = {
   idRef: string,
@@ -33,7 +33,9 @@ export const PictureSlot = ({ idRef, v, res, props }: PictureSlotProps) => {
     useEditorStore.getState().setDraggingFileVisible(true);
   }
 
-  const [image] = useImage(src ?? noImageSrc);
+  const [optimisticImgSrc, setOptimisticImgSrc] = useState<string | null>(null);
+
+  const [image] = useImage(src ?? optimisticImgSrc ?? noImageSrc);
 
   const pos = v3tov2(v[2]);
   const rotation = getFrameAngle(v);
@@ -80,17 +82,28 @@ export const PictureSlot = ({ idRef, v, res, props }: PictureSlotProps) => {
             child: <Text>Hawk tuah!</Text>
           });
         }}
-        onMouseUp={() => {
+        onMouseUp={async () => {
           const dropped = hovering && dragging;
 
           if (dropped) {
-            for (let e of galleryResponse.slots) {
-              if (e.ref === idRef) {
-                e.res = draggingElem.url;
-              }
-            }
+            setOptimisticImgSrc(draggingElem.url);
+            const response = await fetch('https://pandadiestro.xyz/services/stiller/gallery/slot', {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+                'token': useUser.getState().token ?? 'invalid-token',
+              },
+              body: JSON.stringify({
+                gallery: gallery,
+                ref: idRef,
+                title: draggingElem.title,
+                description: draggingElem.description,
+                res: draggingElem.id,
+              }),
+            });
+            console.log('UPDATING TO', draggingElem.id, 'MUTATING', `/gallery/${gallery}`)
+            mutate(`/gallery/${gallery}`);
           }
-          mutate(`gallery/${gallery}`);
         }}
         onMouseEnter={() => {
           setHovering(true);

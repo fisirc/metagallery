@@ -37,7 +37,7 @@ const mockedUserMedia = [
     },
 ] satisfies Array<UserContentFileElement>;
 
-export const galleryResponse = {
+const galleryResponse = {
     "origin": [-7.8, -4.34],
     "slots": [
         {

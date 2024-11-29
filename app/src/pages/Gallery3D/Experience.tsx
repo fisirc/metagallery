@@ -1,7 +1,7 @@
 import { Perf } from 'r3f-perf';
 import Ecctrl, { } from 'ecctrl';
 import { KeyboardControls, Sky, Sparkles } from '@react-three/drei';
-import { galleryResponse, useApi } from '@/hooks/useApi';
+import { useApi } from '@/hooks/useApi';
 import { SceneRoom } from './components/gallery/Scene';
 import { BallCollider, Physics } from '@react-three/rapier';
 import { useEffect, useState } from 'react';

@@ -9,7 +9,7 @@ import { useEditorStore } from '@/stores/editorAction';
 import { PictureSlot } from '@/pages/Editor/components/blocks/PictureSlot';
 import { Model3DSlot } from '@/pages/Editor/components/blocks/Model3DBlock';
 import { getInitialScale, getInitialXY, saveScaleToLocalStorage, saveXYToLocalStorage } from '../utils';
-import { galleryResponse, useApi } from '@/hooks/useApi';
+import { useApi } from '@/hooks/useApi';
 import { StillerGallery } from '@/types';
 
 const initialScale = getInitialScale();
@@ -55,6 +55,8 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
       setTopViewUrl(`https://pandadiestro.xyz/services/stiller/template/info/${response.data.templateid}/topview`);
     }
   }, [response]);
+
+  console.log(response?.data.slots.slots)
 
   return (
     <Box
@@ -108,7 +110,7 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
         <Layer scale={SLOTS_SCALE} offsetX={response?.data.slots.origin[0]} offsetY={response?.data.slots.origin[1]}>
           {
             response && response.data.slots.slots.map((block, i) => {
-              const res = block.res == 0 ? `https://pandadiestro.xyz/services/stiller/file/dl/${block.res}` : null;
+              const res = block.res !== 0 ? `https://pandadiestro.xyz/services/stiller/file/dl/${block.res}` : null;
 
               if (block.type == '2d') {
                 return (
