@@ -30,12 +30,12 @@ var routes = [...]individualHandler{
         handlefunc: handlers.PostTemplateNew,
     },
     {
-        path: "/gallery",
+        path: "/gallery/:slug",
         method: http.MethodGet,
-        handlefunc: handlers.GetGallery,
+        handlefunc: handlers.GetGalleryDetail,
     },
     {
-        path: "/gallery/:slug",
+        path: "/gallery",
         method: http.MethodGet,
         handlefunc: handlers.GetGallery,
     },
