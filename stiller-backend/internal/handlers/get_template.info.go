@@ -34,7 +34,7 @@ func GetTemplateInfo(w http.ResponseWriter, r *http.Request, params httprouter.P
     case "data", "scene", "thumbnail", "topview":
         templates.WriteTemplateSubfile(w, metatemplate_field, template_id)
         // if fieldnamae is topview add header image/svg+xml
-        w.Header().Add("Content-Type", ContentTypes[metatemplate_field])
+        w.Header().Set("Content-Type", ContentTypes[metatemplate_field])
         log.Println("[info] Adding content-type ", ContentTypes[metatemplate_field])
 
     default:
