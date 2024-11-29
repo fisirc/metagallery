@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"stiller/pkg/loggers"
 	"stiller/pkg/netwrappers"
@@ -9,6 +10,13 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 )
+
+var ContentTypes = map[string]string {
+    "data": "application/json",
+    "scene": "model/gltf-binary",
+    "thumbnail": "image/png",
+    "topview": "image/svg+xml",
+}
 
 func GetTemplateInfo(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
     if netwrappers.CORS(w, r) {
@@ -25,11 +33,9 @@ func GetTemplateInfo(w http.ResponseWriter, r *http.Request, params httprouter.P
     switch metatemplate_field {
     case "data", "scene", "thumbnail", "topview":
         templates.WriteTemplateSubfile(w, metatemplate_field, template_id)
-
-    // if fieldnamae is topview add header image/svg+xml
-    if metatemplate_field == "topview" {
-        w.Header().Add("Content-Type", "image/svg+xml")
-    }
+        // if fieldnamae is topview add header image/svg+xml
+        w.Header().Add("Content-Type", ContentTypes[metatemplate_field])
+        log.Println("[info] Adding content-type ", ContentTypes[metatemplate_field])
 
     default:
         loggers.RequestLog(nil, "not a valid field", http.StatusNotFound, &w)
