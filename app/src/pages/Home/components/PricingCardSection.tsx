@@ -1,39 +1,41 @@
 import PricingCard from './PricingCard';
 import styles from './PricingSection.module.css';
+import { useTranslation, Trans } from 'react-i18next';
 
 const PricingSection = () => {
+  const { t } = useTranslation();
   const pricingPlans = [
     {
-      title: 'Da Vinci',
-      price: 'FREE',
+      title: t('davinci_title'),
+      price: t('davinci_price'),
       features: [
-        '• Soporte para subir archivos 2D (PNG, JPG)',
-        '• Acceso a plantillas gratuitas',
-        '• Enlace para compartir tu galería',
-        '• 1GB de almacenamiento',
+        t('davinci_feature1'),
+        t('davinci_feature2'),
+        t('davinci_feature3'),
+        t('davinci_feature4'),
+      ]
+    },
+    {
+      title: t('vangogh_title'),
+      price: t('vangogh_price'),
+      features: [
+        t('vangogh_feature1'),
+        t('vangogh_feature2'),
+        t('vangogh_feature3'),
+        t('vangogh_feature4'),
+        t('vangogh_feature5'),
       ],
     },
     {
-      title: 'Van Gogh',
-      price: 'USD 6/month',
+      title: t('picasso_title'),
+      price: t('picasso_price'),
       features: [
-        '• Soporte para subir archivos 2D (PNG, JPG) y 3D (.OBJ, .FBX)',
-        '• Personalización de elementos dentro de la galería',
-        '• Enlace personalizable para compartir la galería',
-        '• 50GB de almacenamiento',
-        '• Acceso a plantillas premium',
-      ],
-    },
-    {
-      title: 'Picasso',
-      price: 'USD 15/month',
-      features: [
-        '• Soporte para subir archivos 2D (PNG, JPG) y 3D (BLENDER, OBJ, FBX)',
-        '• Personalización de elementos dentro de la galería',
-        '• Enlace personalizable para compartir la galería',
-        '• Almacenamiento ilimitado',
-        '• Acceso a plantillas premium',
-        '• Mayor visibilidad en la comunidad',
+        t('picasso_feature1'),
+        t('picasso_feature2'),
+        t('picasso_feature3'),
+        t('picasso_feature4'),
+        t('picasso_feature5'),
+        t('picasso_feature6'),
       ],
     },
   ];
@@ -41,9 +43,11 @@ const PricingSection = () => {
   return (
     <section className={styles.pricingSection}>
       <div className={styles.contentContainer}>
-        <h2 className={styles.title}>Crea tu galería hoy mismo</h2>
+        <h2 className={styles.title}>
+          {t('pricing_title')}
+        </h2>
         <p className={styles.description}>
-          Crea tu propia galería virtual, exhibe tus obras o descubre las de otros artistas. Interactúa con una comunidad creativa, conecta con compradores interesados y transforma tu visión en una experiencia visual única
+        {t('pricing_description')}
         </p>
         <div className={styles.cardContainer}>
           {pricingPlans.map((plan, index) => (

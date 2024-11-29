@@ -5,8 +5,11 @@ import Popup from './PopUp/Popup';
 import popupStyles from './PopUp/Popup.module.css';
 import { useUser } from '@/stores/useUser';
 import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
+import { useTranslation, Trans } from 'react-i18next';
+import { Grab } from 'lucide-react';
 
 export const Header = () => {
+  const { t } = useTranslation();
   const [loginPopup, setLoginPopup] = useState(false);
   const [registerPopup, setRegisterPopup] = useState(false);
   const [loginStep, setLoginStep] = useState(1);
@@ -79,10 +82,12 @@ export const Header = () => {
     <header className={styles.header}>
       <h1 className={styles.title}>Metagallery</h1>
       <p className={styles.description}>
-        Crea tu propia galería virtual, exhibe tus obras o descubre las de otros artistas. Interactúa con una comunidad creativa, conecta con compradores interesados y transforma tu visión en una experiencia visual única. ¡Únete y lleva tus creaciones a un nuevo nivel de interacción!
+          {t('landing_description')}
       </p>
       <div className={styles.buttonGroup}>
-        <Button variant="secondary" size="large" onClick={() => setLoginPopup(true)}>Iniciar sesión</Button>
+        <Button variant="secondary" size="large" onClick={() => setLoginPopup(true)}>
+          {t('login')}
+        </Button>
 
         <Popup trigger={loginPopup} setTrigger={resetLoginFlow}>
           {loginStep === 1 ? (
@@ -149,7 +154,9 @@ export const Header = () => {
 
         <Button variant="primary" size="large" onClick={() => {
           setRegisterPopup(true);
-        }}>Comienza ahora</Button>
+        }}>
+          {t('call_to_action')}
+        </Button>
 
         <Popup trigger={registerPopup} setTrigger={resetRegisterFlow}>
           {registerStep === 1 ? (

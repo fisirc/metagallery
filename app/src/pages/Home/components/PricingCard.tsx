@@ -1,5 +1,6 @@
 import Button from './Button';
 import styles from './PricingCard.module.css';
+import { useTranslation, Trans } from 'react-i18next';
 
 interface PricingCardProps {
   title: string;
@@ -8,6 +9,7 @@ interface PricingCardProps {
 }
 
 const PricingCard = ({ title, price, features }: PricingCardProps) => {
+  const { t } = useTranslation();
   return (
     <div className={styles.card}>
       <h3 className={styles.title}>{title}</h3>
@@ -17,7 +19,9 @@ const PricingCard = ({ title, price, features }: PricingCardProps) => {
           <li key={index} className={styles.feature}>{feature}</li>
         ))}
       </ul>
-      <Button variant="primary" className={styles.button}>Comienza ahora</Button>
+      <Button variant="primary" className={styles.button}>
+        {t('call_to_action')}
+      </Button>
     </div>
   );
 };

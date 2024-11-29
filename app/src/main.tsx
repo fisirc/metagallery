@@ -1,4 +1,5 @@
 import ReactDOM from 'react-dom/client';
+import './i18n.js';
 import { MantineProvider } from '@mantine/core';
 import { theme } from '@/theme/index';
 import App from './App';
