@@ -183,8 +183,9 @@ const SidebarContent = () => {
         p={8}
         style={{
           borderRadius: 'var(--mantine-radius-md)',
-          backgroundColor: dark ? 'black' : '#e5e5e5',
-          color: dark ? '#e5e5e5' : 'black', 
+          backgroundColor: dark ? '#333333' : '#e5e5e5',
+          color: dark ? '#e5e5e5' : '#333333', 
+          border: '1px solid var(--mantine-color-gray-4)',
         }}
       >
         <ContentMasonry filterInput={filterInput} />

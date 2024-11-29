@@ -128,7 +128,7 @@ export const GalleryDashboard = () => {
   }
 
   return (
-    <div className={styles.container} style={{ backgroundColor: dark ? 'black' : 'white' }}>
+    <div className={styles.container} style={{ backgroundColor: dark ? '#242424' : 'white' }}>
       {isSidebarOpen && (
         <div
           className={styles.overlay}
@@ -141,8 +141,8 @@ export const GalleryDashboard = () => {
       <div
         className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : ""}`}
         style={{
-          backgroundColor: dark ? 'black' : 'white',
-          color: dark ? 'white' : 'black',
+          backgroundColor: dark ? '#242424' : 'white',
+          color: dark ? 'white' : '#242424',
         }}
       >
         <div className={styles.sidebarContent}>
@@ -152,7 +152,7 @@ export const GalleryDashboard = () => {
               className={styles.sidebarButton}
               onClick={() => setIsModalOpen(true)}
               style={{
-                color: showCommunityProjects ? (dark ? 'black' : 'white') : (dark ? 'white' : 'black'),
+                color: showCommunityProjects ? (dark ? '#242424' : 'white') : (dark ? 'white' : '#242424'),
               }}
             >
               <Plus className={styles.sidebarIcon} />
@@ -161,19 +161,19 @@ export const GalleryDashboard = () => {
             <button
               className={styles.sidebarButton}
               style={{
-                color: showCommunityProjects ? (dark ? 'black' : 'white') : (dark ? 'white' : 'black'),
+                color: showCommunityProjects ? (dark ? '#242424' : 'white') : (dark ? 'white' : '#242424'),
               }}
             >
-              <Layout className={styles.sidebarIcon} style={{ color: dark ? 'white' : 'black' }} />
+              <Layout className={styles.sidebarIcon} style={{ color: dark ? 'white' : '#242424' }} />
               <span>Desplegar Galería</span>
             </button>
             <button
               className={styles.sidebarButton}
               style={{
-                color: showCommunityProjects ? (dark ? 'black' : 'white') : (dark ? 'white' : 'black'),
+                color: showCommunityProjects ? (dark ? '#242424' : 'white') : (dark ? 'white' : '#242424'),
               }}
             >
-              <Edit className={styles.sidebarIcon} style={{ color: dark ? 'white' : 'black' }} />
+              <Edit className={styles.sidebarIcon} style={{ color: dark ? 'white' : '#242424' }} />
               <span>Editar Galería</span>
             </button>
           </nav>
@@ -183,13 +183,13 @@ export const GalleryDashboard = () => {
       <header
         className={styles.header}
         style={{
-          backgroundColor: dark ? 'black' : 'white',
-          color: dark ? 'white' : 'black',
+          backgroundColor: dark ? '#242424' : 'white',
+          color: dark ? 'white' : '#242424',
         }}
       >
         <div className={styles.headerContent}>
           <button onClick={toggleSidebar} className={styles.menuButton}>
-            <Menu className={styles.menuIcon} style={{ color: dark ? 'white' : 'black' }} />
+            <Menu className={styles.menuIcon} style={{ color: dark ? 'white' : '#242424' }} />
             <span className={styles.srOnly}>Dashboard</span>
           </button>
           <div style={{ display: 'flex', gap: '24px' }}>
@@ -203,15 +203,15 @@ export const GalleryDashboard = () => {
         <div className={styles.profileSection}>
           <h1 className={styles.profileName}>{user.displayname}</h1>
           <div className={styles.searchContainer}>
-            <Search className={styles.searchIcon} style={{ color: dark ? 'white' : 'black' }} />
+            <Search className={styles.searchIcon} style={{ color: dark ? 'white' : '#242424' }} />
             <input
               type="search"
               placeholder="¿Qué estás buscando?"
               className={styles.searchInput}
               style={{
-                backgroundColor: dark ? 'black' : 'white',
-                color: dark ? 'white' : 'black',
-                borderColor: dark ? 'white' : 'black',
+                backgroundColor: dark ? '#242424' : 'white',
+                color: dark ? 'white' : '#242424',
+                borderColor: dark ? 'white' : '#242424',
               }}
             />
           </div>
@@ -220,7 +220,7 @@ export const GalleryDashboard = () => {
               className={`${styles.filterButton} ${!showCommunityProjects ? styles.active : ''}`}
               onClick={() => setShowCommunityProjects(false)}
               style={{
-                color: showCommunityProjects ? (dark ? 'white' : 'black') : (dark ? 'black' : 'white'),
+                color: showCommunityProjects ? (dark ? 'white' : '#242424') : (dark ? '#242424' : 'white'),
               }}
             >
               Mis proyectos
@@ -229,7 +229,7 @@ export const GalleryDashboard = () => {
               className={`${styles.filterButton} ${showCommunityProjects ? styles.active : ''}`}
               onClick={loadCommunityProjects}
               style={{
-                color: showCommunityProjects ? (dark ? 'black' : 'white') : (dark ? 'white' : 'black'),
+                color: showCommunityProjects ? (dark ? '#242424' : 'white') : (dark ? 'white' : '#242424'),
               }}
             >
               Proyectos de la comunidad
@@ -244,8 +244,8 @@ export const GalleryDashboard = () => {
                 key={index}
                 className={styles.galleryCard}
                 style={{
-                  backgroundColor: dark ? 'black' : 'white',
-                  color: dark ? 'white' : 'black',
+                  backgroundColor: dark ? '#242424' : 'white',
+                  color: dark ? 'white' : '#242424',
                 }}
               >
                 <img
@@ -263,8 +263,8 @@ export const GalleryDashboard = () => {
                       href={`/${gallery.slug}`}
                       className={styles.openButton}
                       style={{
-                        backgroundColor: dark ? 'black' : 'white',
-                        color: dark ? 'white' : 'black',
+                        backgroundColor: dark ? '#242424' : 'white',
+                        color: dark ? 'white' : '#242424',
                       }}
                     >
                       Visitar
@@ -278,8 +278,8 @@ export const GalleryDashboard = () => {
                 key={gallery.id}
                 className={styles.galleryCard}
                 style={{
-                  backgroundColor: dark ? 'black' : 'white',
-                  color: dark ? 'white' : 'black',
+                  backgroundColor: dark ? '#242424' : 'white',
+                  color: dark ? 'white' : '#242424',
                 }}
               >
                 <img

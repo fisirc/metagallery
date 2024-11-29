@@ -30,9 +30,6 @@ export const Header = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
 
-  const { colorScheme } = useMantineColorScheme();
-  const dark = colorScheme === 'dark';
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
