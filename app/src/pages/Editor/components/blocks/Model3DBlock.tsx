@@ -46,7 +46,7 @@ export const Model3DSlot = ({ idRef, v, res, props }: Model3DBlockProps) => {
       const data: UserContentFileElement[] = await res.json();
 
       for (let e of data) {
-        e.url = `https://pandadiestro.xyz/services/stiller/${e.url}`;
+        e.url = `https://pandadiestro.xyz/services/stiller/file/dl/${e.id}/`;
       }
 
       return data;

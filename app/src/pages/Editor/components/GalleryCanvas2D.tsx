@@ -111,7 +111,7 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
         <Layer scale={SLOTS_SCALE} offsetX={response?.data.slots.origin[0]} offsetY={response?.data.slots.origin[1]}>
           {
             response && response.data.slots.slots.map((block, i) => {
-              const res = block.res !== 0 ? `https://pandadiestro.xyz/services/stiller/file/dl/${block.res}` : null;
+              const res = block.res !== 0 ? `https://pandadiestro.xyz/services/stiller/file/dl/${block.res}/` : null;
 
               if (block.type == '2d') {
                 return (

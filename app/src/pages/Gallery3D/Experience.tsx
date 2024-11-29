@@ -17,17 +17,16 @@ export const Experience = ({ gallery }: { gallery: string }) => {
   useEffect(() => {
     window.setTimeout(() => {
       setGravityEnabled(true);
-    }, 1000);
+    }, 10000);
   }, [])
 
   return (
     <>
       <Perf position="top-right" minimal />
       <ambientLight intensity={0.6} />
-      {/* <axesHelper args={[10]} /> */}
       {
         response && response.data.slots.slots.map((slot) => {
-          const res = slot.res !== 0 ? `https://pandadiestro.xyz/services/stiller/file/dl/${slot.res}` : null;
+          const res = slot.res !== 0 ? `https://pandadiestro.xyz/services/stiller/file/dl/${slot.res}/` : null;
 
           if (slot.type == '2d') {
             return (
@@ -39,11 +38,13 @@ export const Experience = ({ gallery }: { gallery: string }) => {
             );
           }
           if (slot.type == '3d') {
+            console.log(slot.v[0])
             return (
               <DynamicSculpture
                 key={slot.ref}
-                position={slot.v[0] as any}
-                glbUrl="/assets/3d/chihiro.glb"
+                position={slot.v[0]}
+                glbUrl={res ?? "/assets/3d/invisible.glb"}
+                // glbUrl="/assets/3d/chihiro.glb"
                 rotation={[0, Math.PI / 4, 0]}
                 scale={[slot.props.scale, slot.props.scale, slot.props.scale] as any}
                 rotate={slot.props.rotate as boolean}

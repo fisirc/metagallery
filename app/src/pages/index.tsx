@@ -60,6 +60,8 @@ export const routes = [
       if (handle.startsWith('@')) {
         return <div>User {handle}</div>;
       }
+
+      useEditorStore.setState({ gallery: handle });
       return <Gallery3D gallery={handle}></Gallery3D>;
     },
   },

@@ -51,7 +51,7 @@ export const UserButton = () => {
             borderRadius: 'var(--mantine-radius-sm)',
           }}
         >
-          <Group gap="xs" mr={4}>
+          <Group gap="xs" mr={4} wrap='nowrap'>
             <Avatar
               src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
               radius="xl"
