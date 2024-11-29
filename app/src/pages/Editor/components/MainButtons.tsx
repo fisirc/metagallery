@@ -3,6 +3,7 @@ import { Group, Button } from '@mantine/core';
 import { IconShare, IconPlayerPlay, IconPlayerStop } from '@tabler/icons-react';
 import { primaryIconProps } from '@/constants';
 import { DeployModal } from './modals/DeployModal';
+import ThemeSwitcher from '@/components/DarkerMode/themeSwitcher';
 
 type Props = { onPreviewButton: () => void; closePreviewButton: () => void; isPreviewing: boolean };
 
@@ -17,11 +18,11 @@ export const MainButtons = ({ onPreviewButton, closePreviewButton, isPreviewing 
     try {
       // const response = await fetch('/api/deploy', { method: 'POST' });
       //if (response.ok) {
-        setModalOpen(false);
-        // confetti(); 
+      setModalOpen(false);
+      // confetti(); 
       //} else {
-        //const errorData = await response.json();
-        //setError(errorData.message || 'Error al desplegar');
+      //const errorData = await response.json();
+      //setError(errorData.message || 'Error al desplegar');
       //}
     } catch (e) {
       setError('No se pudo conectar con el servidor');
@@ -33,9 +34,13 @@ export const MainButtons = ({ onPreviewButton, closePreviewButton, isPreviewing 
   return (
     <>
       <Group gap="xs" wrap="nowrap">
+        <ThemeSwitcher />
         <Button
           leftSection={<IconShare {...primaryIconProps} />}
           onClick={() => setModalOpen(true)}
+          color="blue"
+          variant="outline"
+          style={{ color: 'var(--mantine-color-black-7)', borderColor: 'var(--mantine-color-black-7)' }}
         >
           Deploy
         </Button>
@@ -50,7 +55,11 @@ export const MainButtons = ({ onPreviewButton, closePreviewButton, isPreviewing 
           </Button>
         ) : (
           <Button
-            variant="primary"
+            variant="outline"
+            style={{
+              color: 'var(--mantine-color-white-7)',
+              borderColor: 'var(--mantine-color-black-7)',
+            }}
             onClick={onPreviewButton}
             leftSection={<IconPlayerPlay {...primaryIconProps} />}
           >

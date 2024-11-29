@@ -7,6 +7,7 @@ import { useUser } from '@/stores/useUser';
 import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
 import { useTranslation, Trans } from 'react-i18next';
 import { Grab } from 'lucide-react';
+import ThemeSwitcher from '@/components/DarkerMode/themeSwitcher';
 
 export const Header = () => {
   const { t } = useTranslation();

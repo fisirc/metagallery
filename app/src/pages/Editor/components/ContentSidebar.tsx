@@ -192,6 +192,11 @@ const SidebarContent = () => {
               size="sm"
               leftSection={<IconUpload {...primaryIconProps} />}
               {...props}
+              variant="outline"
+              style={{
+                color: 'var(--mantine-color-white-7)',
+                borderColor: 'var(--mantine-color-black-7)',
+              }}
             >
               Añadir contenido
             </Button>

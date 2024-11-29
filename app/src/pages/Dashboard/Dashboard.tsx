@@ -157,7 +157,7 @@ export const GalleryDashboard = () => {
         </div>
       </div>
 
-      <header className={styles.header} style={{ backgroundColor: theme.white }}>
+      <header className={styles.header} style={{ backgroundColor: theme.colors.gray[0] }}>
         <div className={styles.headerContent}>
           <button onClick={toggleSidebar} className={styles.menuButton}>
             <Menu className={styles.menuIcon} />
