@@ -19,7 +19,7 @@ func PatchGallerySlot(w http.ResponseWriter, r *http.Request, _ httprouter.Param
     }
 
     type ReqPayload struct {
-        Gallery     int     `json:"gallery"`
+        Gallery     string     `json:"gallery"`
         Ref         string  `json:"ref"`
         Res         *int    `json:"res"`
         Title       *string `json:"title"`
