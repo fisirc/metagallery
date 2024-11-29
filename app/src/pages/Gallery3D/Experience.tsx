@@ -7,9 +7,10 @@ import { BallCollider, Physics } from '@react-three/rapier';
 import { useEffect, useState } from 'react';
 import { DynamicPainting } from './components/gallery/DynamicPainting';
 import { DynamicSculpture } from './components/gallery/DynamicSculpture';
+import { StillerGallery } from '@/types';
 
 export const Experience = ({ gallery }: { gallery: string }) => {
-  const { response } = useApi<typeof galleryResponse>(`/gallery/${gallery}`);
+  const { response } = useApi<StillerGallery>(`/gallery/${gallery}`);
 
   const [gravityEnabled, setGravityEnabled] = useState(false);
 
@@ -25,25 +26,27 @@ export const Experience = ({ gallery }: { gallery: string }) => {
       <ambientLight intensity={0.6} />
       {/* <axesHelper args={[10]} /> */}
       {
-        response && response.data.slots.map((slots) => {
-          if (slots.type == '2d') {
+        response && response.data.slots.slots.map((slot) => {
+          const res = slot.res == 0 ? `https://pandadiestro.xyz/services/stiller/file/dl/${slot.res}` : null;
+
+          if (slot.type == '2d') {
             return (
               <DynamicPainting
-                key={slots.ref}
-                imageUrl={slots.res || "/assets/empty_slot.png"}
-                vertices={slots.v}
+                key={slot.ref}
+                imageUrl={res || "/assets/empty_slot.png"}
+                vertices={slot.v}
               />
             );
           }
-          if (slots.type == '3d') {
+          if (slot.type == '3d') {
             return (
               <DynamicSculpture
-                key={slots.ref}
-                position={slots.v[0] as any}
+                key={slot.ref}
+                position={slot.v[0] as any}
                 glbUrl="/assets/3d/chihiro.glb"
                 rotation={[0, Math.PI / 4, 0]}
-                scale={[slots.props.scale, slots.props.scale, slots.props.scale] as any}
-                rotate={slots.props.rotate}
+                scale={[slot.props.scale, slot.props.scale, slot.props.scale] as any}
+                rotate={slot.props.rotate as boolean}
               />
             );
           }

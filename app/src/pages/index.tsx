@@ -40,8 +40,14 @@ export const routes = [
     href: ':gallery/edit',
     label: 'Editor',
     component: ({ params }: { params: { gallery: string } }) => {
+      const { loading, user } = useUser();
+
+      if (!loading && !user) {
+        return <Redirect to="/" />;
+      }
+
       const { gallery } = params;
-      useEditorStore.setState({ gallery });
+      useEditorStore.setState({ gallery: gallery });
       return <Editor gallery={gallery}></Editor>;
     },
   },

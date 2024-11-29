@@ -1,3 +1,4 @@
+import { useMetagalleryStore } from "@/providers/MetagalleryProvider";
 import { UserContentFileElement } from "@/types";
 import { Button, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
@@ -27,6 +28,7 @@ const FileEditor = ({ element }: {
 
   const handleSubmit = form.onSubmit(async (values) => {
     await updateFileMutation.mutateAsync({ ...values, id: element.id } as any);
+    useMetagalleryStore.getState().closeModal('file-editor-modal');
   });
 
   return (
@@ -56,7 +58,7 @@ const FileEditor = ({ element }: {
           Actualizar
         </Button>
       </div>
-    </form>  
+    </form>
   )
 };
 

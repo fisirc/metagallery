@@ -224,13 +224,13 @@ const fetcher = async <T>(...args: ArgsType<typeof fetch>): Promise<ApiResponse<
     //         code: 200,
     //     };
     // }
-    if (path.toString().includes('gallery/')) {
-        // const gallery = path.split('/')[1];
-        return {
-            data: galleryResponse as T,
-            code: 200,
-        };
-    }
+    // if (path.toString().includes('gallery/')) {
+    //     // const gallery = path.split('/')[1];
+    //     return {
+    //         data: galleryResponse as T,
+    //         code: 200,
+    //     };
+    // }
 
     const response = await fetch(...args);
     const data = await response.json();

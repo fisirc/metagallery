@@ -10,6 +10,7 @@ import { PictureSlot } from '@/pages/Editor/components/blocks/PictureSlot';
 import { Model3DSlot } from '@/pages/Editor/components/blocks/Model3DBlock';
 import { getInitialScale, getInitialXY, saveScaleToLocalStorage, saveXYToLocalStorage } from '../utils';
 import { galleryResponse, useApi } from '@/hooks/useApi';
+import { StillerGallery } from '@/types';
 
 const initialScale = getInitialScale();
 const initialXY = getInitialXY();
@@ -23,10 +24,12 @@ type GalleryCanvas2DProps = {
 
 export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DProps) => {
   const [viewport, setViewport] = useState({ x: 0, y: 0 });
-  const [image,] = useImage('/assets/examples/topview.svg');
   const draggingElem = useEditorStore((state) => state.draggingFile);
   const stageRef = useRef<Konva.Stage>(null);
-  const { response } = useApi<typeof galleryResponse>(`/gallery/${gallery}`);
+  const { response } = useApi<StillerGallery>(`/gallery/${gallery}`);
+
+  const [topViewUrl, setTopViewUrl] = useState('');
+  const [image,] = useImage(topViewUrl);
 
   const handleViewportResize = () => {
     const bounds = document.getElementById('canvas')?.getBoundingClientRect();
@@ -46,6 +49,12 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
   useEffect(() => {
     handleViewportResize();
   }, [triggerReRender]);
+
+  useEffect(() => {
+    if (response) {
+      setTopViewUrl(`https://pandadiestro.xyz/services/stiller/template/info/${response.data.templateid}/topview`);
+    }
+  }, [response]);
 
   return (
     <Box
@@ -96,9 +105,11 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
         <Layer>
           <Image image={image} />
         </Layer>
-        <Layer scale={SLOTS_SCALE} offsetX={response?.data.origin[0]} offsetY={response?.data.origin[1]}>
+        <Layer scale={SLOTS_SCALE} offsetX={response?.data.slots.origin[0]} offsetY={response?.data.slots.origin[1]}>
           {
-            response && response.data.slots.map((block, i) => {
+            response && response.data.slots.slots.map((block, i) => {
+              const res = block.res == 0 ? `https://pandadiestro.xyz/services/stiller/file/dl/${block.res}` : null;
+
               if (block.type == '2d') {
                 return (
                   <PictureSlot
@@ -106,7 +117,7 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
                     idRef={block.ref}
                     v={block.v as any}
                     props={{}}
-                    res={block.res} // TODO: make reactive
+                    res={res} // TODO: make reactive
                   />
                 );
               }
@@ -117,7 +128,7 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
                     id={i} // TODO: replace
                     v={block.v[0] as any}
                     props={block.props}
-                    res={block.res} // TODO: make reactive
+                    res={res} // TODO: make reactive
                   />
                 );
               }

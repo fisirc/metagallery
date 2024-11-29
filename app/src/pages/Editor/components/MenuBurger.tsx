@@ -5,12 +5,18 @@ import {
 } from '@tabler/icons-react';
 
 import { primaryIconProps } from '@/constants';
+import { useLocation } from 'wouter';
 
 export const MenuBurger = () => {
+  const [location, setLocation] = useLocation();
+
   const options = [
     {
       Icon: <IconLayout {...primaryIconProps} />,
-      label: 'Ver plantillas',
+      label: 'Volver al menú',
+      OnClick: () => {
+        setLocation('/dashboard');
+      }
     },
   ];
 
@@ -26,16 +32,19 @@ export const MenuBurger = () => {
         />
       </Menu.Target>
       <Menu.Dropdown>
-      {
-        options.map(option => (
-          <Menu.Item
-            key={option.label}
-            leftSection={option.Icon}
-          >
-            {option.label}
-          </Menu.Item>
-        ))
-      }
+        {
+          options.map(option => (
+            <Menu.Item
+              key={option.label}
+              leftSection={option.Icon}
+              onClick={() => {
+                option.OnClick();
+              }}
+            >
+              {option.label}
+            </Menu.Item>
+          ))
+        }
       </Menu.Dropdown>
     </Menu>
   );
