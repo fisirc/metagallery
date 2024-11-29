@@ -3,7 +3,6 @@ package handlers
 import (
 	"net/http"
 	"stiller/pkg/dbutils"
-	"stiller/pkg/jwt"
 	"stiller/pkg/loggers"
 	"stiller/pkg/netwrappers"
 
@@ -21,13 +20,13 @@ func GetGalleryDetail(w http.ResponseWriter, r *http.Request, params httprouter.
 
     type ResPayload []dbutils.StillerGallery
 
-    user_token := r.Header.Get("token")
-    user_tk, token_decode_err := jwt.Decode(user_token)
-    if loggers.RequestLog(token_decode_err, "", http.StatusUnauthorized, &w) {
-        return
-    }
+    // user_token := r.Header.Get("token")
+    // user_tk, token_decode_err := jwt.Decode(user_token)
+    // if loggers.RequestLog(token_decode_err, "", http.StatusUnauthorized, &w) {
+    //     return
+    // }
 
-    user_id := user_tk.UserId
+    // user_id := user_tk.UserId
     gallery_slug := params.ByName("slug")
 
     new_dbconn, dbconn_err := dbutils.NewConn()
@@ -41,7 +40,8 @@ func GetGalleryDetail(w http.ResponseWriter, r *http.Request, params httprouter.
     get_gallery := sqlf.
         Select("*").
         From("gallery").
-        Where("owner = ? AND slug = ?", user_id, gallery_slug).
+        // Where("owner = ? AND slug = ?", user_id, gallery_slug).
+        Where("slug = ?", gallery_slug).
         Limit(1)
 
     gallery := dbutils.StillerGallery{}
@@ -58,7 +58,7 @@ func GetGalleryDetail(w http.ResponseWriter, r *http.Request, params httprouter.
 
             gallery = dbutils.StillerGallery{
                 Id: gall_id,
-                OwnerId: user_id,
+                OwnerId: int(stmt.GetInt64("owner")),
                 Title: stmt.GetText("title"),
                 Description: stmt.GetText("description"),
                 TemplateId: gall_template,
