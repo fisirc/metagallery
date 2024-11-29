@@ -1,34 +1,84 @@
-import useImage from 'use-image';
-import { useState } from 'react';
-import { Image, Rect } from 'react-konva';
+import { useEffect, useState } from 'react';
+import { Image as KonvaImage, Rect } from 'react-konva';
 import { setCursor } from '@/utils';
 import { useEditorStore } from '@/stores/editorAction';
-import { FRAME_STROKE_WIDTH, noImageSrc } from '@/constants';
-import { JSONValue, SlotVertex } from '@/types';
+import { FRAME_STROKE_WIDTH } from '@/constants';
+import { JSONValue, SlotVertex, UserContentFileElement } from '@/types';
 import { v3tov2 } from '../../utils';
+import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
+import { Text } from '@mantine/core';
+import { useUser } from '@/stores/useUser';
+import { mutate } from 'swr';
+import { useQuery } from '@tanstack/react-query';
+import { useForceUpdate } from '@mantine/hooks';
 
 type Model3DBlockProps = {
-  id: number,
+  idRef: string,
   v: SlotVertex,
   res: string | null;
   props: Record<string, JSONValue>;
 };
 
-export const Model3DSlot = ({ id, v, res, props }: Model3DBlockProps) => {
+export const Model3DSlot = ({ idRef, v, res, props }: Model3DBlockProps) => {
   const [hovering, setHovering] = useState(false);
   const draggingElem = useEditorStore((state) => state.draggingFile);
   const dragging = draggingElem !== null;
+  const gallery = useEditorStore((s) => s.gallery);
+
+  const forceUpdate = useForceUpdate();
+
+  useEffect(() => {
+    const i = setInterval(forceUpdate, 500);
+    return () => {
+      clearInterval(i);
+    }
+  }, []);
+
+  const userMediaQuery = useQuery({
+    queryKey: ['user/media'],
+    queryFn: async () => {
+      const res = await fetch('https://pandadiestro.xyz/services/stiller/file', {
+        method: 'GET',
+        headers: {
+          'token': useUser.getState().token,
+        } as any,
+      });
+      const data: UserContentFileElement[] = await res.json();
+
+      for (let e of data) {
+        e.url = `https://pandadiestro.xyz/services/stiller/${e.url}`;
+      }
+
+      return data;
+    }
+  });
+
 
   let src = res;
   if (hovering && dragging) {
     // Preview when user hover this slot while drawing
-    src = draggingElem.url;
+    if (!draggingElem.ext.includes('glb')) {
+      src = draggingElem.url;
+    }
     useEditorStore.getState().setDraggingFileVisible(false);
   } else {
     useEditorStore.getState().setDraggingFileVisible(true);
   }
 
-  const [image] = useImage(src ?? '');
+  let image: HTMLImageElement | undefined = undefined;
+
+  if (userMediaQuery.data && res) {
+    image = new Image();
+    // parse from www.url.com/dl/number to number
+    const id = parseInt(res.split('/').pop() ?? '0');
+    const canvas = document.getElementById(`sidebar_canvas_${id}`)?.querySelector('canvas');
+
+    if (canvas) {
+      const img = new Image();
+      img.src = canvas.toDataURL();
+      image = img;
+    }
+  }
 
   const pos = v3tov2(v);
   const size = 2 * (props.scale as number | null ?? 1);
@@ -44,13 +94,51 @@ export const Model3DSlot = ({ id, v, res, props }: Model3DBlockProps) => {
         height={size}
         fill={dragging ? '#fcf3de' : (hovering ? '#e1e3e5' : '#f1f3f5')}
         cornerRadius={1.2}
+        onMouseEnter={() => {
+          setHovering(true);
+          setCursor('pointer');
+        }}
+        onMouseLeave={() => {
+          setHovering(false);
+          setCursor(null);
+        }}
+        onClick={() => {
+          useMetagalleryStore.getState().openModal({
+            id: 'picture-slot-modal',
+            child: <Text>Hawk tuah!</Text>
+          });
+        }}
+        onMouseUp={async () => {
+          const dropped = hovering && dragging;
+
+          if (dropped) {
+            // setOptimisticImgSrc(draggingElem.url);
+            const response = await fetch('https://pandadiestro.xyz/services/stiller/gallery/slot', {
+              method: 'PATCH',
+              headers: {
+                'Content-Type': 'application/json',
+                'token': useUser.getState().token ?? 'invalid-token',
+              },
+              body: JSON.stringify({
+                gallery: gallery,
+                ref: idRef,
+                title: draggingElem.title,
+                description: draggingElem.description,
+                res: draggingElem.id,
+              }),
+            });
+            console.log('UPDATING TO', draggingElem.id, 'MUTATING', `/gallery/${gallery}`)
+            mutate(`/gallery/${gallery}`);
+          }
+        }}
       />
-      <Image
+      <KonvaImage
         x={x}
         y={y}
         image={image}
         width={size}
         height={size}
+        listening={false}
       />
       {/* Border stroke */}
       <Rect
@@ -61,14 +149,7 @@ export const Model3DSlot = ({ id, v, res, props }: Model3DBlockProps) => {
         stroke={hovering ? (dragging ? '#e8bb74' : '#b0b0b0') : '#c0c0c0'}
         strokeWidth={FRAME_STROKE_WIDTH / 2}
         cornerRadius={1.2}
-        onMouseEnter={() => {
-          setHovering(true);
-          setCursor('pointer');
-        }}
-        onMouseLeave={() => {
-          setHovering(false);
-          setCursor(null);
-        }}
+        listening={false}
       />
     </>
   );

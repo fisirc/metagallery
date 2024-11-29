@@ -1,12 +1,53 @@
 import FileEditor from "@/components/FileEditor";
 import { DRAG_PORTAL_ID, smallIconProps } from "@/constants";
+import { DynamicSculpture } from "@/pages/Gallery3D/components/gallery/DynamicSculpture";
 import { useMetagalleryStore } from "@/providers/MetagalleryProvider";
 import { useEditorStore } from "@/stores/editorAction";
 import { UserContentFileElement } from "@/types";
-import { Button, Card, Image, Menu, Portal, rem, Text } from "@mantine/core";
+import { Button, Card, Image, MantineStyleProp, Menu, Portal, rem, Text } from "@mantine/core";
 import { useHover, useMouse } from "@mantine/hooks";
+import { Canvas } from "@react-three/fiber";
 import { IconDots, IconDownload, IconEdit, IconTrash } from "@tabler/icons-react";
-import { useRef, useState } from "react";
+import { RefObject, useRef, useState } from "react";
+
+type UserContentPreviewProps = {
+  ref: RefObject<any>;
+  contentId: number;
+  title: string;
+  url: string;
+  ext: string;
+  style: MantineStyleProp;
+}
+
+const UserContentPreview = ({ ref, title, contentId, url, ext, style }: UserContentPreviewProps) => {
+  if (ext.includes('glb')) {
+    return (
+      <Canvas
+        gl={{ preserveDrawingBuffer: true }}
+        id={`sidebar_canvas_${contentId}`}
+        ref={ref}
+        style={{ pointerEvents: 'none' }}
+      >
+        <DynamicSculpture
+          position={[0, -1.5, 0]}
+          glbUrl={url}
+          rotation={[0, Math.PI / 4, 0]}
+          scale={[2, 2, 2] as any}
+          rotate={true}
+        />
+      </Canvas>
+    );
+  }
+
+  return (
+    <Image
+      ref={ref}
+      src={url}
+      alt={title}
+      style={style}
+    />
+  );
+}
 
 const ContentSidebarElement = ({ element }: { element: UserContentFileElement }) => {
   const { hovered, ref } = useHover();
@@ -28,12 +69,20 @@ const ContentSidebarElement = ({ element }: { element: UserContentFileElement })
                 top: y - 20,
                 left: x - 40,
                 zIndex: 6969,
+                border: '1px solid black',
                 opacity: 0.8,
-                width: imageRef.current?.width,
-                height: imageRef.current?.height,
+                width: imageRef.current?.width ?? 100,
+                height: imageRef.current?.height ?? 100,
               }}
             >
-              <Image m={0} src={element.url} alt={element.title} radius={5} />
+              <UserContentPreview
+                ref={imageRef}
+                title={element.title}
+                url={element.url}
+                contentId={element.id}
+                ext={element.ext}
+                style={{ borderRadius: 5 }}
+              />
             </div>
           </Portal>
         )
@@ -50,10 +99,21 @@ const ContentSidebarElement = ({ element }: { element: UserContentFileElement })
         }}
       >
         <Card.Section>
-          <Image
+          {/* <Image
             ref={imageRef}
             src={element.url}
             alt={element.title}
+            style={{
+              height: '100%',
+              display: 'block'
+            }}
+          /> */}
+          <UserContentPreview
+            ref={imageRef}
+            url={element.url}
+            title={element.title}
+            contentId={element.id}
+            ext={element.ext}
             style={{
               height: '100%',
               display: 'block'

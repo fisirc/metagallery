@@ -14,24 +14,28 @@ const mockedUserMedia = [
     {
         id: 1,
         title: 'Aiko Tanaka',
+        ext: '.png',
         description: 'Lorem punpuns',
         url: 'https://www.grupoeducar.cl/wp-content/uploads/2023/06/Arte-Revista-Educar-Julio-2023-edicion-274.png',
     },
     {
         id: 2,
         title: 'Grace en 3d',
+        ext: '.png',
         description: 'Modelo 3d no implementado',
         url: 'https://diario.global/wp-content/uploads/2022/02/C2015014-TOTS-SOM-EUROPA-UNIDA.jpg',
     },
     {
         id: 3,
         title: 'Xiao Pang',
+        ext: '.png',
         description: 'Le gusta mirar fijamente a cosas cotidianas',
         url: 'https://unidadlatina.org/wp-content/uploads/2024/04/arte-contemporaneo-latinoamerica.jpg',
     },
     {
         id: 4,
         title: 'Xiao Pang',
+        ext: '.glb',
         description: 'Le gusta mirar fijamente a cosas cotidianas',
         url: 'http://localhost:5173/assets/3d/chihiro.glb',
     },

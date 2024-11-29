@@ -56,8 +56,6 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
     }
   }, [response]);
 
-  console.log(response?.data.slots.slots)
-
   return (
     <Box
       id="canvas"
@@ -127,7 +125,7 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
                 return (
                   <Model3DSlot
                     key={i}
-                    id={i} // TODO: replace
+                    idRef={block.ref} // TODO: replace
                     v={block.v[0] as any}
                     props={block.props}
                     res={res} // TODO: make reactive

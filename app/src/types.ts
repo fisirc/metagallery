@@ -2,6 +2,7 @@
 export interface UserContentFileElement {
   id: number,
   url: string,
+  ext: string,
   title: string,
   description?: string,
 }
