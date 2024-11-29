@@ -249,7 +249,7 @@ const (
 func UpdateSlot(gallery string, ref string, updater SlotUpdateFlag, newval any, conn *sqlite.Conn) error {
     base_update_stmt := sqlf.
         Update("galleryslot").
-            Where("gallery in (select id from gallery where id = ?) and slotid = ?", gallery, ref)
+            Where("gallery in (select id from gallery where slug = ?) and slotid = ?", gallery, ref)
 
     switch (updater) {
     case UPDATE_RES:
