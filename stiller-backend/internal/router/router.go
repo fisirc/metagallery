@@ -75,7 +75,7 @@ var routes = [...]individualHandler{
         handlefunc: handlers.PostFileNew,
     },
     {
-        path: "/file/dl/:file_id",
+        path: "/file/dl/:file_id/",
         method: http.MethodGet,
         handlefunc: handlers.GetFileDl,
     },
