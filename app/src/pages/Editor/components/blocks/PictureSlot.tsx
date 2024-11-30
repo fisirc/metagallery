@@ -25,7 +25,7 @@ export const PictureSlot = ({ idRef, v, res, props }: PictureSlotProps) => {
   const dragging = draggingElem !== null;
 
   let src = res;
-  if (hovering && dragging) {
+  if (hovering && dragging && !draggingElem.ext.includes('glb')) {
     // Preview when user hover this slot while drawing
     src = draggingElem.url;
     useEditorStore.getState().setDraggingFileVisible(false);

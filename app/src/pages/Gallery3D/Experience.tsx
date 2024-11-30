@@ -1,24 +1,23 @@
+import Ecctrl from 'ecctrl';
 import { Perf } from 'r3f-perf';
-import Ecctrl, { } from 'ecctrl';
 import { KeyboardControls, Sky, Sparkles } from '@react-three/drei';
 import { useApi } from '@/hooks/useApi';
 import { SceneRoom } from './components/gallery/Scene';
 import { BallCollider, Physics } from '@react-three/rapier';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { DynamicPainting } from './components/gallery/DynamicPainting';
 import { DynamicSculpture } from './components/gallery/DynamicSculpture';
 import { StillerGallery } from '@/types';
 
-export const Experience = ({ gallery }: { gallery: string }) => {
-  const { response } = useApi<StillerGallery>(`/gallery/${gallery}`);
+type ExperienceProps = {
+  gallery: string;
+  onLoad: () => void;
+};
 
+export const Experience = ({ gallery, onLoad }: ExperienceProps) => {
+  const { response } = useApi<StillerGallery>(`/gallery/${gallery}`);
   const [gravityEnabled, setGravityEnabled] = useState(false);
 
-  useEffect(() => {
-    window.setTimeout(() => {
-      setGravityEnabled(true);
-    }, 10000);
-  }, [])
 
   return (
     <>
@@ -38,7 +37,6 @@ export const Experience = ({ gallery }: { gallery: string }) => {
             );
           }
           if (slot.type == '3d') {
-            console.log(slot.v[0])
             return (
               <DynamicSculpture
                 key={slot.ref}
@@ -69,7 +67,7 @@ export const Experience = ({ gallery }: { gallery: string }) => {
           position={[10, 10, 5]}
           castShadow
         />
-        <Physics gravity={[0, gravityEnabled ? -9 : 0, 0]} timeStep={'vary'} >
+        <Physics paused={!gravityEnabled} gravity={[0, gravityEnabled ? -9 : 0, 0]} timeStep={'vary'} >
           {/* <Player /> */}
           {/* <Ground /> */}
           <Ecctrl
@@ -88,12 +86,17 @@ export const Experience = ({ gallery }: { gallery: string }) => {
             autoBalanceDampingC={0.03}
             springK={0.3}
             autoBalanceSpringK={0.3}
-            position={[0, 1.2, 0]}
+            position={[0, 2, 0]}
             mode="CameraBasedMovement" // character's rotation will follow camera's rotation in this mode
           >
             <BallCollider args={[0.8]} />
           </Ecctrl>
-          <SceneRoom />
+          <SceneRoom onLoad={() => {
+            setTimeout(() => {
+              setGravityEnabled(true);
+            }, 100)
+            onLoad();
+          }} />
         </Physics>
         <Sky />
         {/* <PointerLockControls /> */}

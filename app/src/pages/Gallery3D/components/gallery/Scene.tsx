@@ -6,25 +6,36 @@ import { RigidBody } from '@react-three/rapier';
 import { useEffect, useState } from 'react';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
-export const SceneRoom = () => {
-  const gallery = useEditorStore((s) => s.gallery);
-  console.log({
-    gallery
-  }, '🐢🐢🐢🐢🐢')
-  const { response } = useApi<StillerGallery>(`/gallery/${gallery}`);
+type SceneRoomProps = {
+  onLoad: () => void;
+};
 
+export const SceneRoom = ({ onLoad }: SceneRoomProps) => {
+  const gallery = useEditorStore((s) => s.gallery);
+  const { response } = useApi<StillerGallery>(`/gallery/${gallery}`);
   const [sceneUrl, setSceneUrl] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (response) {
-      console.log({ response })
-      console.log({ '😀': `https://pandadiestro.xyz/services/stiller/template/info/${response.data.templateid}/scene` })
       setSceneUrl(`https://pandadiestro.xyz/services/stiller/template/info/${response.data.templateid}/scene`);
     }
   }, [response]);
 
+  const url = sceneUrl ?? "/assets/3d/invisible.glb";
 
-  const gltf = useLoader(GLTFLoader, 'https://pandadiestro.xyz/services/stiller/template/info/1/scene');
+  const gltf = useLoader(GLTFLoader, url, (loader) => {
+    loader.load(url, (_) => {
+      if (response) {
+        onLoad();
+        setLoaded(true);
+      }
+    });
+  });
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <group>

@@ -31,7 +31,6 @@ export const useMetagalleryStore = create<MetagalleryProviderStore>()(
     },
     openModal: (props) => {
       const newModals = new Map(get().activeModals);
-      console.log({ props })
       newModals.set(props.id, {
         el: props.child,
         props: props,

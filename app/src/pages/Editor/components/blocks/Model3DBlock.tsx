@@ -9,7 +9,7 @@ import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
 import { Text } from '@mantine/core';
 import { useUser } from '@/stores/useUser';
 import { mutate } from 'swr';
-import { useQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useForceUpdate } from '@mantine/hooks';
 
 type Model3DBlockProps = {
@@ -34,32 +34,10 @@ export const Model3DSlot = ({ idRef, v, res, props }: Model3DBlockProps) => {
     }
   }, []);
 
-  const userMediaQuery = useQuery({
-    queryKey: ['user/media'],
-    queryFn: async () => {
-      const res = await fetch('https://pandadiestro.xyz/services/stiller/file', {
-        method: 'GET',
-        headers: {
-          'token': useUser.getState().token,
-        } as any,
-      });
-      const data: UserContentFileElement[] = await res.json();
+  const queryClient = useQueryClient();
+  const data = queryClient.getQueryData(['user/media']);
 
-      for (let e of data) {
-        e.url = `https://pandadiestro.xyz/services/stiller/file/dl/${e.id}/`;
-      }
-
-      return data;
-    }
-  });
-
-
-  let src = res;
-  if (hovering && dragging) {
-    // Preview when user hover this slot while drawing
-    if (!draggingElem.ext.includes('glb')) {
-      src = draggingElem.url;
-    }
+  if (hovering && dragging && draggingElem.ext.includes('glb')) {
     useEditorStore.getState().setDraggingFileVisible(false);
   } else {
     useEditorStore.getState().setDraggingFileVisible(true);
@@ -67,13 +45,17 @@ export const Model3DSlot = ({ idRef, v, res, props }: Model3DBlockProps) => {
 
   let image: HTMLImageElement | undefined = undefined;
 
-  if (userMediaQuery.data && res) {
+  if (data && res) {
     image = new Image();
     // parse from www.url.com/dl/number to number
-    const id = parseInt(res.split('/').at(-2) ?? '0');
-    const canvas = document.getElementById(`sidebar_canvas_${id}`)?.querySelector('canvas');
+    let id: number | null = null;
 
-    console.log({ canvas, res })
+    if (hovering && dragging) {
+      id = draggingElem.id;
+    } else {
+      id = parseInt(res.split('/').at(-2) ?? '0'); // extract id from url
+    }
+    const canvas = document.getElementById(`sidebar_canvas_${id}`)?.querySelector('canvas');
 
     if (canvas) {
       const img = new Image();

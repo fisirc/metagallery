@@ -61,7 +61,6 @@ export const useUser = create<MetagalleryUserState>()(
           userdata: MetagalleryUser,
         };
 
-        console.log({ data });
         window.localStorage.setItem(TOKEN_LC_KEY, data.token);
 
         set({ user: data.userdata, token: data.token, loading: false });

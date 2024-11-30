@@ -2,13 +2,13 @@ import FileEditor from "@/components/FileEditor";
 import { useMouse } from "@mantine/hooks";
 import { Canvas } from "@react-three/fiber";
 import { UserContentFileElement } from "@/types";
-import { RefObject, useRef, useState } from "react";
+import { memo, RefObject, useRef, useState } from "react";
 import { useEditorStore } from "@/stores/editorAction";
 import { DRAG_PORTAL_ID, smallIconProps } from "@/constants";
 import { useMetagalleryStore } from "@/providers/MetagalleryProvider";
 import { IconDots, IconDownload, IconEdit, IconTrash } from "@tabler/icons-react";
 import { DynamicSculpture } from "@/pages/Gallery3D/components/gallery/DynamicSculpture";
-import { Button, Card, Image, MantineStyleProp, Menu, Portal, rem, Text } from "@mantine/core";
+import { Box, Button, Card, Image, MantineStyleProp, Menu, Portal, rem, Text } from "@mantine/core";
 
 type UserContentPreviewProps = {
   innerRef: RefObject<any>;
@@ -16,27 +16,35 @@ type UserContentPreviewProps = {
   title: string;
   url: string;
   ext: string;
+  isDraggingPreview: boolean;
   style: MantineStyleProp;
 }
 
-const UserContentPreview = ({ innerRef, title, contentId, url, ext, style }: UserContentPreviewProps) => {
+const UserContentPreview = memo(({ innerRef, title, isDraggingPreview, contentId, url, ext, style }: UserContentPreviewProps) => {
   if (ext.includes('glb')) {
     return (
-      <Canvas
-        gl={{ preserveDrawingBuffer: true }}
-        id={`sidebar_canvas_${contentId}`}
+      <Box
         ref={innerRef}
-        style={{ pointerEvents: 'none' }}
+        bg='var(--mantine-color-default-hover)'
+        w={isDraggingPreview ? 150 : undefined}
+        h={isDraggingPreview ? 150 : undefined}
+        style={style}
       >
-        <ambientLight intensity={1} />
-        <DynamicSculpture
-          position={[0, -1.5, 0]}
-          glbUrl={url}
-          rotation={[0, 0, 0]}
-          scale={[2, 2, 2] as any}
-          rotate={true}
-        />
-      </Canvas>
+        <Canvas
+          gl={{ preserveDrawingBuffer: true }}
+          id={`sidebar_canvas_${contentId}`}
+          style={{ pointerEvents: 'none' }}
+        >
+          <ambientLight intensity={1} />
+          <DynamicSculpture
+            position={[0, -1.5, 0]}
+            glbUrl={url}
+            rotation={[0, 0, 0]}
+            scale={[2, 2, 2] as any}
+            rotate={true}
+          />
+        </Canvas>
+      </Box>
     );
   }
 
@@ -48,7 +56,9 @@ const UserContentPreview = ({ innerRef, title, contentId, url, ext, style }: Use
       style={style}
     />
   );
-}
+}, (prev, next) => {
+  return prev.contentId === next.contentId;
+});
 
 const ContentSidebarElement = ({ element }: { element: UserContentFileElement }) => {
   const { x, y } = useMouse();
@@ -77,6 +87,7 @@ const ContentSidebarElement = ({ element }: { element: UserContentFileElement })
               }}
             >
               <UserContentPreview
+                isDraggingPreview={true}
                 innerRef={imageRef}
                 title={element.title}
                 url={element.url}
@@ -101,6 +112,7 @@ const ContentSidebarElement = ({ element }: { element: UserContentFileElement })
       >
         <Card.Section>
           <UserContentPreview
+            isDraggingPreview={false}
             innerRef={imageRef}
             url={element.url}
             title={element.title}
