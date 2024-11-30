@@ -4,6 +4,11 @@
   color: #333;
 }
 
+.footer.darkFooter {
+  background-color: #1f1f1f;
+  color: #e5e5e5;
+}
+
 .container {
   max-width: 75rem;
   margin: 0 auto;
@@ -24,15 +29,27 @@
   margin-bottom: 1rem;
 }
 
+.title.darkTitle {
+  color: #e5e5e5;
+}
+
 .description {
   font-size: 0.875rem;
   line-height: 1.5;
+}
+
+.description.darkDescription {
+  color: #bbb;
 }
 
 .subtitle {
   font-size: 1rem;
   font-weight: bold;
   margin-bottom: 1rem;
+}
+
+.subtitle.darkSubtitle {
+  color: #e5e5e5;
 }
 
 .list {
@@ -51,6 +68,10 @@
   color: #000;
 }
 
+.link.darkLink {
+  color: #bbb;
+}
+
 .bottom {
   border-top: 1px solid #ddd;
   padding-top: 2rem;
@@ -61,6 +82,10 @@
 .copyright {
   font-size: 0.875rem;
   color: #666;
+}
+
+.copyright.darkCopyright {
+  color: #bbb;
 }
 
 @media (max-width: 768px) {
