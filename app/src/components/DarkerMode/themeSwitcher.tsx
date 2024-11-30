@@ -1,28 +1,27 @@
 import { ActionIcon, Group } from '@mantine/core';
-import { IconSun, IconMoonStars } from '@tabler/icons-react';
+import { IconSun, IconMoon } from '@tabler/icons-react';
 import { useMantineColorScheme } from '@mantine/core';
 
 export const ThemeSwitcher = () => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const dark = colorScheme === 'dark';
 
   return (
     <Group
       align="center"
-      justify="center" 
+      justify="center"
       style={{ marginRight: '1rem' }}
     >
       <ActionIcon
         onClick={() => toggleColorScheme()}
         size="lg"
-        variant="filled"
+        variant="default"
         style={{
-            backgroundColor: dark ? 'white' : 'black', 
-            color: dark ? 'black' : 'white', 
-          }}
+          backgroundColor: 'var(--mantine-color-body)',
+          color: 'var(--mantine-primary-color)',
+        }}
         aria-label="Toggle theme"
       >
-        {dark ? <IconSun size="1.25rem" /> : <IconMoonStars size="1.25rem" />}
+        {colorScheme == 'dark' ? <IconSun size="1.25rem" /> : <IconMoon size="1.25rem" />}
       </ActionIcon>
     </Group>
   );

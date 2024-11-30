@@ -1,13 +1,11 @@
-import Button from './Button';
-import Card from './Card';
-import Text from './Text';
-import Select from './Select';
-import TextInput from './TextInput';
+import { CustomButton } from './Button';
+import { CustomCard } from './Card';
+import { CustomSelect } from './Select';
+import { CustomTextInput } from './TextInput';
 
 export default {
-  Button,
-  Card,
-  Text,
-  Select,
-  TextInput,
+  Button: CustomButton,
+  Card: CustomCard,
+  Select: CustomSelect,
+  TextInput: CustomTextInput,
 };
