@@ -4,7 +4,7 @@ import classes from './Button.module.css';
 export const CustomButton: MantineThemeComponent = {
   ...Button.extend({ classNames: classes }),
   defaultProps: {
-    variant: 'secondary',
+    variant: 'default',
     size: 'sm',
   },
 };

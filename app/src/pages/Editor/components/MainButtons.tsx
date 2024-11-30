@@ -1,9 +1,9 @@
+import ThemeSwitcher from '@/components/DarkerMode/themeSwitcher';
 import { useState } from 'react';
-import { Group, Button, useMantineTheme, useMantineColorScheme } from '@mantine/core';
-import { IconShare, IconPlayerPlay, IconPlayerStop } from '@tabler/icons-react';
+import { Group, Button } from '@mantine/core';
 import { primaryIconProps } from '@/constants';
 import { DeployModal } from './modals/DeployModal';
-import ThemeSwitcher from '@/components/DarkerMode/themeSwitcher';
+import { IconShare, IconPlayerPlay, IconPlayerStop } from '@tabler/icons-react';
 
 type Props = { onPreviewButton: () => void; closePreviewButton: () => void; isPreviewing: boolean };
 
@@ -11,9 +11,6 @@ export const MainButtons = ({ onPreviewButton, closePreviewButton, isPreviewing 
   const [isModalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const { colorScheme } = useMantineColorScheme();
-  const dark = colorScheme === 'dark';
 
   const handleDeploy = async () => {
     setLoading(true);
@@ -34,9 +31,6 @@ export const MainButtons = ({ onPreviewButton, closePreviewButton, isPreviewing 
         <Button
           leftSection={<IconShare {...primaryIconProps} />}
           onClick={() => setModalOpen(true)}
-          color="black"
-          variant="outline"
-          style={{ color: 'var(--mantine-color-black-7)', borderColor: 'var(--mantine-color-black-7)' }}
         >
           Deploy
         </Button>
@@ -52,11 +46,8 @@ export const MainButtons = ({ onPreviewButton, closePreviewButton, isPreviewing 
         ) : (
           <Button
             style={{
-              backgroundColor: dark ? 'white' : 'black',
-              color: dark ? 'black' : 'white',            
-              border: 'none',                             
             }}
-            variant="filled" 
+            variant="filled"
             onClick={onPreviewButton}
             leftSection={<IconPlayerPlay {...primaryIconProps} />}
           >

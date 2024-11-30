@@ -104,8 +104,6 @@ const SidebarMasonry = ({ filterInput }: { filterInput: string }) => {
 const SidebarInnerContent = () => {
   const [filterInput, setFilterInput] = useState('');
   const queryClient = useQueryClient();
-  const { colorScheme } = useMantineColorScheme();
-  const dark = colorScheme === 'dark';
 
   const uploadFileMutation = useMutation({
     mutationFn: (data: UploadImagePayload) => {
@@ -162,13 +160,10 @@ const SidebarInnerContent = () => {
       </Group>
       <ScrollArea
         flex={1}
-        bg="gray.1"
         p={8}
         style={{
           borderRadius: 'var(--mantine-radius-md)',
-          backgroundColor: dark ? '#333333' : '#e5e5e5',
-          color: dark ? '#e5e5e5' : '#333333',
-          border: '1px solid var(--mantine-color-gray-4)',
+          border: '1px solid var(--mantine-color-default-border)',
         }}
       >
         <SidebarMasonry filterInput={filterInput} />
@@ -183,10 +178,8 @@ const SidebarInnerContent = () => {
               size="sm"
               leftSection={<IconUpload {...primaryIconProps} />}
               {...props}
-              variant="outline"
               style={{
                 color: 'var(--mantine-color-white-7)',
-                borderColor: 'var(--mantine-color-black-7)',
               }}
             >
               Añadir contenido

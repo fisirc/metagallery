@@ -65,8 +65,8 @@ export const GalleryCanvas2D = memo(({ gallery, triggerReRender }: GalleryCanvas
       w="100%"
       mb="16px"
       mih="100%"
-      bd="1px solid var(--mantine-color-gray-4)"
-      bg={draggingElem ? (dark ? '#555555' : '#d8d8d8') : (dark ? '#333333' : '#e4e4e4')}
+      bd="1px solid var(--mantine-color-default-border)"
+      bg={draggingElem ? (dark ? '#333' : '#d8d8d8') : (dark ? '#2f2f2f' : '#e4e4e4')}
       style={{
         borderRadius: 'var(--mantine-radius-md)',
         overflow: 'hidden',
@@ -120,7 +120,7 @@ export const GalleryCanvas2D = memo(({ gallery, triggerReRender }: GalleryCanvas
                     idRef={block.ref}
                     v={block.v as any}
                     props={{}}
-                    res={res} // TODO: make reactive
+                    res={res}
                   />
                 );
               }
@@ -128,10 +128,10 @@ export const GalleryCanvas2D = memo(({ gallery, triggerReRender }: GalleryCanvas
                 return (
                   <Model3DSlot
                     key={i}
-                    idRef={block.ref} // TODO: replace
+                    idRef={block.ref}
                     v={block.v[0] as any}
                     props={block.props}
-                    res={res} // TODO: make reactive
+                    res={res}
                   />
                 );
               }

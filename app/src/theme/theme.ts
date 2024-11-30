@@ -5,6 +5,7 @@ const base = 40;
 const scale = 1.2;
 
 export const theme = createTheme({
+  primaryColor: 'dark',
   colors: {
     text: virtualColor({
       name: 'text',
