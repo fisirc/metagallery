@@ -1,4 +1,6 @@
-import icon from '@/assets/favicon.svg';
+import iconDark from '@/assets/favicon.svg';
+import iconWhite from '@/assets/favicon_white.svg';
+import { useColorScheme } from '@mantine/hooks';
 
 interface AppIconProps {
   size: number;
@@ -6,6 +8,8 @@ interface AppIconProps {
 }
 
 export const AppIcon = ({ size, animated }: AppIconProps) => {
+  const theme = useColorScheme();
+
   return (
     <>
       {
@@ -25,7 +29,7 @@ export const AppIcon = ({ size, animated }: AppIconProps) => {
         `}
         </style>
       }
-      <img src={icon} width={size} style={{
+      <img src={theme === 'dark' ? iconWhite : iconDark} width={size} style={{
         'animation': animated ? 'floating 3s infinite' : 'none',
         'pointerEvents': 'none',
       }} />

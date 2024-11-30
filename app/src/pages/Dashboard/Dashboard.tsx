@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Menu, Search, Plus, Layout, Edit, Copy, Check } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { Modal, useMantineColorScheme, useMantineTheme } from "@mantine/core";
+import { Button, Modal, useMantineColorScheme, useMantineTheme } from "@mantine/core";
 import { NewGalleryForm } from "@/pages/Dashboard/components/NewGalleryForm";
 import { useUser } from "@/stores/useUser";
 import styles from "./GalleryDashboard.module.css";
@@ -10,6 +10,9 @@ import Popup from "@/pages/Home/components/PopUp/Popup";
 import popupStyles from "@/pages/Home/components/PopUp/Popup.module.css";
 import { NewGalleryButton } from "@/components/NewGalleryButton";
 import { UserButton } from "@/components/UserButton";
+import { useApi } from "@/hooks/useApi";
+import { StillerGallery } from "@/types";
+import { thumbnailSrcFromTemplateId } from "@/utils";
 
 const ShareGalleryPopup = ({
   trigger,
@@ -82,27 +85,11 @@ export const GalleryDashboard = () => {
   const [sharePopupOpen, setSharePopupOpen] = useState(false);
   const [currentGallerySlug, setCurrentGallerySlug] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [communityGalleries, setCommunityGalleries] = useState<
-    Array<{ ownerid: number; title: string; thumbnail: string, slug: string }>
-  >([]);
   const [showCommunityProjects, setShowCommunityProjects] = useState(false);
-  const theme = useMantineTheme();
-  const [, setLocation] = useLocation();
-  const {
-    user,
-    galleries,
-    fetchUserGalleries: fetchGalleries,
-    fetchCommunityGalleries,
-    loading,
-  } = useUser();
+  const { user, loading } = useUser();
 
-  useEffect(() => {
-    if (user) {
-      fetchGalleries();
-    } else {
-      setLocation("/");
-    }
-  }, [user, fetchGalleries, setLocation]);
+  const { response: userGalleries } = useApi<StillerGallery[]>('/gallery');
+  const { response: communityGalleries } = useApi<StillerGallery[]>('/galleryall');
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -113,65 +100,39 @@ export const GalleryDashboard = () => {
     setSharePopupOpen(true);
   };
 
-  const loadCommunityProjects = async () => {
-    try {
-      const communityGalleries = await fetchCommunityGalleries();
-      setCommunityGalleries(communityGalleries);
-      setShowCommunityProjects(true);
-    } catch (error) {
-      console.error("Error loading community galleries:", error);
-    }
-  };
-
   if (!user || loading) {
     return <LoadingScreen />;
   }
 
   return (
-    <div className={styles.container} style={{ backgroundColor: dark ? '#242424' : 'white' }}>
+    <div className={styles.container}>
       {isSidebarOpen && (
         <div
           className={styles.overlay}
           onClick={toggleSidebar}
-          style={{
-            backgroundColor: dark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.5)',
-          }}
         />
       )}
       <div
         className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : ""}`}
-        style={{
-          backgroundColor: dark ? '#242424' : 'white',
-          color: dark ? 'white' : '#242424',
-        }}
       >
         <div className={styles.sidebarContent}>
           <h2 className={styles.sidebarTitle}>Menú</h2>
           <nav className={styles.sidebarNav}>
-          <button
+            <button
               className={styles.sidebarButton}
               onClick={() => setIsModalOpen(true)}
-              style={{
-                color: showCommunityProjects ? (dark ? '#242424' : 'white') : (dark ? 'white' : '#242424'),
-              }}
             >
               <Plus className={styles.sidebarIcon} />
               <span>Nueva Galería</span>
             </button>
             <button
               className={styles.sidebarButton}
-              style={{
-                color: showCommunityProjects ? (dark ? '#242424' : 'white') : (dark ? 'white' : '#242424'),
-              }}
             >
               <Layout className={styles.sidebarIcon} style={{ color: dark ? 'white' : '#242424' }} />
               <span>Desplegar Galería</span>
             </button>
             <button
               className={styles.sidebarButton}
-              style={{
-                color: showCommunityProjects ? (dark ? '#242424' : 'white') : (dark ? 'white' : '#242424'),
-              }}
             >
               <Edit className={styles.sidebarIcon} style={{ color: dark ? 'white' : '#242424' }} />
               <span>Editar Galería</span>
@@ -182,10 +143,6 @@ export const GalleryDashboard = () => {
 
       <header
         className={styles.header}
-        style={{
-          backgroundColor: dark ? '#242424' : 'white',
-          color: dark ? 'white' : '#242424',
-        }}
       >
         <div className={styles.headerContent}>
           <button onClick={toggleSidebar} className={styles.menuButton}>
@@ -203,53 +160,40 @@ export const GalleryDashboard = () => {
         <div className={styles.profileSection}>
           <h1 className={styles.profileName}>{user.displayname}</h1>
           <div className={styles.searchContainer}>
-            <Search className={styles.searchIcon} style={{ color: dark ? 'white' : '#242424' }} />
+            <Search className={styles.searchIcon} />
             <input
               type="search"
               placeholder="¿Qué estás buscando?"
               className={styles.searchInput}
-              style={{
-                backgroundColor: dark ? '#242424' : 'white',
-                color: dark ? 'white' : '#242424',
-                borderColor: dark ? 'white' : '#242424',
-              }}
             />
           </div>
           <div className={styles.filters}>
-            <button
+            <Button
+              variant={showCommunityProjects ? 'light' : 'default'}
               className={`${styles.filterButton} ${!showCommunityProjects ? styles.active : ''}`}
               onClick={() => setShowCommunityProjects(false)}
-              style={{
-                color: showCommunityProjects ? (dark ? 'white' : '#242424') : (dark ? '#242424' : 'white'),
-              }}
             >
               Mis proyectos
-            </button>
-            <button
+            </Button>
+            <Button
+              variant={showCommunityProjects ? 'default' : 'light'}
               className={`${styles.filterButton} ${showCommunityProjects ? styles.active : ''}`}
-              onClick={loadCommunityProjects}
-              style={{
-                color: showCommunityProjects ? (dark ? '#242424' : 'white') : (dark ? 'white' : '#242424'),
-              }}
+              onClick={() => setShowCommunityProjects(true)}
             >
               Proyectos de la comunidad
-            </button>
+            </Button>
           </div>
         </div>
 
         <div className={styles.galleryGrid}>
           {showCommunityProjects
-            ? communityGalleries.map((gallery, index) => (
+            ? communityGalleries && communityGalleries.data.map((gallery, index) => (
               <div
                 key={index}
                 className={styles.galleryCard}
-                style={{
-                  backgroundColor: dark ? '#242424' : 'white',
-                  color: dark ? 'white' : '#242424',
-                }}
               >
                 <img
-                  src={gallery.thumbnail}
+                  src={thumbnailSrcFromTemplateId(gallery.templateid)}
                   alt={gallery.title}
                   className={styles.galleryImage}
                 />
@@ -262,10 +206,6 @@ export const GalleryDashboard = () => {
                     <Link
                       href={`/${gallery.slug}`}
                       className={styles.openButton}
-                      style={{
-                        backgroundColor: dark ? '#242424' : 'white',
-                        color: dark ? 'white' : '#242424',
-                      }}
                     >
                       Visitar
                     </Link>
@@ -273,17 +213,13 @@ export const GalleryDashboard = () => {
                 </div>
               </div>
             ))
-            : galleries?.map((gallery) => (
+            : userGalleries && userGalleries.data.map((gallery) => (
               <div
                 key={gallery.id}
                 className={styles.galleryCard}
-                style={{
-                  backgroundColor: dark ? '#242424' : 'white',
-                  color: dark ? 'white' : '#242424',
-                }}
               >
                 <img
-                  src={gallery.thumbnail}
+                  src={thumbnailSrcFromTemplateId(gallery.templateid)}
                   alt={gallery.title}
                   className={styles.galleryImage}
                 />

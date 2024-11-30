@@ -256,7 +256,7 @@ export function useApi<T, E = any>(path: string, options: RequestInit = {}) {
             }
             const url = `https://pandadiestro.xyz/services/stiller${key.startsWith('/') ? key : `/${key}`}`;
             return fetcher<T>(url, options);
-        }, { revalidateOnFocus: false },
+        }, { revalidateOnFocus: false, refreshInterval: 3000 },
     );
 
     return {

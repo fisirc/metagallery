@@ -9,7 +9,7 @@ export const ThemeSwitcher = () => {
     <Group
       align="center"
       justify="center"
-      style={{ marginRight: '1rem' }}
+      style={{ marginRight: '0.4rem' }}
     >
       <ActionIcon
         onClick={() => toggleColorScheme()}
