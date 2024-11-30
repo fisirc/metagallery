@@ -70,8 +70,10 @@ export const Model3DSlot = ({ idRef, v, res, props }: Model3DBlockProps) => {
   if (userMediaQuery.data && res) {
     image = new Image();
     // parse from www.url.com/dl/number to number
-    const id = parseInt(res.split('/').pop() ?? '0');
+    const id = parseInt(res.split('/').at(-2) ?? '0');
     const canvas = document.getElementById(`sidebar_canvas_${id}`)?.querySelector('canvas');
+
+    console.log({ canvas, res })
 
     if (canvas) {
       const img = new Image();

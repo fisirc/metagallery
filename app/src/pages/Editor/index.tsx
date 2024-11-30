@@ -10,18 +10,14 @@ import { Gallery3D } from '../Gallery3D';
 import { StillerGallery } from '@/types';
 import { LoadingScreen } from '@/components/Overlays/LoadingScreen';
 import { useApi } from '@/hooks/useApi';
-import { AppIcon } from '@/components/AppIcon';
-import { useLocation } from 'wouter';
 import { AppIconButton } from '@/components/AppIconButton';
 
 export const Editor = ({ gallery }: { gallery: string }) => {
   const [previewOpened, setPreviewOpened] = useState(false);
-  const [location, setLocation] = useLocation();
-  const { response, isLoading, error } = useApi<StillerGallery>(`/gallery/${gallery}`);
+  const { response, isLoading } = useApi<StillerGallery>(`/gallery/${gallery}`);
   const [projectName, setProjectName] = useState('Cargando galería...');
 
   const galleryData = response?.data;
-  console.log({ galleryData, isLoading, error })
 
   useEffect(() => {
     if (galleryData) {

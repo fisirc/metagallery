@@ -1,17 +1,17 @@
 import FileEditor from "@/components/FileEditor";
-import { DRAG_PORTAL_ID, smallIconProps } from "@/constants";
-import { DynamicSculpture } from "@/pages/Gallery3D/components/gallery/DynamicSculpture";
-import { useMetagalleryStore } from "@/providers/MetagalleryProvider";
-import { useEditorStore } from "@/stores/editorAction";
-import { UserContentFileElement } from "@/types";
-import { Button, Card, Image, MantineStyleProp, Menu, Portal, rem, Text } from "@mantine/core";
-import { useHover, useMouse } from "@mantine/hooks";
+import { useMouse } from "@mantine/hooks";
 import { Canvas } from "@react-three/fiber";
-import { IconDots, IconDownload, IconEdit, IconTrash } from "@tabler/icons-react";
+import { UserContentFileElement } from "@/types";
 import { RefObject, useRef, useState } from "react";
+import { useEditorStore } from "@/stores/editorAction";
+import { DRAG_PORTAL_ID, smallIconProps } from "@/constants";
+import { useMetagalleryStore } from "@/providers/MetagalleryProvider";
+import { IconDots, IconDownload, IconEdit, IconTrash } from "@tabler/icons-react";
+import { DynamicSculpture } from "@/pages/Gallery3D/components/gallery/DynamicSculpture";
+import { Button, Card, Image, MantineStyleProp, Menu, Portal, rem, Text } from "@mantine/core";
 
 type UserContentPreviewProps = {
-  ref: RefObject<any>;
+  innerRef: RefObject<any>;
   contentId: number;
   title: string;
   url: string;
@@ -19,19 +19,20 @@ type UserContentPreviewProps = {
   style: MantineStyleProp;
 }
 
-const UserContentPreview = ({ ref, title, contentId, url, ext, style }: UserContentPreviewProps) => {
+const UserContentPreview = ({ innerRef, title, contentId, url, ext, style }: UserContentPreviewProps) => {
   if (ext.includes('glb')) {
     return (
       <Canvas
         gl={{ preserveDrawingBuffer: true }}
         id={`sidebar_canvas_${contentId}`}
-        ref={ref}
+        ref={innerRef}
         style={{ pointerEvents: 'none' }}
       >
+        <ambientLight intensity={1} />
         <DynamicSculpture
           position={[0, -1.5, 0]}
           glbUrl={url}
-          rotation={[0, Math.PI / 4, 0]}
+          rotation={[0, 0, 0]}
           scale={[2, 2, 2] as any}
           rotate={true}
         />
@@ -41,7 +42,7 @@ const UserContentPreview = ({ ref, title, contentId, url, ext, style }: UserCont
 
   return (
     <Image
-      ref={ref}
+      ref={innerRef}
       src={url}
       alt={title}
       style={style}
@@ -50,8 +51,8 @@ const UserContentPreview = ({ ref, title, contentId, url, ext, style }: UserCont
 }
 
 const ContentSidebarElement = ({ element }: { element: UserContentFileElement }) => {
-  const { hovered, ref } = useHover();
   const { x, y } = useMouse();
+  const [isHovered, setIsHovered] = useState(false);
   const [opened, setOpened] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
   const draggingElem = useEditorStore((state) => state.draggingFile);
@@ -69,14 +70,14 @@ const ContentSidebarElement = ({ element }: { element: UserContentFileElement })
                 top: y - 20,
                 left: x - 40,
                 zIndex: 6969,
-                border: '1px solid black',
+                // border: '1px solid black',
                 opacity: 0.8,
                 width: imageRef.current?.width ?? 100,
                 height: imageRef.current?.height ?? 100,
               }}
             >
               <UserContentPreview
-                ref={imageRef}
+                innerRef={imageRef}
                 title={element.title}
                 url={element.url}
                 contentId={element.id}
@@ -88,28 +89,19 @@ const ContentSidebarElement = ({ element }: { element: UserContentFileElement })
         )
       }
       <Card
-        ref={ref}
         p="xs"
+        draggable
+        onMouseOver={() => setIsHovered(true)}
         opacity={draggingElem === element ? 0.4 : 1}
         style={{ userSelect: 'none', position: 'relative', cursor: 'pointer' }}
-        draggable
         onDragStart={(e) => {
           e.preventDefault();
           useEditorStore.getState().startDragging(element);
         }}
       >
         <Card.Section>
-          {/* <Image
-            ref={imageRef}
-            src={element.url}
-            alt={element.title}
-            style={{
-              height: '100%',
-              display: 'block'
-            }}
-          /> */}
           <UserContentPreview
-            ref={imageRef}
+            innerRef={imageRef}
             url={element.url}
             title={element.title}
             contentId={element.id}
@@ -123,7 +115,7 @@ const ContentSidebarElement = ({ element }: { element: UserContentFileElement })
         <Text size="xs" fw={700} mt={8}>{element.title || 'Sin título'}</Text>
         <Text size="xs" mt={4}>{element.description || 'Sin descripción'}</Text>
         {
-          (opened || hovered) && (
+          (opened || isHovered) && (
             <div style={{ position: 'absolute', top: '2px', right: '2px' }}>
               <Menu position="bottom-start" onOpen={() => setOpened(true)} onClose={() => setOpened(false)} openDelay={0}>
                 <Menu.Target>

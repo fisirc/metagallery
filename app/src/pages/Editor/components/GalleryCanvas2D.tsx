@@ -1,7 +1,7 @@
 import Konva from 'konva';
 import useImage from 'use-image';
 import { Box, useMantineColorScheme } from '@mantine/core';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { Image, Layer, Rect, Stage } from 'react-konva';
 import { setCursor } from '@/utils';
 import { SLOTS_SCALE, ZOOM_FACTOR } from '@/constants';
@@ -22,7 +22,7 @@ type GalleryCanvas2DProps = {
   triggerReRender?: boolean;
 }
 
-export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DProps) => {
+export const GalleryCanvas2D = memo(({ gallery, triggerReRender }: GalleryCanvas2DProps) => {
   const [viewport, setViewport] = useState({ x: 0, y: 0 });
   const draggingElem = useEditorStore((state) => state.draggingFile);
   const stageRef = useRef<Konva.Stage>(null);
@@ -147,4 +147,4 @@ export const GalleryCanvas2D = ({ gallery, triggerReRender }: GalleryCanvas2DPro
       </Stage>
     </Box>
   );
-};
+});

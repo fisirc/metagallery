@@ -1,27 +1,16 @@
-import Masonry from 'react-responsive-masonry';
-import { useEffect, useRef, useState } from 'react';
-import {
-  Button,
-  Drawer,
-  Group,
-  Stack,
-  TextInput,
-  ScrollArea,
-  FileButton,
-  useMantineColorScheme,
-} from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
-import { IconSearch, IconUpload } from '@tabler/icons-react';
-import { primaryIconProps, secondaryIconProps, TOKEN_LC_KEY } from '@/constants';
-import { UserContentFileElement } from '@/types';
-import { useEditorStore } from '@/stores/editorAction';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import api from '@/services/api';
-import QueryBoiler from '@/components/QueryBoiler/QueryBoiler';
-import axios from 'axios';
-import ContentSidebarElement from './ContentSidebarElement';
 import Empty from '@/components/Empty';
+import Masonry from 'react-responsive-masonry';
+import QueryBoiler from '@/components/QueryBoiler/QueryBoiler';
+import ContentSidebarElement from './ContentSidebarElement';
 import { useUser } from '@/stores/useUser';
+import { useMediaQuery } from '@mantine/hooks';
+import { useEditorStore } from '@/stores/editorAction';
+import { memo, useEffect, useState } from 'react';
+import { IconSearch, IconUpload } from '@tabler/icons-react';
+import { UserContentFileElement } from '@/types';
+import { primaryIconProps, secondaryIconProps } from '@/constants';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Button, Drawer, Group, Stack, TextInput, ScrollArea, FileButton, useMantineColorScheme } from '@mantine/core';
 
 interface UploadImagePayload {
   "name": string;
@@ -30,21 +19,17 @@ interface UploadImagePayload {
   "hashed": number;
 };
 
-export const EditorSidebar = () => {
+export const EditorSidebar = memo(() => {
   const [opened, setOpened] = useState(false);
   const isLargeScreen = useMediaQuery('(min-width: 900px)');
 
-  const onDragEnd = () => {
-    useEditorStore.getState().dropFile();
-  };
-
   useEffect(() => {
-    document.addEventListener('mouseup', onDragEnd);
-    document.addEventListener('touchend', onDragEnd);
+    document.addEventListener('mouseup', useEditorStore.getState().dropFile);
+    document.addEventListener('touchend', useEditorStore.getState().dropFile);
 
     return () => {
-      document.removeEventListener('mouseup', onDragEnd);
-      document.removeEventListener('touchend', onDragEnd);
+      document.removeEventListener('mouseup', useEditorStore.getState().dropFile);
+      document.removeEventListener('touchend', useEditorStore.getState().dropFile);
     };
   }, []);
 
@@ -52,7 +37,7 @@ export const EditorSidebar = () => {
     <>
       {isLargeScreen ? (
         <Stack mih="100%" gap="sm" mb="16px" miw={300}>
-          <SidebarContent />
+          <SidebarInnerContent />
         </Stack>
       ) : (
         <Drawer
@@ -64,19 +49,19 @@ export const EditorSidebar = () => {
           opacity={0.2}
           zIndex={2000}
         >
-          <SidebarContent />
+          <SidebarInnerContent />
         </Drawer>
       )}
     </>
   );
-};
+});
 
 /**
  * A user content media element in the sidebar
  */
 
 
-const ContentMasonry = ({ filterInput }: { filterInput: string }) => {
+const SidebarMasonry = ({ filterInput }: { filterInput: string }) => {
   const userMediaQuery = useQuery({
     queryKey: ['user/media'],
     queryFn: async () => {
@@ -102,8 +87,6 @@ const ContentMasonry = ({ filterInput }: { filterInput: string }) => {
     return file.title?.toLowerCase().includes(filterInput.toLowerCase());
   });
 
-  console.log(filteredData);
-
   if (!filteredData.length) return <Empty />
 
   return (
@@ -118,7 +101,7 @@ const ContentMasonry = ({ filterInput }: { filterInput: string }) => {
 }
 
 // Sidebar content extracted for reusability
-const SidebarContent = () => {
+const SidebarInnerContent = () => {
   const [filterInput, setFilterInput] = useState('');
   const queryClient = useQueryClient();
   const { colorScheme } = useMantineColorScheme();
@@ -184,11 +167,11 @@ const SidebarContent = () => {
         style={{
           borderRadius: 'var(--mantine-radius-md)',
           backgroundColor: dark ? '#333333' : '#e5e5e5',
-          color: dark ? '#e5e5e5' : '#333333', 
+          color: dark ? '#e5e5e5' : '#333333',
           border: '1px solid var(--mantine-color-gray-4)',
         }}
       >
-        <ContentMasonry filterInput={filterInput} />
+        <SidebarMasonry filterInput={filterInput} />
       </ScrollArea>
       <FileButton
         onChange={handleFileUpload}
