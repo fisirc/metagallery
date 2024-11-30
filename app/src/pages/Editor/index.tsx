@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { UserButton } from '@/components/UserButton';
 import { DynamicText } from '@/components/DynamicText';
 import { GalleryCanvas2D } from './components/GalleryCanvas2D';
-import { MenuBurger } from './components/MenuBurger';
+import { BackToDashboarButton } from './components/BackToDashboarButton';
 import { MainButtons } from './components/MainButtons';
 import { EditorSidebar } from './components/ContentSidebar';
 import { DRAG_PORTAL_ID } from '@/constants';
@@ -10,7 +10,6 @@ import { Gallery3D } from '../Gallery3D';
 import { StillerGallery } from '@/types';
 import { LoadingScreen } from '@/components/Overlays/LoadingScreen';
 import { useApi } from '@/hooks/useApi';
-import { AppIconButton } from '@/components/AppIconButton';
 
 export const Editor = ({ gallery }: { gallery: string }) => {
   const [previewOpened, setPreviewOpened] = useState(false);
@@ -35,10 +34,7 @@ export const Editor = ({ gallery }: { gallery: string }) => {
         <div id={DRAG_PORTAL_ID} style={{ position: 'absolute' }}></div>
         <div style={{ display: 'flex', justifyContent: 'space-between', minHeight: '70px', maxHeight: '70px' }}>
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', flexWrap: 'nowrap', paddingLeft: '16px' }}>
-            <MenuBurger />
-            <a></a>
-            <AppIconButton />
-            <a></a>
+            <BackToDashboarButton />
             <DynamicText
               value={projectName}
               setValue={setProjectName}
