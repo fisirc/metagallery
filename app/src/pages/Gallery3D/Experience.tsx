@@ -4,7 +4,7 @@ import { KeyboardControls, Sky, Sparkles } from '@react-three/drei';
 import { useApi } from '@/hooks/useApi';
 import { SceneRoom } from './components/gallery/Scene';
 import { BallCollider, Physics } from '@react-three/rapier';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DynamicPainting } from './components/gallery/DynamicPainting';
 import { DynamicSculpture } from './components/gallery/DynamicSculpture';
 import { StillerGallery } from '@/types';
@@ -17,7 +17,6 @@ type ExperienceProps = {
 export const Experience = ({ gallery, onLoad }: ExperienceProps) => {
   const { response } = useApi<StillerGallery>(`/gallery/${gallery}`);
   const [gravityEnabled, setGravityEnabled] = useState(false);
-
 
   return (
     <>
@@ -42,7 +41,6 @@ export const Experience = ({ gallery, onLoad }: ExperienceProps) => {
                 key={slot.ref}
                 position={slot.v[0]}
                 glbUrl={res ?? "/assets/3d/invisible.glb"}
-                // glbUrl="/assets/3d/chihiro.glb"
                 rotation={[0, Math.PI / 4, 0]}
                 scale={[slot.props.scale, slot.props.scale, slot.props.scale] as any}
                 rotate={slot.props.rotate as boolean}
@@ -67,6 +65,7 @@ export const Experience = ({ gallery, onLoad }: ExperienceProps) => {
           position={[10, 10, 5]}
           castShadow
         />
+        {/* <Physics paused={!gravityEnabled} gravity={[0, gravityEnabled ? -9 : 0, 0]} timeStep={'vary'} > */}
         <Physics paused={!gravityEnabled} gravity={[0, gravityEnabled ? -9 : 0, 0]} timeStep={'vary'} >
           {/* <Player /> */}
           {/* <Ground /> */}
@@ -91,12 +90,15 @@ export const Experience = ({ gallery, onLoad }: ExperienceProps) => {
           >
             <BallCollider args={[0.8]} />
           </Ecctrl>
-          <SceneRoom onLoad={() => {
-            setTimeout(() => {
-              setGravityEnabled(true);
-            }, 100)
-            onLoad();
-          }} />
+          {
+            response && <SceneRoom
+              sceneUrl={`https://pandadiestro.xyz/services/stiller/template/info/${response.data.templateid}/scene`}
+              onLoad={() => {
+                setGravityEnabled(true);
+                onLoad();
+              }}
+            />
+          }
         </Physics>
         <Sky />
         {/* <PointerLockControls /> */}

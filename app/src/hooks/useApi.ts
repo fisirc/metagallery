@@ -4,7 +4,7 @@ import { useUser } from '@/stores/useUser';
 
 type ArgsType<T> = T extends (...args: infer U) => any ? U : never;
 
-type ApiResponse<T> = {
+export type ApiResponse<T> = {
     data: T;
     code: number;
     headers?: Headers;
@@ -256,7 +256,7 @@ export function useApi<T, E = any>(path: string, options: RequestInit = {}) {
             }
             const url = `https://pandadiestro.xyz/services/stiller${key.startsWith('/') ? key : `/${key}`}`;
             return fetcher<T>(url, options);
-        }, { revalidateOnFocus: false, refreshInterval: 3000 },
+        }, { revalidateOnFocus: false },
     );
 
     return {

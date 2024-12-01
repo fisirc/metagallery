@@ -5,9 +5,9 @@ import { primaryIconProps } from '@/constants';
 import { DeployModal } from './modals/DeployModal';
 import { IconShare, IconPlayerPlay, IconPlayerStop } from '@tabler/icons-react';
 
-type Props = { onPreviewButton: () => void; closePreviewButton: () => void; isPreviewing: boolean };
+type Props = { onPreviewButton: () => void; onClosePreviewButton: () => void; isPreviewing: boolean };
 
-export const MainButtons = ({ onPreviewButton, closePreviewButton, isPreviewing }: Props) => {
+export const MainButtons = ({ onPreviewButton, onClosePreviewButton: closePreviewButton, isPreviewing }: Props) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

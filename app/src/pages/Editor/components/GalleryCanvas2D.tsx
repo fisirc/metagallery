@@ -39,6 +39,8 @@ export const GalleryCanvas2D = memo(({ gallery, triggerReRender }: GalleryCanvas
     if (bounds) setViewport({ x: bounds.width, y: bounds.height });
   };
 
+  console.log('CANVAS SHIT')
+
   useEffect(() => {
     handleViewportResize();
     window.addEventListener('resize', handleViewportResize);

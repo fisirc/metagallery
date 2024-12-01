@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { Image as KonvaImage, Rect } from 'react-konva';
 import { setCursor } from '@/utils';
 import { useEditorStore } from '@/stores/editorAction';
 import { FRAME_STROKE_WIDTH } from '@/constants';
-import { JSONValue, SlotVertex, UserContentFileElement } from '@/types';
+import { JSONValue, SlotVertex } from '@/types';
 import { v3tov2 } from '../../utils';
 import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
 import { Text } from '@mantine/core';
@@ -11,6 +11,7 @@ import { useUser } from '@/stores/useUser';
 import { mutate } from 'swr';
 import { useQueryClient } from '@tanstack/react-query';
 import { useForceUpdate } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 
 type Model3DBlockProps = {
   idRef: string,
@@ -19,50 +20,59 @@ type Model3DBlockProps = {
   props: Record<string, JSONValue>;
 };
 
-export const Model3DSlot = ({ idRef, v, res, props }: Model3DBlockProps) => {
+export const Model3DSlot = memo(({ idRef, v, res, props }: Model3DBlockProps) => {
   const [hovering, setHovering] = useState(false);
   const draggingElem = useEditorStore((state) => state.draggingFile);
-  const dragging = draggingElem !== null;
+  const dragging = draggingElem !== null && draggingElem.ext.includes('glb');
+  const graggingInvalid = draggingElem !== null && !draggingElem.ext.includes('glb');
   const gallery = useEditorStore((s) => s.gallery);
-
-  const forceUpdate = useForceUpdate();
+  const [forced, forceUpdate] = useState(false);
+  const [optimisticResId, setOptimisticResId] = useState<number | null>(null);
+  const isPreviewingGallery = useEditorStore((s) => s.isPreviewingGallery);
 
   useEffect(() => {
-    const i = setInterval(forceUpdate, 500);
+    const i = setInterval(() => {
+      if (!isPreviewingGallery) {
+        forceUpdate(s => !s); // too heavy to use while previewing
+      }
+    }, 100);
     return () => {
       clearInterval(i);
     }
-  }, []);
+  }, [isPreviewingGallery]);
 
   const queryClient = useQueryClient();
-  const data = queryClient.getQueryData(['user/media']);
+  const data = queryClient.getQueryData(['user/media']); // Data loaded in the sidebar
 
-  if (hovering && dragging && draggingElem.ext.includes('glb')) {
+  if (hovering && dragging) {
     useEditorStore.getState().setDraggingFileVisible(false);
-  } else {
-    useEditorStore.getState().setDraggingFileVisible(true);
   }
 
-  let image: HTMLImageElement | undefined = undefined;
-
-  if (data && res) {
-    image = new Image();
-    // parse from www.url.com/dl/number to number
-    let id: number | null = null;
-
-    if (hovering && dragging) {
-      id = draggingElem.id;
-    } else {
-      id = parseInt(res.split('/').at(-2) ?? '0'); // extract id from url
-    }
-    const canvas = document.getElementById(`sidebar_canvas_${id}`)?.querySelector('canvas');
-
-    if (canvas) {
+  let image: HTMLImageElement | undefined = useMemo(() => {
+    if (data && res) {
+      // We convert the canvas rendered in the sidebar to an image
       const img = new Image();
-      img.src = canvas.toDataURL();
-      image = img;
+
+      // parse from www.url.com/dl/number to number
+      let id: number | null = null;
+
+      if (hovering && dragging) {
+        id = draggingElem.id;
+      } else {
+        id = optimisticResId ?? parseInt(res.split('/').at(-2) ?? '0'); // extract id from url
+      }
+      const canvas = document.getElementById(`sidebar_canvas_${id}`)?.querySelector('canvas');
+
+      if (canvas) {
+        img.src = canvas.toDataURL();
+        return img;
+      }
+      return undefined;
     }
-  }
+    return undefined;
+  }, [data, res, optimisticResId, hovering, dragging, forced]);
+
+  // console.log({ forced })
 
   const pos = v3tov2(v);
   const size = 2 * (props.scale as number | null ?? 1);
@@ -79,12 +89,17 @@ export const Model3DSlot = ({ idRef, v, res, props }: Model3DBlockProps) => {
         fill={dragging ? '#fcf3de' : (hovering ? '#e1e3e5' : '#f1f3f5')}
         cornerRadius={1.2}
         onMouseEnter={() => {
-          setHovering(true);
-          setCursor('pointer');
+          if (!graggingInvalid) {
+            setHovering(true);
+            setCursor('pointer');
+          } else {
+            setCursor('not-allowed');
+          }
         }}
         onMouseLeave={() => {
           setHovering(false);
           setCursor(null);
+          useEditorStore.getState().setDraggingFileVisible(true);
         }}
         onClick={() => {
           useMetagalleryStore.getState().openModal({
@@ -96,23 +111,32 @@ export const Model3DSlot = ({ idRef, v, res, props }: Model3DBlockProps) => {
           const dropped = hovering && dragging;
 
           if (dropped) {
-            // setOptimisticImgSrc(draggingElem.url);
-            const response = await fetch('https://pandadiestro.xyz/services/stiller/gallery/slot', {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                'token': useUser.getState().token ?? 'invalid-token',
-              },
-              body: JSON.stringify({
-                gallery: gallery,
-                ref: idRef,
-                title: draggingElem.title,
-                description: draggingElem.description,
-                res: draggingElem.id,
-              }),
-            });
-            console.log('UPDATING TO', draggingElem.id, 'MUTATING', `/gallery/${gallery}`)
-            mutate(`/gallery/${gallery}`);
+            setOptimisticResId(parseInt(draggingElem.url.split('/').at(-2) ?? '0'));
+            try {
+              const response = await fetch('https://pandadiestro.xyz/services/stiller/gallery/slot', {
+                method: 'PATCH',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'token': useUser.getState().token ?? 'invalid-token',
+                },
+                body: JSON.stringify({
+                  gallery: gallery,
+                  ref: idRef,
+                  title: draggingElem.title,
+                  description: draggingElem.description,
+                  res: draggingElem.id,
+                }),
+              });
+              console.log('UPDATING TO', draggingElem.id, 'MUTATING', `/gallery/${gallery}`)
+            } catch {
+              notifications.show({
+                color: 'red',
+                title: 'Error',
+                message: 'Failed to update slot',
+              });
+            } finally {
+              mutate(`/gallery/${gallery}`);
+            }
           }
         }}
       />
@@ -137,4 +161,7 @@ export const Model3DSlot = ({ idRef, v, res, props }: Model3DBlockProps) => {
       />
     </>
   );
-};
+}, (prev, next) => {
+  return prev.res === next.res;
+});
+

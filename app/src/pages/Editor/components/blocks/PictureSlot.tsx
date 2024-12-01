@@ -1,15 +1,17 @@
 import useImage from 'use-image';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Text } from '@mantine/core';
 import { Image, Rect, Group, Text as Text3D } from 'react-konva';
-import { setCursor } from '@/utils';
+import { copyGalleryWithSlotResId, setCursor } from '@/utils';
 import { useEditorStore } from '@/stores/editorAction';
 import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
 import { CORNER_RADIUS, FRAME_STROKE_WIDTH, noImageSrc } from '@/constants';
-import { JSONValue, SlotVertices } from '@/types';
+import { JSONValue, SlotVertices, StillerGallery } from '@/types';
 import { cosine, getFrameAngle, getFrameHeight, getFrameWidth, sine, v3tov2 } from '@/pages/Editor/utils';
-import { mutate } from 'swr';
 import { useUser } from '@/stores/useUser';
+import { ApiResponse, useApi } from '@/hooks/useApi';
+import { mutate, useSWRConfig } from 'swr';
+import { notifications } from '@mantine/notifications';
 
 type PictureSlotProps = {
   idRef: string,
@@ -18,24 +20,25 @@ type PictureSlotProps = {
   props: Record<string, JSONValue>;
 };
 
-export const PictureSlot = ({ idRef, v, res, props }: PictureSlotProps) => {
+export const PictureSlot = memo(({ idRef, v, res, props }: PictureSlotProps) => {
   const [hovering, setHovering] = useState(false);
   const draggingElem = useEditorStore((s) => s.draggingFile);
   const gallery = useEditorStore((s) => s.gallery);
-  const dragging = draggingElem !== null;
+  const dragging = draggingElem !== null && !draggingElem.ext.includes('glb');
+  const graggingInvalid = draggingElem !== null && draggingElem.ext.includes('glb');
+  const [optimisticImgSrc, setOptimisticImgSrc] = useState<string | null>(null);
 
   let src = res;
-  if (hovering && dragging && !draggingElem.ext.includes('glb')) {
+  if (hovering && dragging) {
     // Preview when user hover this slot while drawing
     src = draggingElem.url;
     useEditorStore.getState().setDraggingFileVisible(false);
-  } else {
-    useEditorStore.getState().setDraggingFileVisible(true);
+  }
+  else if (optimisticImgSrc) {
+    src = optimisticImgSrc;
   }
 
-  const [optimisticImgSrc, setOptimisticImgSrc] = useState<string | null>(null);
-
-  const [image] = useImage(src ?? optimisticImgSrc ?? noImageSrc);
+  const [image] = useImage(src ?? noImageSrc);
 
   const pos = v3tov2(v[2]);
   const rotation = getFrameAngle(v);
@@ -87,29 +90,42 @@ export const PictureSlot = ({ idRef, v, res, props }: PictureSlotProps) => {
 
           if (dropped) {
             setOptimisticImgSrc(draggingElem.url);
-            const response = await fetch('https://pandadiestro.xyz/services/stiller/gallery/slot', {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                'token': useUser.getState().token ?? 'invalid-token',
-              },
-              body: JSON.stringify({
-                gallery: gallery,
-                ref: idRef,
-                title: draggingElem.title,
-                description: draggingElem.description,
-                res: draggingElem.id,
-              }),
-            });
-            console.log('UPDATING TO', draggingElem.id, 'MUTATING', `/gallery/${gallery}`)
-            mutate(`/gallery/${gallery}`);
+            try {
+              const r = await fetch('https://pandadiestro.xyz/services/stiller/gallery/slot', {
+                method: 'PATCH',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'token': useUser.getState().token ?? 'invalid-token',
+                },
+                body: JSON.stringify({
+                  gallery: gallery,
+                  ref: idRef,
+                  title: draggingElem.title,
+                  description: draggingElem.description,
+                  res: draggingElem.id,
+                }),
+              });
+            } catch {
+              notifications.show({
+                color: 'red',
+                title: 'Error',
+                message: 'Failed to update slot',
+              });
+            } finally {
+              mutate(`/gallery/${gallery}`);
+            }
           }
         }}
         onMouseEnter={() => {
-          setHovering(true);
-          setCursor('pointer');
+          if (!graggingInvalid) {
+            setHovering(true);
+            setCursor('pointer');
+          } else {
+            setCursor('not-allowed');
+          }
         }}
         onMouseLeave={() => {
+          useEditorStore.getState().setDraggingFileVisible(true);
           setHovering(false);
           setCursor(null);
         }}
@@ -137,4 +153,6 @@ export const PictureSlot = ({ idRef, v, res, props }: PictureSlotProps) => {
       /> */}
     </Group>
   );
-};
+}, (prev, next) => {
+  return prev.res === next.res;
+});

@@ -10,11 +10,12 @@ import { Gallery3D } from '../Gallery3D';
 import { StillerGallery } from '@/types';
 import { LoadingScreen } from '@/components/Overlays/LoadingScreen';
 import { useApi } from '@/hooks/useApi';
+import { useEditorStore } from '@/stores/editorAction';
 
 export const Editor = ({ gallery }: { gallery: string }) => {
-  const [previewOpened, setPreviewOpened] = useState(false);
   const { response, isLoading } = useApi<StillerGallery>(`/gallery/${gallery}`);
   const [projectName, setProjectName] = useState('Cargando galería...');
+  const { isPreviewingGallery, setIsPreviewingGallery } = useEditorStore();
 
   const galleryData = response?.data;
 
@@ -43,26 +44,26 @@ export const Editor = ({ gallery }: { gallery: string }) => {
           </div>
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px', paddingRight: '16px', }}>
             <MainButtons
-              isPreviewing={previewOpened}
+              isPreviewing={isPreviewingGallery}
               onPreviewButton={() => {
-                setPreviewOpened(true);
+                setIsPreviewingGallery(true);
               }}
-              closePreviewButton={() => {
-                setPreviewOpened(false);
+              onClosePreviewButton={() => {
+                setIsPreviewingGallery(false);
               }}
             />
             <UserButton />
           </div>
         </div>
-        <div style={{ display: previewOpened ? 'none' : 'flex', flexDirection: 'row', gap: '16px', minHeight: 'calc(100vh - 70px)', maxHeight: 'calc(100vh - 70px)', paddingLeft: '16px', paddingRight: '16px' }}>
+        <div style={{ display: isPreviewingGallery ? 'none' : 'flex', flexDirection: 'row', gap: '16px', minHeight: 'calc(100vh - 70px)', maxHeight: 'calc(100vh - 70px)', paddingLeft: '16px', paddingRight: '16px' }}>
           <EditorSidebar />
-          <GalleryCanvas2D gallery={gallery} triggerReRender={previewOpened} />
+          <GalleryCanvas2D gallery={gallery} triggerReRender={isPreviewingGallery} />
         </div>
         {
-          previewOpened && (
+          isPreviewingGallery && (
             <div style={{ display: 'flex', flexDirection: 'row', minHeight: 'calc(100vh - 70px)', maxHeight: 'calc(100vh - 70px)' }}>
               <div style={{ height: 'calc(100vh - 70px)', width: '100%' }}>
-                <Gallery3D gallery={gallery} />
+                <Gallery3D gallery={gallery} withTopOffset />
               </div>
             </div>
           )

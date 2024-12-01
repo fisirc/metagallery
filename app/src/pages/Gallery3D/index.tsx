@@ -1,10 +1,15 @@
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 import { Text } from '@mantine/core';
 import { Canvas } from '@react-three/fiber';
 import { Experience } from './Experience';
 import { AppIcon } from '@/components/AppIcon';
 
-export const Gallery3D = ({ gallery }: { gallery: string }) => {
+type Gallery3DProps = {
+  gallery: string;
+  withTopOffset?: boolean;
+};
+
+export const Gallery3D = ({ gallery, withTopOffset }: Gallery3DProps) => {
   const [loading, setLoading] = useState(true);
 
   return (
@@ -17,18 +22,21 @@ export const Gallery3D = ({ gallery }: { gallery: string }) => {
           }
         }}
       >
-        <Experience gallery={gallery} onLoad={() => {
-          setLoading(false);
-        }} />
+        <Experience
+          gallery={gallery}
+          onLoad={() => {
+            setLoading(false);
+          }}
+        />
       </Canvas>
       {
         loading && (
           <div style={{
             position: 'absolute',
-            top: 0,
+            top: withTopOffset ? 70 : 0,
             left: 0,
             width: '100vw',
-            height: '100vh',
+            height: withTopOffset ? 'calc(100vh - 70px)' : '100vh',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

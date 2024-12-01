@@ -1,4 +1,6 @@
-type CursorStyles = null | 'pointer' | 'grab' | 'grabbing' | 'move';
+import { StillerGallery } from './types';
+
+type CursorStyles = null | 'pointer' | 'grab' | 'grabbing' | 'move' | 'not-allowed';
 
 let lastCursor: CursorStyles = null;
 
@@ -19,4 +21,24 @@ export function thumbnailSrcFromTemplateId(id: number) {
 export function negateIf(expr: boolean, cond?: boolean) {
     if (cond === undefined) return expr;
     return cond ? !expr : expr;
+}
+
+export function copyGalleryWithSlotResId(gallery: StillerGallery, slotRef: string, resId: number) {
+    const newSlots = gallery.slots.slots.map((slot) => {
+        if (slot.ref === slotRef) {
+            return {
+                ...slot,
+                res: resId,
+            };
+        }
+        return slot;
+    });
+
+    return {
+        ...gallery,
+        slots: {
+            ...gallery.slots,
+            slots: newSlots,
+        },
+    };
 }
