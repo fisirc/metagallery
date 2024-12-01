@@ -12,7 +12,6 @@ type SceneRoomProps = {
 
 export const SceneRoom = ({ onLoad, sceneUrl }: SceneRoomProps) => {
   const url = sceneUrl ?? "/assets/3d/invisible.glb";
-  console.log({ sceneUrl })
 
   useEffect(() => {
     onLoad();
