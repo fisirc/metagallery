@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Menu, Search, Plus, Layout, Edit, Copy, Check } from "lucide-react";
-import { Link, useLocation } from "wouter";
-import { Button, Modal, useMantineColorScheme, useMantineTheme } from "@mantine/core";
+import { Link } from "wouter";
+import { Button, Modal, ScrollArea } from "@mantine/core";
 import { NewGalleryForm } from "@/pages/Dashboard/components/NewGalleryForm";
 import { useUser } from "@/stores/useUser";
 import styles from "./GalleryDashboard.module.css";
@@ -79,8 +79,6 @@ const ShareGalleryPopup = ({
 };
 
 export const GalleryDashboard = () => {
-  const { colorScheme } = useMantineColorScheme();
-  const dark = colorScheme === 'dark';
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [sharePopupOpen, setSharePopupOpen] = useState(false);
   const [currentGallerySlug, setCurrentGallerySlug] = useState("");
@@ -105,7 +103,7 @@ export const GalleryDashboard = () => {
   }
 
   return (
-    <div className={styles.container}>
+    <ScrollArea className={styles.container}>
       {isSidebarOpen && (
         <div
           className={styles.overlay}
@@ -128,13 +126,13 @@ export const GalleryDashboard = () => {
             <button
               className={styles.sidebarButton}
             >
-              <Layout className={styles.sidebarIcon} style={{ color: dark ? 'white' : '#242424' }} />
+              <Layout className={styles.sidebarIcon} />
               <span>Desplegar Galería</span>
             </button>
             <button
               className={styles.sidebarButton}
             >
-              <Edit className={styles.sidebarIcon} style={{ color: dark ? 'white' : '#242424' }} />
+              <Edit className={styles.sidebarIcon} />
               <span>Editar Galería</span>
             </button>
           </nav>
@@ -146,7 +144,7 @@ export const GalleryDashboard = () => {
       >
         <div className={styles.headerContent}>
           <button onClick={toggleSidebar} className={styles.menuButton}>
-            <Menu className={styles.menuIcon} style={{ color: dark ? 'white' : '#242424' }} />
+            <Menu className={styles.menuIcon} />
             <span className={styles.srOnly}>Dashboard</span>
           </button>
           <div style={{ display: 'flex', gap: '24px' }}>
@@ -270,6 +268,6 @@ export const GalleryDashboard = () => {
         setTrigger={setSharePopupOpen}
         gallerySlug={currentGallerySlug}
       />
-    </div>
+    </ScrollArea>
   );
 };

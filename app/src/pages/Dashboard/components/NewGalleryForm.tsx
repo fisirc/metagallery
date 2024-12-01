@@ -79,7 +79,7 @@ export const NewGalleryForm = ({ modalKey }: { modalKey: string }) => {
   });
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} style={{ padding: '4px 14px' }}>
       <Text size="xl" fw={700} mb={12} styles={{ root: { fontSize: '1.7rem' } }}>Crear nueva galería</Text>
       <div
         style={{
@@ -154,7 +154,7 @@ export const NewGalleryForm = ({ modalKey }: { modalKey: string }) => {
               style={{
                 border: 'none',
                 outline: 'none',
-                borderBottom: '1px solid var(--mantine-color-black)',
+                borderBottom: '1px solid var(--mantine-color-bright)',
               }}
               onChange={(e) => {
                 form.getInputProps('slug').onChange(e);

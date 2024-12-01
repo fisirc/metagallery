@@ -2,7 +2,7 @@ import { Redirect } from 'wouter';
 import { Home } from './Home';
 import { Editor } from './Editor';
 import { Gallery3D } from './Gallery3D';
-import { Dashboard } from './Dashboard';
+import { GalleryDashboard } from './Dashboard/Dashboard';
 import { useUser } from '@/stores/useUser';
 import { LoadingScreen } from '@/components/Overlays/LoadingScreen';
 import { useEditorStore } from '@/stores/editorAction';
@@ -33,7 +33,7 @@ export const routes = [
       if (loading) {
         return <LoadingScreen />
       }
-      return <Dashboard />;
+      return <GalleryDashboard />;
     },
   },
   {

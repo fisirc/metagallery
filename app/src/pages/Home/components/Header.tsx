@@ -1,21 +1,17 @@
-import { useState } from 'react';
-import Button from './Button';
 import styles from './Header.module.css';
 import Popup from './PopUp/Popup';
 import popupStyles from './PopUp/Popup.module.css';
+import { useState } from 'react';
+import { Button } from '@mantine/core';
 import { useUser } from '@/stores/useUser';
-import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
-import { useTranslation, Trans } from 'react-i18next';
-import { Grab } from 'lucide-react';
-import ThemeSwitcher from '@/components/DarkerMode/themeSwitcher';
+import { useTranslation } from 'react-i18next';
 import { usePopupContext } from './PopUpContext';
-import { useMantineColorScheme } from '@mantine/core';
+import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
 
 export const Header = () => {
-  const { isRegisterPopupOpen, closeRegisterPopup } = usePopupContext();
+  const { isRegisterPopupOpen, closeRegisterPopup, openRegisterPopup } = usePopupContext();
   const { t } = useTranslation();
   const [loginPopup, setLoginPopup] = useState(false);
-  const [registerPopup, setRegisterPopup] = useState(false);
   const [loginStep, setLoginStep] = useState(1);
   const [registerStep, setRegisterStep] = useState(1);
 
@@ -53,7 +49,6 @@ export const Header = () => {
   };
 
   const resetRegisterFlow = () => {
-    setRegisterPopup(false);
     setRegisterStep(1);
     setUsername('');
     setEmail('');
@@ -86,10 +81,10 @@ export const Header = () => {
     <header className={styles.header}>
       <h1 className={styles.title}>Metagallery</h1>
       <p className={styles.description}>
-          {t('landing_description')}
+        {t('landing_description')}
       </p>
       <div className={styles.buttonGroup}>
-        <Button variant="secondary" size="large" onClick={() => setLoginPopup(true)}>
+        <Button variant="default" size="md" onClick={() => setLoginPopup(true)}>
           {t('login')}
         </Button>
 
@@ -156,8 +151,8 @@ export const Header = () => {
           )}
         </Popup>
 
-        <Button variant="primary" size="large" onClick={() => {
-          setRegisterPopup(true);
+        <Button variant="filled" size="md" onClick={() => {
+          openRegisterPopup();
         }}>
           {t('call_to_action')}
         </Button>

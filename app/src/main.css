@@ -2,7 +2,9 @@
 
 :root[data-mantine-color-scheme='light'] {}
 
-body {}
+html {
+  scrollbar-gutter: stable;
+}
 
 input:focus {
   outline: none;

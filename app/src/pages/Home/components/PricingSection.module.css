@@ -21,8 +21,7 @@
 .description {
   max-width: 48rem;
   margin: 0 auto 3rem;
-  font-size: clamp(0.875rem, 2vw, 1.125rem);
-  color: #666;
+  color: var(--mantine-color-dimmed);
   padding: 0 1rem;
 }
 

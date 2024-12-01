@@ -1,6 +1,6 @@
 import PricingCard from './PricingCard';
 import styles from './PricingSection.module.css';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 const PricingSection = () => {
   const { t } = useTranslation();
@@ -47,7 +47,7 @@ const PricingSection = () => {
           {t('pricing_title')}
         </h2>
         <p className={styles.description}>
-        {t('pricing_description')}
+          {t('pricing_description')}
         </p>
         <div className={styles.cardContainer}>
           {pricingPlans.map((plan, index) => (

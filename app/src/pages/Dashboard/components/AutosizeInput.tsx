@@ -1,3 +1,4 @@
+import { Input } from '@mantine/core';
 import React, { Component, CSSProperties, ChangeEvent } from 'react';
 
 // Define the prop types for the AutosizeInput component
@@ -217,7 +218,7 @@ export class AutosizeInput extends Component<AutosizeInputProps, AutosizeInputSt
     return (
       <div className={this.props.className} style={wrapperStyle}>
         {this.renderStyles()}
-        <input {...(inputProps as React.InputHTMLAttributes<HTMLInputElement>)} ref={this.inputRef} />
+        <Input variant="unstyled" {...(inputProps as any)} ref={this.inputRef} />
         <div ref={this.sizerRef} style={sizerStyle}>{sizerValue}</div>
         {this.props.placeholder ? (
           <div ref={this.placeHolderSizerRef} style={sizerStyle}>

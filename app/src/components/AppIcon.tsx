@@ -1,17 +1,25 @@
 import iconDark from '@/assets/favicon.svg';
 import iconWhite from '@/assets/favicon_white.svg';
-import { useColorScheme } from '@mantine/hooks';
+import { negateIf } from '@/utils';
+import { useMantineColorScheme } from '@mantine/core';
 
 interface AppIconProps {
   size: number;
-  animated: boolean;
+  animated?: boolean;
+  withText?: string;
+  inverse?: boolean;
 }
 
-export const AppIcon = ({ size, animated }: AppIconProps) => {
-  const theme = useColorScheme();
+export const AppIcon = ({ size, animated, inverse, withText }: AppIconProps) => {
+  const { colorScheme: theme } = useMantineColorScheme();
 
   return (
-    <>
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+    }}>
       {
         animated && <style>
           {`
@@ -29,10 +37,11 @@ export const AppIcon = ({ size, animated }: AppIconProps) => {
         `}
         </style>
       }
-      <img src={theme === 'dark' ? iconWhite : iconDark} width={size} style={{
+      <img src={negateIf(theme === 'dark', inverse) ? iconWhite : iconDark} width={size} style={{
         'animation': animated ? 'floating 3s infinite' : 'none',
         'pointerEvents': 'none',
       }} />
-    </>
+      {withText && <span style={{ fontWeight: 700, fontSize: size / 2, marginLeft: 8 }}>{withText}</span>}
+    </div>
   );
 }
