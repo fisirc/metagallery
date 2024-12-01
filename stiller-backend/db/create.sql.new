@@ -14,6 +14,7 @@ create table file (
     ext text not null,
     hashed integer not null,
     size real not null,
+    --new default
     deleted integer not null default 0
 );
 
@@ -42,7 +43,6 @@ create table metatemplatefile (
 
 create table template (
     id integer unique primary key autoincrement not null,
-    owner integer not null references user (id),
     tier integer not null references tier (id),
     templatefile integer not null references metatemplatefile(id),
     title text not null,
@@ -61,12 +61,15 @@ create table gallery (
     id integer unique primary key autoincrement not null,
     owner integer not null references user (id),
     template integer not null references template (id),
-    deleted integer not null default 0,
     slug text unique not null,
     title text,
-    description text
+    description text,
+    --new
+    deleted integer not null default 0
 );
 
+
+--new table
 table gallery_telem (
     id integer unique primary key autoincrement not null,
     gallery integer not null references gallery (id),

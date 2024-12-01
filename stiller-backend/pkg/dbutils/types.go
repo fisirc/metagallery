@@ -1,6 +1,10 @@
 package dbutils
 
-import "stiller/pkg/templates"
+import (
+	"stiller/pkg/templates"
+
+	"zombiezen.com/go/sqlite"
+)
 
 type StillerFileType uint8
 const (
@@ -43,6 +47,17 @@ type StillerUser struct {
     Bpasswd     string      `json:"bpasswd,omitempty"`
 }
 
+func (su *StillerUser) FromStmt(stmt *sqlite.Stmt) {
+    *su = StillerUser{
+        Id: int(stmt.GetInt64("id")),
+        TierId: StillerTier(stmt.GetInt64("tier")),
+        Displayname: stmt.GetText("displayname"),
+        Username: stmt.GetText("username"),
+        Mail: stmt.GetText("mail"),
+        Bpasswd: stmt.GetText("bpasswd"),
+    }
+}
+
 type StillerTemplateBlock struct {
     Id          int     `json:"id"`
     TemplateId  int     `json:"template"`
@@ -62,6 +77,16 @@ type StillerTemplate struct {
     TemplateId  int    `json:"templatefile"`
     Title       string `json:"title"`
     Description string `json:"description"`
+}
+
+func (st *StillerTemplate) FromStmt(stmt *sqlite.Stmt) {
+    *st = StillerTemplate{
+        Id: int(stmt.GetInt64("id")),
+        TierId: int(stmt.GetInt64("tier")),
+        TemplateId: int(stmt.GetInt64("templatefile")),
+        Title: stmt.GetText("title"),
+        Description: stmt.GetText("description"),
+    }
 }
 
 type StillerGallerySlot struct {

@@ -24,6 +24,13 @@ func GetTemplate(w http.ResponseWriter, r *http.Request, params httprouter.Param
         return
     }
 
+    type Pair struct {
+        dbutils.StillerUser `json:"owner"`
+        dbutils.StillerTemplate
+    }
+
+    type ResPayload []Pair
+
     user_token := r.Header.Get("token")
     user_decoded, token_decode_err := jwt.Decode(user_token)
     if loggers.RequestLog(token_decode_err, "", http.StatusUnauthorized, &w) {
@@ -63,23 +70,37 @@ func GetTemplate(w http.ResponseWriter, r *http.Request, params httprouter.Param
     }
 
     gettemplates_stmt := sqlf.
-        Select("*").
+        Select("template.id as temp_id").
+        Select("template.tier as temp_tier").
+        Select("template.templatefile as temp_file").
+        Select("template.title as temp_title").
+        Select("template.templatefile as temp_templatefile").
+        Select("template.description as temp_description").
+        Select("user.*").
             From("template").
-        Where("tier <= ?", tier)
+            Join("user", "user.id = owner").
+        Where("template.tier <= ?", tier)
 
-    templates := make([]dbutils.StillerTemplate, 0, 2)
+    templates := make([]Pair, 0, 2)
 
     templateexec_err := sqlitex.ExecuteTransient(dbconn, gettemplates_stmt.String(), &sqlitex.ExecOptions{
         ResultFunc: func(stmt *sqlite.Stmt) error {
             new_template := dbutils.StillerTemplate{
-                Id: int(stmt.GetInt64("id")),
-                TierId: int(stmt.GetInt64("tier")),
-                TemplateId: int(stmt.GetInt64("template")),
-                Title: stmt.GetText("title"),
-                Description: stmt.GetText("description"),
+                Id: int(stmt.GetInt64("temp_id")),
+                TierId: int(stmt.GetInt64("temp_tier")),
+                TemplateId: int(stmt.GetInt64("temp_templatefile")),
+                Title: stmt.GetText("temp_title"),
+                Description: stmt.GetText("temp_description"),
             }
 
-            templates = append(templates, new_template)
+            new_user := dbutils.StillerUser{}
+            new_user.FromStmt(stmt)
+            new_user.Bpasswd = ""
+
+            templates = append(templates, Pair{
+                StillerUser: new_user,
+                StillerTemplate: new_template,
+            })
             return nil
         },
 
