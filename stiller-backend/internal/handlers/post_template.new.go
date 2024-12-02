@@ -150,6 +150,7 @@ func PostTemplateNew(w http.ResponseWriter, r *http.Request, params httprouter.P
             Set("title", req_payload.Title).
             Set("description", req_payload.Description).
             Set("templatefile", templatefile_id).
+            Set("owner", user_id).
         Returning("id")
 
     newtempl_query, newtempl_args := newtempl_stmt.String(), newtempl_stmt.Args()
