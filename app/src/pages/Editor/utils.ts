@@ -1,8 +1,17 @@
 import { SlotVertex, SlotVertices } from '@/types';
 import debounce from 'debounce';
 
+/**
+ * The conversion is:
+ * Blender (x, y, z)
+ * Konva   (x, x, -y)
+ */
 export function v3tov2(v: SlotVertex): [number, number] {
     return [v[0], -v[2]];
+}
+
+export function medianPoint(p1: [number, number], p2: [number, number]) {
+    return [(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2];
 }
 
 export function getFrameWidth(v: SlotVertices) {

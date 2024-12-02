@@ -10,7 +10,7 @@ import { PictureSlot } from '@/pages/Editor/components/blocks/PictureSlot';
 import { Model3DSlot } from '@/pages/Editor/components/blocks/Model3DBlock';
 import { getInitialScale, getInitialXY, saveScaleToLocalStorage, saveXYToLocalStorage } from '../utils';
 import { useApi } from '@/hooks/useApi';
-import { StillerGallery } from '@/types';
+import { SlotVertices, StillerGallery } from '@/types';
 
 const initialScale = getInitialScale();
 const initialXY = getInitialXY();
@@ -118,8 +118,8 @@ export const GalleryCanvas2D = memo(({ gallery, triggerReRender }: GalleryCanvas
                   <PictureSlot
                     key={i}
                     idRef={block.ref}
-                    v={block.v as any}
-                    props={{}}
+                    v={block.v as unknown as SlotVertices}
+                    props={block.props}
                     res={res}
                   />
                 );
@@ -129,7 +129,7 @@ export const GalleryCanvas2D = memo(({ gallery, triggerReRender }: GalleryCanvas
                   <Model3DSlot
                     key={i}
                     idRef={block.ref}
-                    v={block.v[0] as any}
+                    v={block.v[0]}
                     props={block.props}
                     res={res}
                   />

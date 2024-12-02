@@ -7,7 +7,7 @@ import { useEditorStore } from '@/stores/editorAction';
 import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
 import { CORNER_RADIUS, FRAME_STROKE_WIDTH, noImageSrc } from '@/constants';
 import { JSONValue, SlotVertices } from '@/types';
-import { cosine, getFrameAngle, getFrameHeight, getFrameWidth, sine, v3tov2 } from '@/pages/Editor/utils';
+import { cosine, getFrameAngle, getFrameHeight, getFrameWidth, medianPoint, sine, v3tov2 } from '@/pages/Editor/utils';
 import { useUser } from '@/stores/useUser';
 import { mutate } from 'swr';
 import { notifications } from '@mantine/notifications';
@@ -39,7 +39,8 @@ export const PictureSlot = memo(({ idRef, v, res, props }: PictureSlotProps) => 
 
   const [image] = useImage(src ?? noImageSrc);
 
-  const pos = v3tov2(v[2]);
+  // const pos = v3tov2(v[3]);
+  const pos = medianPoint(v3tov2(v[1]), v3tov2(v[3]));
   const rotation = getFrameAngle(v);
 
   const frameWidth = getFrameWidth(v);
@@ -62,19 +63,21 @@ export const PictureSlot = memo(({ idRef, v, res, props }: PictureSlotProps) => 
     imgOffsetY = frameHeight / 2 - imgHeight / 2;
   }
 
-  // const changedX = -pos[0] + (pos[0] > 0 ? frameWidth : -frameWidth);
-  // const changedX = -pos[0] - frameWidth;
-  const changedX = pos[0];
+  const x = -pos[0];
+  const y = pos[1];
 
   return (
     <Group>
       { /* Base color and border */}
+
       <Rect
-        x={changedX}
-        y={pos[1]}
+        x={x}
+        y={y}
+        offsetX={+frameWidth / 2}
+        offsetY={+frameHeight / 2}
         width={frameWidth}
         height={frameHeight}
-        rotation={rotation}
+        // rotation={rotation}
         listening
         fillAfterStrokeEnabled
         strokeHitEnabled
@@ -136,8 +139,11 @@ export const PictureSlot = memo(({ idRef, v, res, props }: PictureSlotProps) => 
       { /* Rendered image */}
       {
         image && <Image
-          x={changedX - imgOffsetY * sine(rotation) + imgOffsetX * cosine(rotation)}
-          y={pos[1] + imgOffsetY * cosine(rotation) + imgOffsetX * sine(rotation)}
+          x={x - imgOffsetY * sine(rotation) + imgOffsetX * cosine(rotation)}
+          y={y + imgOffsetY * cosine(rotation) + imgOffsetX * sine(rotation)}
+          offsetX={+frameWidth / 2}
+          offsetY={+frameHeight / 2}
+
           width={imgWidth}
           height={imgHeight}
           listening={false}
