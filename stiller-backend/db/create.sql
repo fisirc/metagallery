@@ -74,7 +74,7 @@ create table gallery_telem (
     user_agent text not null,
     load_time real not null,
     used_time real not null default 0
-)
+);
 
 insert into
     filetype
