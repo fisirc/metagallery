@@ -68,24 +68,7 @@ func GetGalleryData(gallery int) (*StillerGalleryData, error) {
         return nil, ErrTemplateNotFound
     }
 
-    templateFileId := int(-1)
-    templateFileQuery_stmt := sqlf.Select("templatefile").
-        From("template").
-        Where("id = ?", template_id)
-    templateFileQuery_query, templateFileQuery_args := templateFileQuery_stmt.String(), templateFileQuery_stmt.Args()
-    templateFileQuery_err := sqlitex.ExecuteTransient(new_dbconn, templateFileQuery_query, &sqlitex.ExecOptions{
-        ResultFunc: func(stmt *sqlite.Stmt) error {
-            templateFileId = int(stmt.GetInt64("templatefile"))
-            return nil
-        },
-        Args: templateFileQuery_args,
-    })
-
-    if templateFileId == -1 {
-        return nil, templateFileQuery_err
-    }
-
-    template_data, template_data_err := templates.GetTemplateData(templateFileId)
+    template_data, template_data_err := templates.GetTemplateData(template_id)
     if template_data_err != nil {
         return nil, template_data_err
     }

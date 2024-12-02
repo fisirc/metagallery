@@ -101,7 +101,39 @@ func PostTemplateNew(w http.ResponseWriter, r *http.Request, params httprouter.P
         return
     }
 
-    abs_path := fsop.GetTemplatePath(templatefile_id)
+    newtempl_stmt := sqlf.
+    InsertInto("template").
+        NewRow().
+            Set("tier", req_payload.TierId).
+            Set("title", req_payload.Title).
+            Set("description", req_payload.Description).
+            Set("templatefile", templatefile_id).
+            Set("owner", user_id).
+        Returning("id")
+
+    newtempl_query, newtempl_args := newtempl_stmt.String(), newtempl_stmt.Args()
+    newtemp_id := int(-1)
+    newtemp_exec_err := sqlitex.ExecuteTransient(new_dbconn, newtempl_query, &sqlitex.ExecOptions{
+        ResultFunc: func(stmt *sqlite.Stmt) error {
+            newtemp_id = int(stmt.GetInt64("id"))
+            return nil
+        },
+
+        Args: newtempl_args,
+    })
+
+    if loggers.RequestLog(newtemp_exec_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
+
+    if newtemp_id == -1 {
+        loggers.GenericErrLog(nil, "no new template was created")
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+
+
+    abs_path := fsop.GetTemplatePath(newtemp_id)
     tarfile, tarball_err := os.Create(abs_path)
     if loggers.RequestLog(tarball_err, "", http.StatusInternalServerError, &w) {
         return
@@ -143,36 +175,6 @@ func PostTemplateNew(w http.ResponseWriter, r *http.Request, params httprouter.P
         return
     }
 
-    newtempl_stmt := sqlf.
-    InsertInto("template").
-        NewRow().
-            Set("tier", req_payload.TierId).
-            Set("title", req_payload.Title).
-            Set("description", req_payload.Description).
-            Set("templatefile", templatefile_id).
-            Set("owner", user_id).
-        Returning("id")
-
-    newtempl_query, newtempl_args := newtempl_stmt.String(), newtempl_stmt.Args()
-    newtemp_id := int(-1)
-    newtemp_exec_err := sqlitex.ExecuteTransient(new_dbconn, newtempl_query, &sqlitex.ExecOptions{
-        ResultFunc: func(stmt *sqlite.Stmt) error {
-            newtemp_id = int(stmt.GetInt64("id"))
-            return nil
-        },
-
-        Args: newtempl_args,
-    })
-
-    if loggers.RequestLog(newtemp_exec_err, "", http.StatusInternalServerError, &w) {
-        return
-    }
-
-    if newtemp_id == -1 {
-        loggers.GenericErrLog(nil, "no new template was created")
-        w.WriteHeader(http.StatusInternalServerError)
-        return
-    }
 
     w.WriteHeader(http.StatusOK)
 }
