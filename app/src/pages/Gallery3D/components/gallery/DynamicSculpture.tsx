@@ -31,9 +31,9 @@ export function DynamicSculpture({
   return (
     <group
       ref={groupRef}
-      position={position}
+      position={[position[0], position[1] + 1.9, position[2]]}
       rotation={rotation}
-      scale={scale}
+      scale={[.8, .8, .8]}
     >
       <primitive object={copiedModel} />
     </group>
