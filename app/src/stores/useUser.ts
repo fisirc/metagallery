@@ -1,4 +1,5 @@
 import { TOKEN_LC_KEY } from '@/constants';
+import { mutate } from 'swr';
 import { create } from 'zustand';
 
 type MetagalleryUser = {
@@ -129,6 +130,7 @@ export const useUser = create<MetagalleryUserState>()(
     },
     logout() {
       window.localStorage.removeItem(TOKEN_LC_KEY);
+      mutate(() => true, undefined, false);
       set({ user: null, loading: false, token: null });
     },
   }),
