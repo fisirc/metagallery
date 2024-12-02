@@ -71,6 +71,11 @@ func GetGalleryDetail(w http.ResponseWriter, r *http.Request, params httprouter.
         Args: get_gallery.Args(),
     })
 
+    if gallery.Id == 0 {
+        loggers.RequestLog(nil, "gallery not found", http.StatusNotFound, &w)
+        return
+    }
+
     if loggers.RequestLog(exec_err, "", http.StatusInternalServerError, &w) {
         return
     }
