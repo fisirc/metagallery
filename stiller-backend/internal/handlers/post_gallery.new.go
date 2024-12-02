@@ -84,27 +84,8 @@ func PostGalleryNew(w http.ResponseWriter, r *http.Request, params httprouter.Pa
         return
     }
 
-    templateFileId := int(-1)
-    templateFileQuery_stmt := sqlf.Select("templatefile").
-        From("template").
-        Where("id = ?", req_payload.Template)
-
-    templateFileQuery_query, templateFileQuery_args := templateFileQuery_stmt.String(), templateFileQuery_stmt.Args()
-
-    templateFileQuery_err := sqlitex.ExecuteTransient(dbconn, templateFileQuery_query, &sqlitex.ExecOptions{
-        ResultFunc: func(stmt *sqlite.Stmt) error {
-            templateFileId = int(stmt.GetInt64("templatefile"))
-            return nil
-        },
-        Args: templateFileQuery_args,
-    })
-
-    if loggers.RequestLog(templateFileQuery_err, "", http.StatusInternalServerError, &w) {
-        return
-    }
-
-    template_data, template_data_err := templates.GetTemplateData(templateFileId)
-    if loggers.RequestLog(template_data_err, "Error gettint template id", http.StatusInternalServerError, &w) {
+    template_data, template_data_err := templates.GetTemplateData(req_payload.Template)
+    if loggers.RequestLog(template_data_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
