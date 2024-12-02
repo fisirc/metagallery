@@ -10,7 +10,6 @@ import { Text } from '@mantine/core';
 import { useUser } from '@/stores/useUser';
 import { mutate } from 'swr';
 import { useQueryClient } from '@tanstack/react-query';
-import { useForceUpdate } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 
 type Model3DBlockProps = {

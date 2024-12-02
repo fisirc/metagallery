@@ -1,7 +1,6 @@
 .container {
   min-height: 100vh;
   position: relative;
-  margin-bottom: 32px;
 }
 
 .overlay {
@@ -232,6 +231,8 @@
   display: grid;
   justify-items: center;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  margin-right: 32px;
+  margin-left: 32px;
   gap: 1.5rem;
 }
 

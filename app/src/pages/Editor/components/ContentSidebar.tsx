@@ -152,7 +152,8 @@ const SidebarInnerContent = () => {
         <TextInput
           variant="transparent"
           placeholder="¿Qué estás buscando?"
-          size="xs"
+          size="sm"
+          w={'100%'}
           leftSection={<IconSearch {...secondaryIconProps} />}
           value={filterInput}
           onChange={(e) => setFilterInput(e.currentTarget.value)}
@@ -176,11 +177,9 @@ const SidebarInnerContent = () => {
           (props) => (
             <Button
               size="sm"
+              variant='default'
               leftSection={<IconUpload {...primaryIconProps} />}
               {...props}
-              style={{
-                color: 'var(--mantine-color-white-7)',
-              }}
             >
               Añadir contenido
             </Button>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu, Search, Plus, Layout, Edit, Copy, Check } from "lucide-react";
 import { Link } from "wouter";
-import { Button, Modal, ScrollArea } from "@mantine/core";
+import { Box, Button, Loader, Modal, ScrollArea, Text, Title } from "@mantine/core";
 import { NewGalleryForm } from "@/pages/Dashboard/components/NewGalleryForm";
 import { useUser } from "@/stores/useUser";
 import styles from "./GalleryDashboard.module.css";
@@ -86,8 +86,8 @@ export const GalleryDashboard = () => {
   const [showCommunityProjects, setShowCommunityProjects] = useState(false);
   const { user, loading } = useUser();
 
-  const { response: userGalleries } = useApi<StillerGallery[]>('/gallery');
-  const { response: communityGalleries } = useApi<StillerGallery[]>('/galleryall');
+  const { response: userGalleries, isLoading: galleryLoading } = useApi<StillerGallery[]>('/gallery');
+  const { response: communityGalleries, isLoading: galleryallLoading } = useApi<StillerGallery[]>('/galleryall');
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -182,7 +182,30 @@ export const GalleryDashboard = () => {
             </Button>
           </div>
         </div>
-
+        {
+          (galleryLoading || galleryallLoading) && (
+            <Box mt={72} display={'flex'} style={{ justifyContent: 'center' }}>
+              <Loader size={30} />
+            </Box>
+          )
+        }
+        {
+          (showCommunityProjects && communityGalleries && communityGalleries.data.length === 0) && (
+            <Box mt={72} display={'flex'} style={{ justifyContent: 'center' }}>
+              <p>No hay proyectos de la comunidad</p>
+            </Box>
+          )
+        }
+        {
+          (!showCommunityProjects && userGalleries && userGalleries.data.length === 0) && (
+            <Box mt={72} display={'flex'} style={{ alignItems: 'center', flexDirection: 'column', gap: 18 }}>
+              <Title order={5}>Aquí aparecerán tus proyectos 🖼️</Title>
+              <Text td="underline" c={'orange'} style={{ cursor: 'pointer' }} onClick={() => {
+                setIsModalOpen(true);
+              }}>Crea tu primera galería</Text>
+            </Box>
+          )
+        }
         <div className={styles.galleryGrid}>
           {showCommunityProjects
             ? communityGalleries && communityGalleries.data.map((gallery, index) => (

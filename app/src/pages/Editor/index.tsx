@@ -31,7 +31,7 @@ export const Editor = ({ gallery }: { gallery: string }) => {
 
   return (
     <>
-      <section style={{ minWidth: '420px', position: 'relative', overflow: 'hidden' }}>
+      <section style={{ minWidth: '420px', position: 'relative', overflow: 'hidden', backgroundColor: 'var(--mantine-color-body)' }}>
         <div id={DRAG_PORTAL_ID} style={{ position: 'absolute' }}></div>
         <div style={{ display: 'flex', justifyContent: 'space-between', minHeight: '70px', maxHeight: '70px' }}>
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', flexWrap: 'nowrap', paddingLeft: '16px' }}>

@@ -54,7 +54,7 @@ export const MainButtons = ({ onPreviewButton, onClosePreviewButton: closePrevie
             Visualizar
           </Button>
         )}
-      </Group>
+      </Group >
 
       <DeployModal
         isOpen={isModalOpen}

@@ -1,6 +1,6 @@
 import { useApi } from "@/hooks/useApi";
 import { TemplateListItem } from "@/types";
-import { Group, Image, Radio, Text } from "@mantine/core";
+import { Box, Group, Image, Radio, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import styles from './TemplateList.module.css';
 
@@ -22,18 +22,18 @@ export const TemplatesList = ({ onTemplateSelect }: TemplatesListProps) => {
   if (error) return <Text>Estamos experimentando problemas. Inténtalo de nuevo más tarde. 😔</Text>;
 
   if (isLoading || !response) {
-    return <Text>Cargando plantillas...</Text>;
+    return <Text w={600}>Cargando plantillas...</Text>;
   }
 
   const defaultVal = response.data[0].id.toString();
 
   return (
     <Radio.Group
-      mah={400}
       value={value ?? defaultVal}
       defaultValue={defaultVal}
       onChange={(val) => {
         setValue(val);
+        console.log({ val })
         onTemplateSelect(Number(val));
       }}
       style={{ overflow: 'auto', paddingRight: 12 }}
@@ -49,17 +49,18 @@ export const TemplatesList = ({ onTemplateSelect }: TemplatesListProps) => {
         >
           <Group wrap="nowrap" align="flex-start">
             <Radio.Indicator />
-            <Group wrap="nowrap" align="flex-start">
+            <Group align="flex-start">
               <Image
                 alt={template.title}
+                fit="contain"
                 width={200}
                 height={150}
                 src={`https://pandadiestro.xyz/services/stiller/template/info/${template.id}/thumbnail`}
               />
-              <div>
+              <Box flex={1}>
                 <Text className={styles.label}>{template.title}</Text>
                 <Text className={styles.description}>{template.description}</Text>
-              </div>
+              </Box>
             </Group>
           </Group>
         </Radio.Card>

@@ -1,0 +1,16 @@
+{
+  "origin": [-7.8, -4.34],
+  "slots": [
+      {
+          "ref": "center",
+          "type": "3d",
+          "props": {
+              "scale": 1.5,
+              "rotate": true
+          },
+          "v": [
+              [0, 0.7822, -3.103]
+          ]
+      }
+  ]
+}

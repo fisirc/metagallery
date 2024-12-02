@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from 'react';
 import { DynamicPainting } from './components/gallery/DynamicPainting';
 import { DynamicSculpture } from './components/gallery/DynamicSculpture';
 import { StillerGallery } from '@/types';
+import { useLocation } from 'wouter';
 
 type ExperienceProps = {
   gallery: string;
@@ -15,8 +16,17 @@ type ExperienceProps = {
 };
 
 export const Experience = ({ gallery, onLoad }: ExperienceProps) => {
-  const { response } = useApi<StillerGallery>(`/gallery/${gallery}`);
+  const { response, error } = useApi<StillerGallery>(`/gallery/${gallery}`);
   const [gravityEnabled, setGravityEnabled] = useState(false);
+
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (error) {
+      window.alert('La galería no existe');
+      setLocation('/');
+    }
+  }, [error])
 
   return (
     <>

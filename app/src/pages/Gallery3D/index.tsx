@@ -30,18 +30,18 @@ export const Gallery3D = ({ gallery, withTopOffset }: Gallery3DProps) => {
   });
 
   return (
-    <div ref={ref} style={{ maxHeight: '100svh', height: '100svh', width: '100svw' }}>
+    <div ref={ref} style={{ maxHeight: '100svh', height: '100svh', width: '100svw', backgroundColor: 'var(--mantine-color-body)' }}>
       {
         (!hasMouse && !loading) && (
           <>
-            <Button size='compact-sm' onClick={() => store.enterVR()} style={{ position: 'absolute', zIndex: 69, top: 8, left: '3.5rem' }}>
+            <Button size='compact-sm' onClick={() => store.enterVR()} style={{ height: 32, position: 'absolute', zIndex: 69, top: withTopOffset ? 78 : 8, left: '3.5rem' }}>
               <IconBadgeVr />
             </Button>
             <EcctrlJoystick />
           </>
         )
       }
-      <Button size='compact-sm' onClick={() => toggle()} style={{ position: 'absolute', zIndex: 69, top: 8, left: 8 }}>
+      <Button size='compact-sm' onClick={() => toggle()} style={{ height: 32, position: 'absolute', zIndex: 69, top: withTopOffset ? 78 : 8, left: 8 }}>
         {
           fullscreen ? <IconMaximizeOff /> : <IconMaximize />
         }

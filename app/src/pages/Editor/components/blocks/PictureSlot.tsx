@@ -1,16 +1,15 @@
 import useImage from 'use-image';
 import { memo, useState } from 'react';
 import { Text } from '@mantine/core';
-import { Image, Rect, Group, Text as Text3D } from 'react-konva';
-import { copyGalleryWithSlotResId, setCursor } from '@/utils';
+import { Image, Rect, Group } from 'react-konva';
+import { setCursor } from '@/utils';
 import { useEditorStore } from '@/stores/editorAction';
 import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
 import { CORNER_RADIUS, FRAME_STROKE_WIDTH, noImageSrc } from '@/constants';
-import { JSONValue, SlotVertices, StillerGallery } from '@/types';
+import { JSONValue, SlotVertices } from '@/types';
 import { cosine, getFrameAngle, getFrameHeight, getFrameWidth, sine, v3tov2 } from '@/pages/Editor/utils';
 import { useUser } from '@/stores/useUser';
-import { ApiResponse, useApi } from '@/hooks/useApi';
-import { mutate, useSWRConfig } from 'swr';
+import { mutate } from 'swr';
 import { notifications } from '@mantine/notifications';
 
 type PictureSlotProps = {
@@ -67,7 +66,7 @@ export const PictureSlot = memo(({ idRef, v, res, props }: PictureSlotProps) => 
     <Group>
       { /* Base color and border */}
       <Rect
-        x={pos[0]}
+        x={-pos[0] - frameWidth}
         y={pos[1]}
         width={frameWidth}
         height={frameHeight}
@@ -133,7 +132,7 @@ export const PictureSlot = memo(({ idRef, v, res, props }: PictureSlotProps) => 
       { /* Rendered image */}
       {
         image && <Image
-          x={pos[0] - imgOffsetY * sine(rotation) + imgOffsetX * cosine(rotation)}
+          x={-pos[0] - frameWidth - imgOffsetY * sine(rotation) + imgOffsetX * cosine(rotation)}
           y={pos[1] + imgOffsetY * cosine(rotation) + imgOffsetX * sine(rotation)}
           width={imgWidth}
           height={imgHeight}

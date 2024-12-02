@@ -1,9 +1,14 @@
 import { Center, Stack, Text } from "@mantine/core";
 import { AppIcon } from "../AppIcon";
 
-export const LoadingScreen = () => {
+type LoadingScreenProps = {
+  h?: number;
+  mt?: number;
+};
+
+export const LoadingScreen = ({ h, mt }: LoadingScreenProps) => {
   return (
-    <Center h={'100vh'}>
+    <Center h={h ? h : '100vh'} mt={mt}>
       <Stack align="center">
         <AppIcon animated size={100} />
         <Text size="xl" mt={18}>Cargando metagallery...</Text>

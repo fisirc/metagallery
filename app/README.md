@@ -20,4 +20,4 @@
 - Virtual museum: <https://github.com/r23/Virtual-Reality-Museum>
   - <https://github.com/r23/Virtual-Reality-Museum/blob/a37c16ce8cf00addeab8600c728ad04b925961e7/index.html#L132>
   - <https://github.com/r23/Virtual-Reality-Museum/blob/master/models/good_samaritan.mtl>
-- SVG Editor: <https://svgedit.netlify.app/>
+- SVG Editor: <https://svgedit.netlify.app/editor/index.html>
