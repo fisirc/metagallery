@@ -41,11 +41,15 @@ export const Gallery3D = ({ gallery, withTopOffset }: Gallery3DProps) => {
           </>
         )
       }
-      <Button size='compact-sm' onClick={() => toggle()} style={{ height: 32, position: 'absolute', zIndex: 69, top: withTopOffset ? 78 : 8, left: 8 }}>
-        {
-          fullscreen ? <IconMaximizeOff /> : <IconMaximize />
-        }
-      </Button>
+      {
+        !loading && (
+          <Button size='compact-sm' onClick={() => toggle()} style={{ height: 32, position: 'absolute', zIndex: 69, top: withTopOffset ? 78 : 8, left: 8 }}>
+            {
+              fullscreen ? <IconMaximizeOff /> : <IconMaximize />
+            }
+          </Button>
+        )
+      }
       <Canvas
         camera={{ fov: 70 }}
         onPointerDown={(e) => {

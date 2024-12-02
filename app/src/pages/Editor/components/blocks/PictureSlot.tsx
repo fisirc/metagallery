@@ -62,11 +62,15 @@ export const PictureSlot = memo(({ idRef, v, res, props }: PictureSlotProps) => 
     imgOffsetY = frameHeight / 2 - imgHeight / 2;
   }
 
+  // const changedX = -pos[0] + (pos[0] > 0 ? frameWidth : -frameWidth);
+  // const changedX = -pos[0] - frameWidth;
+  const changedX = pos[0];
+
   return (
     <Group>
       { /* Base color and border */}
       <Rect
-        x={-pos[0] - frameWidth}
+        x={changedX}
         y={pos[1]}
         width={frameWidth}
         height={frameHeight}
@@ -132,7 +136,7 @@ export const PictureSlot = memo(({ idRef, v, res, props }: PictureSlotProps) => 
       { /* Rendered image */}
       {
         image && <Image
-          x={-pos[0] - frameWidth - imgOffsetY * sine(rotation) + imgOffsetX * cosine(rotation)}
+          x={changedX - imgOffsetY * sine(rotation) + imgOffsetX * cosine(rotation)}
           y={pos[1] + imgOffsetY * cosine(rotation) + imgOffsetX * sine(rotation)}
           width={imgWidth}
           height={imgHeight}
