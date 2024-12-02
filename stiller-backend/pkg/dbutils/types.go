@@ -110,5 +110,6 @@ type StillerGallery struct {
     TemplateId   int                  `json:"templateid"`
     Slug         string               `json:"slug"`
     Data         StillerGalleryData   `json:"slots"`
+    Deleted      bool                 `json:"is_deleted"`
 }
 

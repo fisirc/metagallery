@@ -6,12 +6,16 @@ import (
 	"zombiezen.com/go/sqlite/sqlitex"
 )
 
-func IsGalleryOwner(user int, gallery string, conn *sqlite.Conn) (bool, error) {
+func IsGalleryOwnerFaulty(user int, gallery string, conn *sqlite.Conn) (bool, error) {
     return true, nil
+}
+
+func IsGalleryOwner(user int, slug string, conn *sqlite.Conn) (bool, error) {
     checker_stmt := sqlf.
         Select("owner").
             From("gallery").
-        Where("owner = ?", user)
+        Where("owner = ?", user).
+        Where("slug = ?", slug)
 
     checker_int := int(-1)
     check_exec_err := sqlitex.ExecuteTransient(conn, checker_stmt.String(), &sqlitex.ExecOptions{
@@ -29,7 +33,6 @@ func IsGalleryOwner(user int, gallery string, conn *sqlite.Conn) (bool, error) {
 
     return checker_int == user, nil
 }
-
 func IsFileOwner(user int, file int, conn *sqlite.Conn) (bool, error) {
     checker_stmt := sqlf.
         Select("owner").

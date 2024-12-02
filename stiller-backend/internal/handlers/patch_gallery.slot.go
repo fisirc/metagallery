@@ -46,7 +46,7 @@ func PatchGallerySlot(w http.ResponseWriter, r *http.Request, _ httprouter.Param
     defer dbutils.CloseConn(new_dbconn)
 
     user_id := user_tk.UserId
-    is_owner, ownercheck_err := checkers.IsGalleryOwner(user_id, rpayload.Gallery, new_dbconn)
+    is_owner, ownercheck_err := checkers.IsGalleryOwnerFaulty(user_id, rpayload.Gallery, new_dbconn)
     if loggers.RequestLog(ownercheck_err, "", http.StatusInternalServerError, &w) {
         return
     }

@@ -60,6 +60,11 @@ var routes = [...]individualHandler{
         handlefunc: handlers.PatchGallerySlot,
     },
     {
+        path: "/gallerydel/:gallery_slug",
+        method: http.MethodGet,
+        handlefunc: handlers.GetGalleryDel,
+    },
+    {
         path: "/file",
         method: http.MethodGet,
         handlefunc: handlers.GetFile,

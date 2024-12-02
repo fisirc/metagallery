@@ -67,7 +67,7 @@ create table gallery (
     description text
 );
 
-table gallery_telem (
+create table gallery_telem (
     id integer unique primary key autoincrement not null,
     gallery integer not null references gallery (id),
     user integer not null references user (id),

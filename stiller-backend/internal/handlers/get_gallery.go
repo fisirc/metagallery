@@ -62,6 +62,7 @@ func GetGallery(w http.ResponseWriter, r *http.Request, params httprouter.Params
                 TemplateId: gall_template,
                 Slug: stmt.GetText("slug"),
                 Data: *gallery_data,
+                Deleted: stmt.GetBool("deleted"),
             }
 
             galleries = append(galleries, gallery)
