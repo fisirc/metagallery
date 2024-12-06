@@ -71,6 +71,8 @@ func GetGalleryDetail(w http.ResponseWriter, r *http.Request, params httprouter.
         Args: get_gallery.Args(),
     })
 
+    w.Header().Set("Content-Type", "application/json")
+
     if gallery.Id == 0 {
         loggers.RequestLog(nil, "gallery not found", http.StatusNotFound, &w)
         return
