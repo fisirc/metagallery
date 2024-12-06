@@ -10,7 +10,7 @@ import { Gallery3D } from '../Gallery3D';
 import { StillerGallery } from '@/types';
 import { LoadingScreen } from '@/components/Overlays/LoadingScreen';
 import { useApi } from '@/hooks/useApi';
-import { useEditorStore } from '@/stores/editorAction';
+import { useEditorStore } from '@/stores/useEditorStore';
 
 export const Editor = ({ gallery }: { gallery: string }) => {
   const { response, isLoading } = useApi<StillerGallery>(`/gallery/${gallery}`);

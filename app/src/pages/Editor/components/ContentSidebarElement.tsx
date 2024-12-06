@@ -3,7 +3,7 @@ import { useMouse } from "@mantine/hooks";
 import { Canvas } from "@react-three/fiber";
 import { UserContentFileElement } from "@/types";
 import { memo, RefObject, useRef, useState } from "react";
-import { useEditorStore } from "@/stores/editorAction";
+import { useEditorStore } from "@/stores/useEditorStore";
 import { DRAG_PORTAL_ID, smallIconProps } from "@/constants";
 import { useMetagalleryStore } from "@/providers/MetagalleryProvider";
 import { IconDots, IconDownload, IconEdit, IconTrash } from "@tabler/icons-react";

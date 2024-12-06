@@ -2,7 +2,7 @@ import useImage from 'use-image';
 import { memo, useState } from 'react';
 import { Image, Rect, Group } from 'react-konva';
 import { setCursor } from '@/utils';
-import { useEditorStore } from '@/stores/editorAction';
+import { useEditorStore } from '@/stores/useEditorStore';
 import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
 import { CORNER_RADIUS, FRAME_STROKE_WIDTH, noImageSrc } from '@/constants';
 import { JSONValue, SlotVertices } from '@/types';
@@ -26,7 +26,7 @@ export const PictureSlot = memo(({ idRef, v, res, title, description, props }: P
   const draggingElem = useEditorStore((s) => s.draggingFile);
   const gallery = useEditorStore((s) => s.gallery);
   const dragging = draggingElem !== null && !draggingElem.ext.includes('glb');
-  const graggingInvalid = draggingElem !== null && draggingElem.ext.includes('glb');
+  const draggingInvalid = draggingElem !== null && draggingElem.ext.includes('glb');
   const [optimisticImgSrc, setOptimisticImgSrc] = useState<string | null>(null);
 
   let src = res;
@@ -132,7 +132,7 @@ export const PictureSlot = memo(({ idRef, v, res, title, description, props }: P
           }
         }}
         onMouseEnter={() => {
-          if (!graggingInvalid) {
+          if (!draggingInvalid) {
             setHovering(true);
             setCursor('pointer');
           } else {

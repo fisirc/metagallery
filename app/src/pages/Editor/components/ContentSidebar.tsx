@@ -4,7 +4,7 @@ import QueryBoiler from '@/components/QueryBoiler/QueryBoiler';
 import ContentSidebarElement from './ContentSidebarElement';
 import { useUser } from '@/stores/useUser';
 import { useMediaQuery } from '@mantine/hooks';
-import { useEditorStore } from '@/stores/editorAction';
+import { useEditorStore } from '@/stores/useEditorStore';
 import { memo, useEffect, useState } from 'react';
 import { IconSearch, IconUpload } from '@tabler/icons-react';
 import { UserContentFileElement } from '@/types';

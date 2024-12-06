@@ -1,7 +1,7 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import { Image as KonvaImage, Rect } from 'react-konva';
 import { setCursor } from '@/utils';
-import { useEditorStore } from '@/stores/editorAction';
+import { useEditorStore } from '@/stores/useEditorStore';
 import { FRAME_STROKE_WIDTH } from '@/constants';
 import { JSONValue, SlotVertex } from '@/types';
 import { v3tov2 } from '../../utils';
@@ -25,7 +25,7 @@ export const Model3DSlot = memo(({ idRef, v, res, props, title, description }: M
   const [hovering, setHovering] = useState(false);
   const draggingElem = useEditorStore((state) => state.draggingFile);
   const dragging = draggingElem !== null && draggingElem.ext.includes('glb');
-  const graggingInvalid = draggingElem !== null && !draggingElem.ext.includes('glb');
+  const draggingInvalid = draggingElem !== null && !draggingElem.ext.includes('glb');
   const gallery = useEditorStore((s) => s.gallery);
   const [forced, forceUpdate] = useState(false);
   const [optimisticResId, setOptimisticResId] = useState<number | null>(null);
@@ -90,7 +90,7 @@ export const Model3DSlot = memo(({ idRef, v, res, props, title, description }: M
         fill={dragging ? '#fcf3de' : (hovering ? '#e1e3e5' : '#f1f3f5')}
         cornerRadius={1.2}
         onMouseEnter={() => {
-          if (!graggingInvalid) {
+          if (!draggingInvalid) {
             setHovering(true);
             setCursor('pointer');
           } else {

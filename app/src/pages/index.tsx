@@ -5,7 +5,7 @@ import { Gallery3D } from './Gallery3D';
 import { GalleryDashboard, TrashView } from './Dashboard/Dashboard';
 import { useUser } from '@/stores/useUser';
 import { LoadingScreen } from '@/components/Overlays/LoadingScreen';
-import { useEditorStore } from '@/stores/editorAction';
+import { useEditorStore } from '@/stores/useEditorStore';
 
 export const routes = [
   {

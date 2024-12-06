@@ -5,7 +5,7 @@ import { memo, useEffect, useRef, useState } from 'react';
 import { Image, Layer, Rect, Stage } from 'react-konva';
 import { setCursor } from '@/utils';
 import { SLOTS_SCALE, ZOOM_FACTOR } from '@/constants';
-import { useEditorStore } from '@/stores/editorAction';
+import { useEditorStore } from '@/stores/useEditorStore';
 import { PictureSlot } from '@/pages/Editor/components/blocks/PictureSlot';
 import { Model3DSlot } from '@/pages/Editor/components/blocks/Model3DBlock';
 import { getInitialScale, getInitialXY, saveScaleToLocalStorage, saveXYToLocalStorage } from '../utils';
@@ -72,6 +72,7 @@ export const GalleryCanvas2D = memo(({ gallery, triggerReRender }: GalleryCanvas
         overflow: 'hidden',
       }}
     >
+
       <Stage
         ref={stageRef}
         width={viewport.x}

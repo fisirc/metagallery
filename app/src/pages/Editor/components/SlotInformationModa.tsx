@@ -1,5 +1,5 @@
 import { useMetagalleryStore } from "@/providers/MetagalleryProvider";
-import { useEditorStore } from "@/stores/editorAction";
+import { useEditorStore } from "@/stores/useEditorStore";
 import { useUser } from "@/stores/useUser";
 import { Button, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
