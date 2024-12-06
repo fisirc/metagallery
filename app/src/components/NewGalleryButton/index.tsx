@@ -3,12 +3,12 @@ import { NewGalleryForm } from "@/pages/Dashboard/components/NewGalleryForm";
 import { useMetagalleryStore } from "@/providers/MetagalleryProvider";
 import { Button, Group } from "@mantine/core";
 import { IconSparkles } from "@tabler/icons-react";
-import ThemeSwitcher from "../DarkerMode/themeSwitcher";
+import ColorThemeSwitcher from "../DarkerMode/themeSwitcher";
 
 export const NewGalleryButton = () => {
   return (
     <Group align="center">
-      <ThemeSwitcher />
+      <ColorThemeSwitcher />
       <Button
         variant="filled"
         color="dark"

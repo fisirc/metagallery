@@ -1,5 +1,5 @@
 import Switcher from './components/Switcher';
-import ThemeSwitcher from "@/components/DarkerMode/themeSwitcher";
+import ColorThemeSwitcher from "@/components/DarkerMode/themeSwitcher";
 import PricingSection from "./components/PricingCardSection";
 import { Footer } from "@/components/Footer/Footer";
 import { Header } from "./components/Header";
@@ -25,7 +25,7 @@ export const Home = () => (
         </Group>
         <Group mr={24}>
           <Switcher />
-          <ThemeSwitcher />
+          <ColorThemeSwitcher />
         </Group>
       </div>
       <Header />

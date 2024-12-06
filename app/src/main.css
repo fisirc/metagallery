@@ -6,6 +6,31 @@ html {
   scrollbar-gutter: stable;
 }
 
+html.metagallery-protanopia {
+  filter: saturate(1.5) hue-rotate(15deg);
+}
+html.metagallery-deuteranopia {
+  filter: saturate(1.5) hue-rotate(-15deg);
+}
+html.metagallery-tritanopia {
+  filter: saturate(1.5) hue-rotate(45deg);
+}
+html.metagallery-achromatopsia {
+  filter: contrast(2) brightness(1.2);
+}
+html.metagallery-tritanomaly {
+  filter: saturate(1.3) hue-rotate(25deg);
+}
+html.metagallery-deuteranomaly {
+  filter: saturate(1.3) hue-rotate(-10deg);
+}
+html.metagallery-protanomaly {
+  filter: saturate(1.3) hue-rotate(5deg);
+}
+html.metagallery-normal {
+  filter: none;
+}
+
 input:focus {
   outline: none;
 }

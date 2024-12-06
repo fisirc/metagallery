@@ -1,4 +1,4 @@
-import ThemeSwitcher from '@/components/DarkerMode/themeSwitcher';
+import ColorThemeSwitcher from '@/components/DarkerMode/themeSwitcher';
 import { useState } from 'react';
 import { Group, Button } from '@mantine/core';
 import { primaryIconProps } from '@/constants';
@@ -27,7 +27,7 @@ export const MainButtons = ({ onPreviewButton, onClosePreviewButton: closePrevie
   return (
     <>
       <Group gap="xs" wrap="nowrap">
-        <ThemeSwitcher />
+        <ColorThemeSwitcher />
         <Button
           leftSection={<IconShare {...primaryIconProps} />}
           onClick={() => setModalOpen(true)}
