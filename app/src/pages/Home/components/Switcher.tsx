@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Select } from '@mantine/core';
 
 export const Switcher = () => {
@@ -12,19 +11,19 @@ export const Switcher = () => {
         fr: { nativeName: 'French' },
         gr: { nativeName: 'German' },
         ch: { nativeName: 'Chinese' }
-    }as const;
+    } as const;
 
     const languageOptions = Object.keys(lngs).map((lng) => ({
         value: lng,
         label: lngs[lng as keyof typeof lngs].nativeName,
-    }));  
+    }));
 
     return (
-        <div 
+        <div
             style={{
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: 'center', 
+                alignItems: 'center',
             }}
         >
             <Select
@@ -34,10 +33,10 @@ export const Switcher = () => {
                 onChange={(value) => value && i18n.changeLanguage(value)} // Cambiar idioma
                 styles={{
                     root: {
-                      maxWidth: 150, // Ancho máximo del contenedor
+                        maxWidth: 150, // Ancho máximo del contenedor
                     },
                     input: {
-                      maxWidth: 150, // Ajusta el ancho del campo
+                        maxWidth: 150, // Ajusta el ancho del campo
                     },
                     label: { fontWeight: 'bold', marginBottom: 5 },
                 }}
