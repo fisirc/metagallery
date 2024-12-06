@@ -3,7 +3,7 @@ import { Select } from '@mantine/core';
 
 export const Switcher = () => {
 
-    const { t, i18n } = useTranslation();
+    const { i18n } = useTranslation();
 
     const lngs = {
         es: { nativeName: 'Español' },
