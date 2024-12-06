@@ -121,11 +121,13 @@ func PostAuthNewuser(w http.ResponseWriter, r *http.Request, _ httprouter.Params
     req_payload := ReqPayload{}
     res_payload := ResPayload{}
 
+    // Parseo del cuerpo JSON
     unmarshal_err := jsonexp.UnmarshalRead(r.Body, &req_payload, jsonexp.DefaultOptionsV2())
     if loggers.RequestLog(unmarshal_err, "", http.StatusBadRequest, &w) {
         return
     }
 
+    // Creación de conexión a la base de datos
     new_dbconn, dbconn_err := dbutils.NewConn()
     if loggers.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
         return
@@ -133,6 +135,7 @@ func PostAuthNewuser(w http.ResponseWriter, r *http.Request, _ httprouter.Params
 
     defer dbutils.CloseConn(new_dbconn)
 
+    // Registrar la función personalizada de SQLite
     create_fn_err := new_dbconn.CreateFunction("newuser", &sqlite.FunctionImpl{
         NArgs: 5,
         Deterministic: true,
@@ -147,6 +150,7 @@ func PostAuthNewuser(w http.ResponseWriter, r *http.Request, _ httprouter.Params
         UserId: -1,
     }
 
+    // Llamada a la función personalizada para crear un usuario
     query_stmt := sqlf.Select(
         "newuser(?, ?, ?, ?, ?)",
         req_payload.TierId,
@@ -181,18 +185,21 @@ func PostAuthNewuser(w http.ResponseWriter, r *http.Request, _ httprouter.Params
         return
     }
 
+    // Creación del directorio del usuario
     new_dir := strconv.Itoa(new_tk.UserId)
     mkdir_err := os.MkdirAll(stiller.StillerConfig.FilesPath + new_dir, os.ModePerm)
     if loggers.RequestLog(mkdir_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
+    // Obtención de los datos del nuevo usuario
     new_user, newuser_err := dbutils.GetUserById(new_tk.UserId, new_dbconn)
-    new_user.Bpasswd = ""
+    new_user.Bpasswd = "" // No devolver la contraseña hash
     if loggers.RequestLog(newuser_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
+    // Generación del token JWT
     sign_encoded, sign_err := new_tk.Encode()
     if loggers.RequestLog(sign_err, "", http.StatusInternalServerError, &w) {
         return
@@ -201,6 +208,7 @@ func PostAuthNewuser(w http.ResponseWriter, r *http.Request, _ httprouter.Params
     res_payload.UserData = new_user
     res_payload.Token = string(sign_encoded)
 
+    // Respuesta al cliente
     jsonexp.MarshalWrite(w, res_payload, jsonexp.DefaultOptionsV2())
 }
 

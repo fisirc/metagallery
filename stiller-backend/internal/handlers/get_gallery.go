@@ -23,6 +23,7 @@ func GetGallery(w http.ResponseWriter, r *http.Request, params httprouter.Params
 
     type ResPayload []dbutils.StillerGallery
 
+    // Decodificando el token del header
     user_token := r.Header.Get("token")
     user_tk, token_decode_err := jwt.Decode(user_token)
     if loggers.RequestLog(token_decode_err, "", http.StatusUnauthorized, &w) {
@@ -31,6 +32,7 @@ func GetGallery(w http.ResponseWriter, r *http.Request, params httprouter.Params
 
     user_id := user_tk.UserId
 
+    // Crear conexión a la base de datos
     new_dbconn, dbconn_err := dbutils.NewConn()
     if loggers.RequestLog(dbconn_err, "", http.StatusInternalServerError, &w) {
         return
@@ -38,6 +40,7 @@ func GetGallery(w http.ResponseWriter, r *http.Request, params httprouter.Params
 
     defer dbutils.CloseConn(new_dbconn)
 
+    // Construir consulta para obtener galerías
     get_galleries := sqlf.
         Select("*").
         From("gallery").
@@ -76,6 +79,7 @@ func GetGallery(w http.ResponseWriter, r *http.Request, params httprouter.Params
         return
     }
 
+    // Enviar respuesta en formato JSON
     writing_err := jsonexp.MarshalWrite(w, galleries, jsonexp.DefaultOptionsV2())
     if loggers.RequestLog(writing_err, "", http.StatusInternalServerError, &w) {
         return
