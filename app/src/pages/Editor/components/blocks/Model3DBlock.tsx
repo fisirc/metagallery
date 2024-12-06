@@ -6,20 +6,22 @@ import { FRAME_STROKE_WIDTH } from '@/constants';
 import { JSONValue, SlotVertex } from '@/types';
 import { v3tov2 } from '../../utils';
 import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
-import { Text } from '@mantine/core';
 import { useUser } from '@/stores/useUser';
 import { mutate } from 'swr';
 import { useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
+import { SlotInformationModal } from '../SlotInformationModa';
 
 type Model3DBlockProps = {
   idRef: string,
   v: SlotVertex,
   res: string | null;
   props: Record<string, JSONValue>;
+  title: string;
+  description: string;
 };
 
-export const Model3DSlot = memo(({ idRef, v, res, props }: Model3DBlockProps) => {
+export const Model3DSlot = memo(({ idRef, v, res, props, title, description }: Model3DBlockProps) => {
   const [hovering, setHovering] = useState(false);
   const draggingElem = useEditorStore((state) => state.draggingFile);
   const dragging = draggingElem !== null && draggingElem.ext.includes('glb');
@@ -103,7 +105,13 @@ export const Model3DSlot = memo(({ idRef, v, res, props }: Model3DBlockProps) =>
         onClick={() => {
           useMetagalleryStore.getState().openModal({
             id: 'picture-slot-modal',
-            child: <Text>Hawk tuah!</Text>
+            child: (
+              <SlotInformationModal
+                title={title}
+                description={description}
+                slotRef={idRef}
+              />
+            )
           });
         }}
         onMouseUp={async () => {

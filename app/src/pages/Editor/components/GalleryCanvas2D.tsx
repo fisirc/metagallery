@@ -120,6 +120,8 @@ export const GalleryCanvas2D = memo(({ gallery, triggerReRender }: GalleryCanvas
                     idRef={block.ref}
                     v={block.v as unknown as SlotVertices}
                     props={block.props}
+                    title={block.title}
+                    description={block.description}
                     res={res}
                   />
                 );
@@ -131,6 +133,8 @@ export const GalleryCanvas2D = memo(({ gallery, triggerReRender }: GalleryCanvas
                     idRef={block.ref}
                     v={block.v[0]}
                     props={block.props}
+                    title={block.title}
+                    description={block.description}
                     res={res}
                   />
                 );

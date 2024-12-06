@@ -1,6 +1,5 @@
 import useImage from 'use-image';
 import { memo, useState } from 'react';
-import { Text } from '@mantine/core';
 import { Image, Rect, Group } from 'react-konva';
 import { setCursor } from '@/utils';
 import { useEditorStore } from '@/stores/editorAction';
@@ -11,15 +10,18 @@ import { cosine, getFrameAngle, getFrameHeight, getFrameWidth, medianPoint, sine
 import { useUser } from '@/stores/useUser';
 import { mutate } from 'swr';
 import { notifications } from '@mantine/notifications';
+import { SlotInformationModal } from '../SlotInformationModa';
 
 type PictureSlotProps = {
   idRef: string,
   v: SlotVertices,
   res: string | null;
   props: Record<string, JSONValue>;
+  title: string;
+  description: string;
 };
 
-export const PictureSlot = memo(({ idRef, v, res, props }: PictureSlotProps) => {
+export const PictureSlot = memo(({ idRef, v, res, title, description, props }: PictureSlotProps) => {
   const [hovering, setHovering] = useState(false);
   const draggingElem = useEditorStore((s) => s.draggingFile);
   const gallery = useEditorStore((s) => s.gallery);
@@ -88,7 +90,13 @@ export const PictureSlot = memo(({ idRef, v, res, props }: PictureSlotProps) => 
         onClick={() => {
           useMetagalleryStore.getState().openModal({
             id: 'picture-slot-modal',
-            child: <Text>Hawk tuah!</Text>
+            child: (
+              <SlotInformationModal
+                title={title}
+                description={description}
+                slotRef={idRef}
+              />
+            )
           });
         }}
         onMouseUp={async () => {
@@ -163,5 +171,5 @@ export const PictureSlot = memo(({ idRef, v, res, props }: PictureSlotProps) => 
     </Group>
   );
 }, (prev, next) => {
-  return prev.res === next.res;
+  return prev.res === next.res && prev.title === next.title && prev.description === next.description;
 });
