@@ -1,3 +1,4 @@
+import { useMetagalleryStore } from "@/providers/MetagalleryProvider";
 import { useEditorStore } from "@/stores/editorAction";
 import { useUser } from "@/stores/useUser";
 import { Button, TextInput } from "@mantine/core";
@@ -7,12 +8,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { mutate } from "swr";
 
 type SlotInformationModalProps = {
+  id: string;
   title: string;
   description: string;
   slotRef: string;
 }
 
-export const SlotInformationModal = ({ title, description, slotRef }: SlotInformationModalProps) => {
+export const SlotInformationModal = ({ id, title, description, slotRef }: SlotInformationModalProps) => {
   const gallery = useEditorStore((s) => s.gallery);
   const queryClient = useQueryClient();
 
@@ -38,6 +40,7 @@ export const SlotInformationModal = ({ title, description, slotRef }: SlotInform
       console.log('File uploaded');
       queryClient.invalidateQueries({ queryKey: ['user/media'] });
       mutate(`/gallery/${gallery}`);
+      useMetagalleryStore.getState().closeModal(id);
     },
     onError: (error) => {
       console.error('Error uploading file', error);
@@ -67,14 +70,12 @@ export const SlotInformationModal = ({ title, description, slotRef }: SlotInform
       <TextInput
         label="Título de la obra"
         placeholder="Título"
-        required
         {...form.getInputProps('title')}
       />
       <TextInput
         mt={12}
         label="Descripción"
         placeholder="Descripción"
-        required
         {...form.getInputProps('description')}
       />
       <Button mt={16} size="sm" type="submit">Guardar</Button>

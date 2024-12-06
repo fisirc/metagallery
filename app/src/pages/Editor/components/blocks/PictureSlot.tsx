@@ -92,6 +92,7 @@ export const PictureSlot = memo(({ idRef, v, res, title, description, props }: P
             id: 'picture-slot-modal',
             child: (
               <SlotInformationModal
+                id='picture-slot-modal'
                 title={title}
                 description={description}
                 slotRef={idRef}

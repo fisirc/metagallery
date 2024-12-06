@@ -107,6 +107,7 @@ export const Model3DSlot = memo(({ idRef, v, res, props, title, description }: M
             id: 'picture-slot-modal',
             child: (
               <SlotInformationModal
+                id='picture-slot-modal'
                 title={title}
                 description={description}
                 slotRef={idRef}
@@ -169,6 +170,6 @@ export const Model3DSlot = memo(({ idRef, v, res, props, title, description }: M
     </>
   );
 }, (prev, next) => {
-  return prev.res === next.res;
+  return prev.res === next.res && prev.title === next.title && prev.description === next.description;
 });
 
