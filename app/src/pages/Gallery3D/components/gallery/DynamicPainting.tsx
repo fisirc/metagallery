@@ -1,8 +1,16 @@
 import { useMemo } from "react";
 import { useTexture } from "@react-three/drei";
 import * as THREE from 'three';
+import { useExperienceStore } from "@/stores/useExperienceStore";
 
-export function DynamicPainting({ imageUrl, vertices }: { imageUrl: string; vertices: readonly (readonly number[])[] }) {
+type DynamicPaintingProps = {
+  imageUrl: string;
+  vertices: readonly (readonly number[])[];
+  title?: string;
+  description?: string;
+};
+
+export function DynamicPainting({ imageUrl, vertices, title, description }: DynamicPaintingProps) {
   const texture = useTexture(imageUrl);
 
   // Define a geometry using the provided vertices
@@ -32,8 +40,25 @@ export function DynamicPainting({ imageUrl, vertices }: { imageUrl: string; vert
 
   return (
     <>
-      <mesh geometry={geometry}>
-        <meshBasicMaterial map={texture} side={THREE.DoubleSide} />
+      <mesh
+        geometry={geometry}
+        onPointerMove={() => {
+        }}
+        onPointerEnter={() => {
+          useExperienceStore.setState({
+            hovering: {
+              title: title ?? '',
+              description: description ?? '',
+            }
+          })
+        }}
+        onPointerLeave={() => {
+          useExperienceStore.setState({
+            hovering: null
+          })
+        }}
+      >
+        <meshBasicMaterial map={texture} side={THREE.DoubleSide} visible />
       </mesh>
     </>
   );

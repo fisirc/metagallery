@@ -1,6 +1,6 @@
 import { useLoader } from '@react-three/fiber';
 import { RigidBody } from '@react-three/rapier';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 type SceneRoomProps = {

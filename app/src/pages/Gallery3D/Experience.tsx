@@ -42,6 +42,8 @@ export const Experience = ({ gallery, onLoad }: ExperienceProps) => {
                 key={slot.ref}
                 imageUrl={res || "/assets/empty_slot.png"}
                 vertices={slot.v}
+                title={slot.title}
+                description={slot.description}
               />
             );
           }
@@ -52,6 +54,8 @@ export const Experience = ({ gallery, onLoad }: ExperienceProps) => {
                 position={slot.v[0]}
                 glbUrl={res ?? "/assets/3d/invisible.glb"}
                 rotation={[0, Math.PI / 4, 0]}
+                title={slot.title}
+                description={slot.description}
                 scale={[slot.props.scale, slot.props.scale, slot.props.scale] as any}
                 rotate={slot.props.rotate as boolean}
               />
@@ -81,6 +85,7 @@ export const Experience = ({ gallery, onLoad }: ExperienceProps) => {
           {/* <Ground /> */}
           <Ecctrl
             type='dynamic'
+            mode="CameraBasedMovement" // character's rotation will follow camera's rotation in this mode
             animated={false}
             camCollision={false} // disable camera collision detect (useless in FP mode)
             camInitDis={-0.01}
@@ -96,7 +101,6 @@ export const Experience = ({ gallery, onLoad }: ExperienceProps) => {
             springK={0.3}
             autoBalanceSpringK={0.3}
             position={[0, 2, 0]}
-            mode="CameraBasedMovement" // character's rotation will follow camera's rotation in this mode
           >
             <BallCollider args={[0.8]} />
           </Ecctrl>

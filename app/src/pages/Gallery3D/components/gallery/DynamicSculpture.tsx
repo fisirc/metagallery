@@ -2,6 +2,7 @@ import { useMemo, useRef } from "react";
 import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { useExperienceStore } from "@/stores/useExperienceStore";
 
 interface DynamicSculptureProps {
   glbUrl: string;
@@ -9,6 +10,8 @@ interface DynamicSculptureProps {
   rotation: [number, number, number];
   scale?: readonly [number, number, number];
   rotate?: boolean;
+  title?: string;
+  description?: string;
 }
 
 export function DynamicSculpture({
@@ -16,6 +19,8 @@ export function DynamicSculpture({
   position,
   rotation,
   scale = [1, 1, 1],
+  title,
+  description,
   rotate = false,
 }: DynamicSculptureProps) {
   const { scene: model } = useGLTF(glbUrl);
@@ -34,6 +39,19 @@ export function DynamicSculpture({
       position={[position[0], position[1] + 1.9, position[2]]}
       rotation={rotation}
       scale={[.8, .8, .8]}
+      onPointerEnter={() => {
+        useExperienceStore.setState({
+          hovering: {
+            title: title ?? '',
+            description: description ?? '',
+          }
+        })
+      }}
+      onPointerLeave={() => {
+        useExperienceStore.setState({
+          hovering: null
+        })
+      }}
     >
       <primitive object={copiedModel} />
     </group>
