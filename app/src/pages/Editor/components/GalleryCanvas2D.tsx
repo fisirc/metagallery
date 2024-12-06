@@ -7,7 +7,7 @@ import { setCursor } from '@/utils';
 import { SLOTS_SCALE, ZOOM_FACTOR } from '@/constants';
 import { useEditorStore } from '@/stores/useEditorStore';
 import { PictureSlot } from '@/pages/Editor/components/slots/PictureSlot';
-import { Model3DSlot } from '@/pages/Editor/components/slots/Model3DBlock';
+import { Model3DSlot } from '@/pages/Editor/components/slots/Model3DSlot';
 import { getInitialScale, getInitialXY, saveScaleToLocalStorage, saveXYToLocalStorage } from '../utils';
 import { useApi } from '@/hooks/useApi';
 import { SlotVertices, StillerGallery } from '@/types';
