@@ -6,8 +6,8 @@ import { z } from 'zod';
 import { useEffect } from 'react';
 
 const colorBlindnessOptionsSchema = z.enum([
-  'Protanopia', 'Deuteranopia', 'Tritanopia', 'Achromatopsia',
-  'Tritanomaly', 'Deuteranomaly', 'Protanomaly', 'Normal',
+  'Normal', 'Protanopia', 'Deuteranopia', 'Tritanopia',
+  'Achromatopsia', 'Tritanomaly', 'Deuteranomaly', 'Protanomaly',
 ]);
 
 export const ColorThemeSwitcher = () => {
