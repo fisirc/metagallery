@@ -112,7 +112,7 @@ const SidebarInnerContent = () => {
       formData.append('stiller-type', data.type.toString());
       formData.append('stiller-file', data.file);
       formData.append('stiller-hashed', data.hashed.toString());
-      const res = fetch('${API_URL}/file/new', {
+      const res = fetch(`${API_URL}/file/new`, {
         method: 'POST',
         headers: {
           'token': useUser.getState().token,
