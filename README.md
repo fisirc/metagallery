@@ -1,5 +1,7 @@
 # Metagallery
 
+🔴 Live on <https://metagallery.pages.dev/>
+
 Create your own virtual gallery, showcase your works, or discover those of other artists.
 
 Metagallery is a platform to create and share virtual galleries with ease.
