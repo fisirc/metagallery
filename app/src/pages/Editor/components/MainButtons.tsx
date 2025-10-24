@@ -2,26 +2,22 @@ import ColorThemeSwitcher from '@/components/DarkerMode/themeSwitcher';
 import { useState } from 'react';
 import { Group, Button } from '@mantine/core';
 import { primaryIconProps } from '@/constants';
-import { DeployModal } from './modals/DeployModal';
+import { DeploySuccessModal } from './modals/DeploySuccessModal';
 import { IconShare, IconPlayerPlay, IconPlayerStop } from '@tabler/icons-react';
 
-type Props = { onPreviewButton: () => void; onClosePreviewButton: () => void; isPreviewing: boolean };
+type Props = {
+  onPreviewButton: () => void;
+  onClosePreviewButton: () => void;
+  isPreviewing: boolean;
+  gallery: string;
+};
 
-export const MainButtons = ({ onPreviewButton, onClosePreviewButton: closePreviewButton, isPreviewing }: Props) => {
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+export const MainButtons = ({ onPreviewButton, onClosePreviewButton: closePreviewButton, isPreviewing, gallery }: Props) => {
+  const [isSuccessModalOpen, setSuccessModalOpen] = useState(false);
+  const deployUrl = `https://metagallery.pages.dev/${gallery}`;
 
-  const handleDeploy = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      setModalOpen(false);
-    } catch (e) {
-      setError('No se pudo conectar con el servidor');
-    } finally {
-      setLoading(false);
-    }
+  const handleDeploy = () => {
+    setSuccessModalOpen(true);
   };
 
   return (
@@ -30,9 +26,9 @@ export const MainButtons = ({ onPreviewButton, onClosePreviewButton: closePrevie
         <ColorThemeSwitcher />
         <Button
           leftSection={<IconShare {...primaryIconProps} />}
-          onClick={() => setModalOpen(true)}
+          onClick={handleDeploy}
         >
-          Deploy
+          Compartir
         </Button>
         {isPreviewing ? (
           <Button
@@ -56,12 +52,10 @@ export const MainButtons = ({ onPreviewButton, onClosePreviewButton: closePrevie
         )}
       </Group >
 
-      <DeployModal
-        isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
-        onDeploy={handleDeploy}
-        loading={loading}
-        error={error}
+      <DeploySuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setSuccessModalOpen(false)}
+        deployUrl={deployUrl}
       />
     </>
   );

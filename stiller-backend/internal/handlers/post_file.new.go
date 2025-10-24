@@ -59,7 +59,8 @@ func PostFileNew(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    abs_path := stiller.StillerConfig.FilesPath + strconv.Itoa(user_id) + "/" + filename;
+    abs_path := stiller.StillerConfig.FilesPath + "/" + strconv.Itoa(user_id) + "/" + filename;
+    os.Mkdir(stiller.StillerConfig.FilesPath + "/" + strconv.Itoa(user_id), 0774)
 
     file_exists, file_err := fsop.FileExists(abs_path)
     if loggers.RequestLog(file_err, "", http.StatusInternalServerError, &w) {

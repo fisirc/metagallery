@@ -46,6 +46,7 @@ export const Editor = ({ gallery }: { gallery: string }) => {
           </div>
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px', paddingRight: '16px', }}>
             <MainButtons
+              gallery={gallery}
               isPreviewing={isPreviewingGallery}
               onPreviewButton={() => {
                 setIsPreviewingGallery(true);
