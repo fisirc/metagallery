@@ -1,9 +1,7 @@
 import { create } from 'zustand';
 import { Modal, ModalProps, Portal } from '@mantine/core';
 import { ReactNode, useEffect, useState } from 'react';
-import { MODAL_PORTAL_ID, TOKEN_LC_KEY } from '@/constants';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { useUser } from '@/stores/useUser';
+import { MODAL_PORTAL_ID } from '@/constants';
 import { useWindowSize } from 'react-use';
 import ReactConfetti from 'react-confetti';
 
@@ -99,17 +97,6 @@ export const MetagalleryProvider = ({ children }: { children: ReactNode }) => {
   const modals = useMetagalleryStore((m) => m.activeModals);
   const showingConfetti = useMetagalleryStore((m) => m.showingConfetti);
   const { width, height } = useWindowSize();
-  const [token,] = useLocalStorage(TOKEN_LC_KEY, {
-    otherwise: null,
-  });
-
-  useEffect(() => {
-    if (token) {
-      useUser.getState().loginWithToken(token);
-    } else {
-      useUser.getState().logout();
-    }
-  }, [token]);
 
   return (
     <>

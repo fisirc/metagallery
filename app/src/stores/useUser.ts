@@ -135,3 +135,8 @@ export const useUser = create<MetagalleryUserState>()(
     },
   }),
 );
+
+// Auto-restore session on initialization if token exists
+if (token) {
+  useUser.getState().loginWithToken(token);
+}
