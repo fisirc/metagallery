@@ -53,8 +53,10 @@ func GenericOkLog(err error, msg_fmt string, args ...any) {
 }
 
 func RequestLog(err error, msg string, status int, res *http.ResponseWriter) bool {
-    if len(msg) != 0 || err != nil {
+    if err != nil {
         GenericErrLog(err, err.Error())
+    }
+    if len(msg) != 0 {
         (*res).WriteHeader(status)
         return true
     }

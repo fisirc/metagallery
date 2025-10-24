@@ -89,4 +89,3 @@ values
     (0, 'free'),
     (1, 'van gogh'),
     (2, 'picasso');
-

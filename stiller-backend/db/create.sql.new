@@ -70,14 +70,14 @@ create table gallery (
 
 
 --new table
-table gallery_telem (
+create table gallery_telem (
     id integer unique primary key autoincrement not null,
     gallery integer not null references gallery (id),
     user integer not null references user (id),
     user_agent text not null,
     load_time real not null,
     used_time real not null default 0
-)
+);
 
 insert into
     filetype

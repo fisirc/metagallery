@@ -21,84 +21,8 @@ import (
 
 var (
     ErrInQuery = errors.New("query error")
-    ErrNotEnoughArgs = errors.New("not enough args in query")
     ErrUserExists = errors.New("user already exists")
 )
-
-func newuserScalarFn(ctx sqlite.Context, args []sqlite.Value) (sqlite.Value, error){
-    db_conn := ctx.Conn()
-
-    if len(args) != 5 {
-        return sqlite.Value{}, ErrNotEnoughArgs
-    }
-
-    passwdbytes := []byte(args[4].Text())
-    bcrypt_pwd, bcrypt_err := bcrypt.GenerateFromPassword(passwdbytes, stiller.StillerConfig.BCryptCost)
-    if bcrypt_err != nil {
-        return sqlite.Value{}, bcrypt_err
-    }
-
-    new_user := dbutils.StillerUser{
-        TierId:      dbutils.StillerTier(args[0].Int()),
-        Username:    args[1].Text(),
-        Displayname: args[2].Text(),
-        Mail:        args[3].Text(),
-        Bpasswd:     string(bcrypt_pwd),
-    }
-
-    check_stmt := sqlf.
-        Select("id").
-        From("user").
-        Where("username = ?", new_user.Username)
-
-    defer check_stmt.Close()
-
-    check_id := int(-1)
-    check_err := sqlitex.ExecuteTransient(db_conn, check_stmt.String(), &sqlitex.ExecOptions{
-        ResultFunc: func(stmt *sqlite.Stmt) error {
-            check_id++
-            return nil
-        },
-
-        Args: check_stmt.Args(),
-    })
-
-    if check_err != nil {
-        return sqlite.Value{}, check_err
-    }
-
-    if check_id != -1 {
-        return sqlite.IntegerValue(-1), ErrUserExists
-    }
-
-    query_stmt := sqlf.
-        InsertInto("user").
-            Set("tier", new_user.TierId).
-            Set("displayname", new_user.Displayname).
-            Set("username", new_user.Username).
-            Set("mail", new_user.Mail).
-            Set("bpasswd", new_user.Bpasswd).
-        Returning("id")
-
-    defer query_stmt.Close()
-
-    query := query_stmt.String()
-    new_id := int(-1)
-    exec_err := sqlitex.ExecuteTransient(db_conn, query, &sqlitex.ExecOptions{
-        ResultFunc: func(stmt *sqlite.Stmt) error {
-            new_id = stmt.ColumnInt(0)
-            return nil
-        },
-
-        Args: query_stmt.Args(),
-    })
-
-    if exec_err != nil {
-        return sqlite.Value{}, exec_err
-    }
-
-    return sqlite.IntegerValue(int64(new_id)), nil
-}
 
 func PostAuthNewuser(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     if netwrappers.CORS(w, r) {
@@ -135,53 +59,69 @@ func PostAuthNewuser(w http.ResponseWriter, r *http.Request, _ httprouter.Params
 
     defer dbutils.CloseConn(new_dbconn)
 
-    // Registrar la función personalizada de SQLite
-    create_fn_err := new_dbconn.CreateFunction("newuser", &sqlite.FunctionImpl{
-        NArgs: 5,
-        Deterministic: true,
-        Scalar: newuserScalarFn,
-    })
-
-    if loggers.RequestLog(create_fn_err, "", http.StatusInternalServerError, &w) {
-        return
-    }
-
     new_tk := jwt.Token{
         UserId: -1,
     }
 
-    // Llamada a la función personalizada para crear un usuario
-    query_stmt := sqlf.Select(
-        "newuser(?, ?, ?, ?, ?)",
-        req_payload.TierId,
-        req_payload.Username,
-        req_payload.Username,
-        req_payload.Mail,
-        req_payload.Passwd,
-    )
+    // Check if user already exists
+    check_stmt := sqlf.
+        Select("id").
+        From("user").
+        Where("username = ?", req_payload.Username)
 
-    defer query_stmt.Close()
+    defer check_stmt.Close()
 
-    query := query_stmt.String()
-    exec_err := sqlitex.ExecuteTransient(new_dbconn, query, &sqlitex.ExecOptions{
+    user_exists := false
+    check_err := sqlitex.ExecuteTransient(new_dbconn, check_stmt.String(), &sqlitex.ExecOptions{
         ResultFunc: func(stmt *sqlite.Stmt) error {
-            if stmt.ColumnType(0) == sqlite.TypeText {
-                return errors.New(stmt.ColumnText(0))
-            }
-
-            new_tk.UserId = stmt.ColumnInt(0)
+            user_exists = true
             return nil
         },
-
-        Args: query_stmt.Args(),
+        Args: check_stmt.Args(),
     })
 
-    if new_tk.UserId == -1 {
-        loggers.RequestLog(nil, "no user was created", http.StatusInternalServerError, &w)
+    if loggers.RequestLog(check_err, "", http.StatusInternalServerError, &w) {
         return
     }
 
-    if loggers.RequestLog(exec_err, "", http.StatusBadRequest, &w) {
+    if user_exists {
+        loggers.RequestLog(ErrUserExists, "", http.StatusConflict, &w)
+        return
+    }
+
+    // Hash the password using bcrypt
+    passwdbytes := []byte(req_payload.Passwd)
+    bcrypt_pwd, bcrypt_err := bcrypt.GenerateFromPassword(passwdbytes, stiller.StillerConfig.BCryptCost)
+    if loggers.RequestLog(bcrypt_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
+
+    // Insert new user
+    insert_stmt := sqlf.
+        InsertInto("user").
+            Set("tier", req_payload.TierId).
+            Set("displayname", req_payload.Username).
+            Set("username", req_payload.Username).
+            Set("mail", req_payload.Mail).
+            Set("bpasswd", string(bcrypt_pwd)).
+        Returning("id")
+
+    defer insert_stmt.Close()
+
+    exec_err := sqlitex.ExecuteTransient(new_dbconn, insert_stmt.String(), &sqlitex.ExecOptions{
+        ResultFunc: func(stmt *sqlite.Stmt) error {
+            new_tk.UserId = stmt.ColumnInt(0)
+            return nil
+        },
+        Args: insert_stmt.Args(),
+    })
+
+    if loggers.RequestLog(exec_err, "", http.StatusInternalServerError, &w) {
+        return
+    }
+
+    if new_tk.UserId == -1 {
+        loggers.RequestLog(nil, "no user was created", http.StatusInternalServerError, &w)
         return
     }
 
