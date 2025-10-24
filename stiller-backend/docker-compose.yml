@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  stiller-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stiller-backend
+    ports:
+      - "6969:6969"
+    volumes:
+      - ./static:/app/static
+      - ./db:/app/db
+      - ./.env:/app/.env:ro
+    environment:
+      - Addr=:6969
+      - FilesPath=/app/static/
+      - DBPath=/app/db/metagallery.db
+    restart: unless-stopped
+    networks:
+      - stiller-network
+
+networks:
+  stiller-network:
+    driver: bridge

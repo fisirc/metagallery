@@ -13,9 +13,9 @@ export const Header = () => {
   const { isRegisterPopupOpen, closeRegisterPopup, openRegisterPopup } = usePopupContext();
   const { t } = useTranslation();
   const [loginPopup, setLoginPopup] = useState(false);
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState('guest');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState('12345');
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
 
@@ -186,7 +186,6 @@ export const Header = () => {
                   required
                 />
               </div>
-              <p className={popupStyles.guestNote}>{t('guest_login_note')}</p>
               <button className={popupStyles.button} type="submit" disabled={isLoading}>
                 {isLoading ? 'Registrando...' : 'Registrarse'}
               </button>

@@ -53,7 +53,7 @@ export const UserButton = () => {
         >
           <Group gap="xs" mr={4} wrap='nowrap'>
             <Avatar
-              src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
+              src="https://i.pinimg.com/736x/39/47/d3/3947d3c4ca7f05c6be20e735adb0a35a.jpg"
               radius="xl"
               style={{ cursor: 'pointer' }}
             />
@@ -71,7 +71,7 @@ export const UserButton = () => {
       <Menu.Dropdown>
         <Group gap="xs" mr={4} m={6}>
           <Avatar
-            src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-1.png"
+            src="https://i.pinimg.com/736x/39/47/d3/3947d3c4ca7f05c6be20e735adb0a35a.jpg"
             radius="xl"
             style={{ cursor: 'pointer' }}
             size={64}
