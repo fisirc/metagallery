@@ -1,3 +1,4 @@
+import { API_URL } from "@/constants";
 import { useMetagalleryStore } from "@/providers/MetagalleryProvider";
 import { useEditorStore } from "@/stores/useEditorStore";
 import { useUser } from "@/stores/useUser";
@@ -22,7 +23,7 @@ export const SlotInformationModal = ({ id, title, description, slotRef }: SlotIn
     mutationFn: async () => {
       const vals = form.getValues();
 
-      const res = await fetch('https://pandadiestro.xyz/services/stiller/gallery/slot', {
+      const res = await fetch(`${API_URL}/gallery/slot`, {
         method: 'PATCH',
         headers: {
           'token': useUser.getState().token,

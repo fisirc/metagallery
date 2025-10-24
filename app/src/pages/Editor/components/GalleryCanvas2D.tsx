@@ -4,7 +4,7 @@ import { Box, useMantineColorScheme } from '@mantine/core';
 import { memo, useEffect, useRef, useState } from 'react';
 import { Image, Layer, Rect, Stage } from 'react-konva';
 import { setCursor } from '@/utils';
-import { SLOTS_SCALE, ZOOM_FACTOR } from '@/constants';
+import { API_URL, SLOTS_SCALE, ZOOM_FACTOR } from '@/constants';
 import { useEditorStore } from '@/stores/useEditorStore';
 import { PictureSlot } from '@/pages/Editor/components/slots/PictureSlot';
 import { Model3DSlot } from '@/pages/Editor/components/slots/Model3DSlot';
@@ -55,7 +55,7 @@ export const GalleryCanvas2D = memo(({ gallery, triggerReRender }: GalleryCanvas
 
   useEffect(() => {
     if (response) {
-      setTopViewUrl(`https://pandadiestro.xyz/services/stiller/template/info/${response.data.templateid}/topview`);
+      setTopViewUrl(`${API_URL}/template/info/${response.data.templateid}/topview`);
     }
   }, [response]);
 
@@ -112,7 +112,7 @@ export const GalleryCanvas2D = memo(({ gallery, triggerReRender }: GalleryCanvas
         <Layer scale={SLOTS_SCALE} offsetX={response?.data.slots.origin[0]} offsetY={response?.data.slots.origin[1]}>
           {
             response && response.data.slots.slots.map((block, i) => {
-              const res = block.res !== 0 ? `https://pandadiestro.xyz/services/stiller/file/dl/${block.res}/` : null;
+              const res = block.res !== 0 ? `${API_URL}/file/dl/${block.res}/` : null;
 
               if (block.type == '2d') {
                 return (

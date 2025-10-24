@@ -1,8 +1,9 @@
+import { API_URL } from '@/constants';
 import { useUser } from '@/stores/useUser';
 import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: "https://pandadiestro.xyz/services/stiller",
+  baseURL: API_URL,
 });
 
 api.interceptors.request.use(

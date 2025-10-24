@@ -1,3 +1,4 @@
+import { API_URL } from './constants';
 import { StillerGallery } from './types';
 
 type CursorStyles = null | 'pointer' | 'grab' | 'grabbing' | 'move' | 'not-allowed';
@@ -15,7 +16,7 @@ export function panicIfNull<T>(value: T): asserts value is NonNullable<T> {
 }
 
 export function thumbnailSrcFromTemplateId(id: number) {
-    return `https://pandadiestro.xyz/services/stiller/template/info/${id}/thumbnail`;
+    return `${API_URL}/template/info/${id}/thumbnail`;
 }
 
 export function negateIf(expr: boolean, cond?: boolean) {

@@ -2,7 +2,8 @@ import styles from './Header.module.css';
 import Popup from './PopUp/Popup';
 import popupStyles from './PopUp/Popup.module.css';
 import { useState } from 'react';
-import { Button } from '@mantine/core';
+import { ActionIcon, Button } from '@mantine/core';
+import { IconBrandGithub } from '@tabler/icons-react';
 import { useUser } from '@/stores/useUser';
 import { useTranslation } from 'react-i18next';
 import { usePopupContext } from './PopUpContext';
@@ -62,6 +63,15 @@ export const Header = () => {
   return (
     <header className={styles.header}>
       <h1 className={styles.title}>Metagallery</h1>
+      <a
+        href="https://github.com/fisirc/metagallery"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.githubLink}
+      >
+        <IconBrandGithub size={20} />
+        <span>{t('view_on_github')}</span>
+      </a>
       <p className={styles.description}>{t('landing_description')}</p>
       <div className={styles.buttonGroup}>
         <Button variant="default" size="md" onClick={() => setLoginPopup(true)}>
@@ -110,6 +120,7 @@ export const Header = () => {
                   {loginError}
                 </div>
               )}
+              <p className={popupStyles.guestNote}>{t('guest_login_note')}</p>
               <button
                 className={popupStyles.button}
                 type="submit"
@@ -175,6 +186,7 @@ export const Header = () => {
                   required
                 />
               </div>
+              <p className={popupStyles.guestNote}>{t('guest_login_note')}</p>
               <button className={popupStyles.button} type="submit" disabled={isLoading}>
                 {isLoading ? 'Registrando...' : 'Registrarse'}
               </button>
@@ -182,6 +194,7 @@ export const Header = () => {
           </>
         </Popup>
       </div>
+      <p className={styles.guestNote}>{t('guest_login_note')}</p>
       <div className={styles.imageContainer}>
         <img
           src="/galleryspace.png"

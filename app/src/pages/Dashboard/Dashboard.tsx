@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Menu, Search, Plus, Copy, Check, Trash, SkipBack, ChevronLeft } from "lucide-react";
 import { Link, Route } from "wouter";
-import { Box, Button, Loader, Modal, ScrollArea, Text, Title } from "@mantine/core";
+import { Box, Button, Loader, Modal, ScrollArea, Text, Title, ActionIcon } from "@mantine/core";
+import { IconBrandGithub } from "@tabler/icons-react";
 import { NewGalleryForm } from "@/pages/Dashboard/components/NewGalleryForm";
 import { useUser } from "@/stores/useUser";
 import styles from "./GalleryDashboard.module.css";
@@ -87,7 +88,18 @@ export const TrashView = () => {
             <Menu className={styles.menuIcon} />
             <span className={styles.srOnly}>Papelera</span>
           </button>
-          <div style={{ display: 'flex', gap: '24px' }}>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <ActionIcon
+              component="a"
+              href="https://github.com/fisirc/metagallery"
+              target="_blank"
+              rel="noopener noreferrer"
+              size="lg"
+              variant="default"
+              aria-label="GitHub repository"
+            >
+              <IconBrandGithub size={20} />
+            </ActionIcon>
             <NewGalleryButton />
             <UserButton />
           </div>
@@ -346,7 +358,18 @@ export const GalleryDashboard = () => {
             <Menu className={styles.menuIcon} />
             <span className={styles.srOnly}>Dashboard</span>
           </button>
-          <div style={{ display: 'flex', gap: '24px' }}>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <ActionIcon
+              component="a"
+              href="https://github.com/fisirc/metagallery"
+              target="_blank"
+              rel="noopener noreferrer"
+              size="lg"
+              variant="default"
+              aria-label="GitHub repository"
+            >
+              <IconBrandGithub size={20} />
+            </ActionIcon>
             <NewGalleryButton />
             <UserButton />
           </div>

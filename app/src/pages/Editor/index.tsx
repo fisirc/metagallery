@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { ActionIcon } from '@mantine/core';
+import { IconBrandGithub } from '@tabler/icons-react';
 import { UserButton } from '@/components/UserButton';
 import { DynamicText } from '@/components/DynamicText';
 import { GalleryCanvas2D } from './components/GalleryCanvas2D';
@@ -52,6 +54,17 @@ export const Editor = ({ gallery }: { gallery: string }) => {
                 setIsPreviewingGallery(false);
               }}
             />
+            <ActionIcon
+              component="a"
+              href="https://github.com/fisirc/metagallery"
+              target="_blank"
+              rel="noopener noreferrer"
+              size="lg"
+              variant="default"
+              aria-label="GitHub repository"
+            >
+              <IconBrandGithub size={20} />
+            </ActionIcon>
             <UserButton />
           </div>
         </div>

@@ -7,6 +7,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { useUser } from "@/stores/useUser";
 import { useLocation } from "wouter";
 import { AutosizeInput } from "./AutosizeInput";
+import { API_URL } from "@/constants";
 
 type NewGalleryPayload = {
   template: number;
@@ -59,7 +60,7 @@ export const NewGalleryForm = ({ modalKey }: { modalKey: string }) => {
     } satisfies NewGalleryPayload;
 
     try {
-      const res = await fetch('https://pandadiestro.xyz/services/stiller/gallery/new', {
+      const res = await fetch(`${API_URL}/gallery/new`, {
         method: 'POST',
         headers: {
           'token': useUser.getState().token,

@@ -1,6 +1,7 @@
 import useSWR from 'swr';
 import { UserContentFileElement } from '@/types';
 import { useUser } from '@/stores/useUser';
+import { API_URL } from '@/constants';
 
 type ArgsType<T> = T extends (...args: infer U) => any ? U : never;
 
@@ -254,7 +255,7 @@ export function useApi<T, E = any>(path: string, options: RequestInit = {}) {
                 token: useUser.getState().token ?? 'invalid-token',
                 ...options.headers,
             }
-            const url = `https://pandadiestro.xyz/services/stiller${key.startsWith('/') ? key : `/${key}`}`;
+            const url = `${API_URL}${key.startsWith('/') ? key : `/${key}`}`;
             return fetcher<T>(url, options);
         }, { revalidateOnFocus: false },
     );

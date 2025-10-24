@@ -1,3 +1,4 @@
+import { API_URL } from "@/constants";
 import { useMetagalleryStore } from "@/providers/MetagalleryProvider";
 import { UserContentFileElement } from "@/types";
 import { Button, TextInput } from "@mantine/core";
@@ -10,7 +11,7 @@ const FileEditor = ({ element }: {
   const queryClient = useQueryClient();
 
   const updateFileMutation = useMutation({
-    mutationFn: (values) => fetch(`https://pandadiestro.xyz/services/stiller/file`, {
+    mutationFn: (values) => fetch(`${API_URL}/file`, {
       method: 'PATCH',
       body: JSON.stringify(values)
     }),

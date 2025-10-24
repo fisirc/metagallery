@@ -8,7 +8,7 @@ import { useEditorStore } from '@/stores/useEditorStore';
 import { memo, useEffect, useState } from 'react';
 import { IconSearch, IconUpload } from '@tabler/icons-react';
 import { UserContentFileElement } from '@/types';
-import { primaryIconProps, secondaryIconProps } from '@/constants';
+import { API_URL, primaryIconProps, secondaryIconProps } from '@/constants';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Drawer, Group, Stack, TextInput, ScrollArea, FileButton, useMantineColorScheme } from '@mantine/core';
 
@@ -65,7 +65,7 @@ const SidebarMasonry = ({ filterInput }: { filterInput: string }) => {
   const userMediaQuery = useQuery({
     queryKey: ['user/media'],
     queryFn: async () => {
-      const res = await fetch('https://pandadiestro.xyz/services/stiller/file', {
+      const res = await fetch(`${API_URL}/file`, {
         method: 'GET',
         headers: {
           'token': useUser.getState().token,
@@ -74,7 +74,7 @@ const SidebarMasonry = ({ filterInput }: { filterInput: string }) => {
       const data: UserContentFileElement[] = await res.json();
 
       for (let e of data) {
-        e.url = `https://pandadiestro.xyz/services/stiller/file/dl/${e.id}/`;
+        e.url = `${API_URL}/file/dl/${e.id}/`;
       }
 
       return data;
@@ -112,7 +112,7 @@ const SidebarInnerContent = () => {
       formData.append('stiller-type', data.type.toString());
       formData.append('stiller-file', data.file);
       formData.append('stiller-hashed', data.hashed.toString());
-      const res = fetch('https://pandadiestro.xyz/services/stiller/file/new', {
+      const res = fetch('${API_URL}/file/new', {
         method: 'POST',
         headers: {
           'token': useUser.getState().token,

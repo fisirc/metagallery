@@ -11,6 +11,7 @@ export default defineConfig({
     setupFiles: './vitest.setup.mjs',
   },
   server: {
+    https: false,
     proxy: {
       '/services/stiller': {
         target: 'https://pandadiestro.xyz',

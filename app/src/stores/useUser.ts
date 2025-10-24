@@ -1,4 +1,4 @@
-import { TOKEN_LC_KEY } from '@/constants';
+import { API_URL, TOKEN_LC_KEY } from '@/constants';
 import { mutate } from 'swr';
 import { create } from 'zustand';
 
@@ -45,7 +45,7 @@ export const useUser = create<MetagalleryUserState>()(
     galleries: null,
     loginWithCredentials: async (username, password) => {
       try {
-        const response = await fetch('https://pandadiestro.xyz/services/stiller/auth/login', {
+        const response = await fetch(`${API_URL}/auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ export const useUser = create<MetagalleryUserState>()(
     },
     loginWithToken: async (token) => {
       try {
-        const response = await fetch('https://pandadiestro.xyz/services/stiller/auth/profile/', {
+        const response = await fetch(`${API_URL}/auth/profile/`, {
           headers: {
             'Content-Type': 'application/json',
             'token': token,
@@ -98,7 +98,7 @@ export const useUser = create<MetagalleryUserState>()(
     },
     register: async ({ username, password, email, displayname }) => {
       try {
-        const response = await fetch('https://pandadiestro.xyz/services/stiller/auth/newuser', {
+        const response = await fetch(`${API_URL}/auth/newuser`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

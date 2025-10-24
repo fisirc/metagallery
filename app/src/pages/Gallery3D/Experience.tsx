@@ -9,6 +9,7 @@ import { DynamicPainting } from './components/gallery/DynamicPainting';
 import { DynamicSculpture } from './components/gallery/DynamicSculpture';
 import { StillerGallery } from '@/types';
 import { useLocation } from 'wouter';
+import { API_URL } from '@/constants';
 
 type ExperienceProps = {
   gallery: string;
@@ -34,7 +35,7 @@ export const Experience = ({ gallery, onLoad }: ExperienceProps) => {
       <ambientLight intensity={0.6} />
       {
         response && response.data.slots.slots.map((slot) => {
-          const res = slot.res !== 0 ? `https://pandadiestro.xyz/services/stiller/file/dl/${slot.res}/` : null;
+          const res = slot.res !== 0 ? `${API_URL}/file/dl/${slot.res}/` : null;
 
           if (slot.type == '2d') {
             return (
@@ -106,7 +107,7 @@ export const Experience = ({ gallery, onLoad }: ExperienceProps) => {
           </Ecctrl>
           {
             response && <SceneRoom
-              sceneUrl={`https://pandadiestro.xyz/services/stiller/template/info/${response.data.templateid}/scene`}
+              sceneUrl={`${API_URL}/template/info/${response.data.templateid}/scene`}
               onLoad={() => {
                 setGravityEnabled(true);
                 onLoad();

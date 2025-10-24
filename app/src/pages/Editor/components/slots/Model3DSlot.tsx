@@ -2,7 +2,7 @@ import { memo, useEffect, useMemo, useState } from 'react';
 import { Image as KonvaImage, Rect } from 'react-konva';
 import { setCursor } from '@/utils';
 import { useEditorStore } from '@/stores/useEditorStore';
-import { FRAME_STROKE_WIDTH } from '@/constants';
+import { API_URL, FRAME_STROKE_WIDTH } from '@/constants';
 import { JSONValue, SlotVertex } from '@/types';
 import { v3tov2 } from '../../utils';
 import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
@@ -121,7 +121,7 @@ export const Model3DSlot = memo(({ idRef, v, res, props, title, description }: M
           if (dropped) {
             setOptimisticResId(parseInt(draggingElem.url.split('/').at(-2) ?? '0'));
             try {
-              const response = await fetch('https://pandadiestro.xyz/services/stiller/gallery/slot', {
+              const response = await fetch(`${API_URL}/gallery/slot`, {
                 method: 'PATCH',
                 headers: {
                   'Content-Type': 'application/json',

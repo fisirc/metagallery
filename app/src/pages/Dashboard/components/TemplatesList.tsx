@@ -3,6 +3,7 @@ import { TemplateListItem } from "@/types";
 import { Box, Group, Image, Radio, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import styles from './TemplateList.module.css';
+import { API_URL } from "@/constants";
 
 type TemplatesListProps = {
   onTemplateSelect: (templateId: number) => void;
@@ -55,7 +56,7 @@ export const TemplatesList = ({ onTemplateSelect }: TemplatesListProps) => {
                 fit="contain"
                 width={200}
                 height={150}
-                src={`https://pandadiestro.xyz/services/stiller/template/info/${template.id}/thumbnail`}
+                src={`${API_URL}/template/info/${template.id}/thumbnail`}
               />
               <Box flex={1}>
                 <Text className={styles.label}>{template.title}</Text>

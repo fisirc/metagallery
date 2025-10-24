@@ -4,7 +4,7 @@ import { Image, Rect, Group } from 'react-konva';
 import { setCursor } from '@/utils';
 import { useEditorStore } from '@/stores/useEditorStore';
 import { useMetagalleryStore } from '@/providers/MetagalleryProvider';
-import { CORNER_RADIUS, FRAME_STROKE_WIDTH, noImageSrc } from '@/constants';
+import { API_URL, CORNER_RADIUS, FRAME_STROKE_WIDTH, noImageSrc } from '@/constants';
 import { JSONValue, SlotVertices } from '@/types';
 import { cosine, getFrameAngle, getFrameHeight, getFrameWidth, medianPoint, sine, v3tov2 } from '@/pages/Editor/utils';
 import { useUser } from '@/stores/useUser';
@@ -106,7 +106,7 @@ export const PictureSlot = memo(({ idRef, v, res, title, description, props }: P
           if (dropped) {
             setOptimisticImgSrc(draggingElem.url);
             try {
-              const r = await fetch('https://pandadiestro.xyz/services/stiller/gallery/slot', {
+              const r = await fetch(`${API_URL}/gallery/slot`, {
                 method: 'PATCH',
                 headers: {
                   'Content-Type': 'application/json',

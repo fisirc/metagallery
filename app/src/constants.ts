@@ -3,6 +3,8 @@ import { IconProps } from '@tabler/icons-react';
 // Local Storage token key
 export const TOKEN_LC_KEY = 'token';
 
+export const API_URL = 'https://stiller.paoloose.site';
+
 export const primaryIconProps: IconProps = {
   size: '18px',
   stroke: 1.5,

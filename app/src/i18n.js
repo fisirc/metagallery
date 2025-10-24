@@ -20,6 +20,8 @@ i18n
       es: {
         translation: {
           landing_description: 'Crea tu propia galería virtual, exhibe tus obras o descubre las de otros artistas. Interactúa con una comunidad creativa, conecta con compradores interesados y transforma tu visión en una experiencia visual única. ¡Únete y lleva tus creaciones a un nuevo nivel de interacción!',
+          view_on_github: 'Ver en GitHub',
+          guest_login_note: 'Usuario de prueba: "guest", contraseña: "12345"',
           login: 'Iniciar sesión',
           call_to_action: 'Comienza ahora',
           pricing_title: 'Crea tu galería hoy mismo',
@@ -65,6 +67,8 @@ i18n
       en: {
         translation: {
           landing_description: 'Create your own virtual gallery, showcase your works, or discover those of other artists. Engage with a creative community, connect with interested buyers, and turn your vision into a unique visual experience. Join us and take your creations to a new level of interaction!',
+          view_on_github: 'View on GitHub',
+          guest_login_note: 'Test user: "guest", password: "12345"',
           login: 'Login',
           call_to_action: 'Start now',
           pricing_title: 'Create your gallery today',
@@ -110,6 +114,8 @@ i18n
       fr: {
         translation: {
           landing_description: 'Créez votre propre galerie virtuelle, exposez vos œuvres ou découvrez celles d\'autres artistes. Interagissez avec une communauté créative, connectez-vous avec des acheteurs intéressés et transformez votre vision en une expérience visuelle unique. Rejoignez-nous et portez vos créations à un nouveau niveau d\'interaction !',
+          view_on_github: 'Voir sur GitHub',
+          guest_login_note: 'Utilisateur de test : "guest", mot de passe : "12345"',
           login: 'Connexion',
           call_to_action: 'Commencez maintenant',
           pricing_title: 'Créez votre galerie dès aujourd\'hui',
@@ -155,6 +161,8 @@ i18n
       gr: {
         translation: {
           landing_description: 'Erstelle deine eigene virtuelle Galerie, stelle deine Werke aus oder entdecke die von anderen Künstlern. Interagiere mit einer kreativen Community, vernetze dich mit interessierten Käufern und verwandle deine Vision in ein einzigartiges visuelles Erlebnis. Mach mit und hebe deine Kreationen auf ein neues Interaktionsniveau!',
+          view_on_github: 'Auf GitHub ansehen',
+          guest_login_note: 'Testbenutzer: "guest", Passwort: "12345"',
           login: 'Anmelden',
           call_to_action: 'Jetzt starten',
           pricing_title: 'Erstelle deine Galerie noch heute',
@@ -200,6 +208,8 @@ i18n
       ch: {
         translation: {
           landing_description: '创建您自己的虚拟画廊，展示您的作品，或发现其他艺术家的作品。与创意社区互动，与感兴趣的买家建立联系，将您的愿景转化为独特的视觉体验。加入我们，将您的创作提升到全新的互动水平！',
+          view_on_github: '在 GitHub 上查看',
+          guest_login_note: '测试用户："guest"，密码："12345"',
           login: '登录',
           call_to_action: '立即开始',
           pricing_title: '立即创建您的画廊',
