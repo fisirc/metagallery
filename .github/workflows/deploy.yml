@@ -6,9 +6,11 @@ jobs:
     steps:
       - name: system deps
         run: |
+          exit 0
           sudo apt install --upgrade -y openssh-client openssh-known-hosts openssh-server
       - name: ssh setup
         run: |
+          exit 0
           mkdir -p ~/.ssh/
           chmod 700 ~/.ssh/
           eval "$(ssh-agent -s)"
@@ -20,4 +22,6 @@ jobs:
           ls ~/.ssh/
           ssh-keyscan -H "${{ secrets.SSH_IP }}" >> ~/.ssh/known_hosts
       - name: deploy
-        run: ssh -vT "bauer@${{ secrets.SSH_IP }}" "cd ~/clones/metagallery/stiller-backend && git pull"
+        run: |
+          exit 0
+          ssh -vT "bauer@${{ secrets.SSH_IP }}" "cd ~/clones/metagallery/stiller-backend && git pull"
