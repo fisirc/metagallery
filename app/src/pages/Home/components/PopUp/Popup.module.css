@@ -31,6 +31,7 @@
   padding: 2rem;
   margin-bottom: 1rem;
   width: 350px;
+  max-width: 90vw;
 }
 
 .title {
@@ -177,4 +178,80 @@
   backdrop-filter: blur(8px);
   position: relative;
   overflow: hidden;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .popupinner {
+    padding: 1.5rem;
+    width: 320px;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+
+  .description {
+    font-size: 0.9375rem;
+  }
+
+  .label {
+    font-size: 0.9375rem;
+  }
+
+  .button, .buttonStart, .buttonBack {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.9375rem;
+  }
+
+  .forminput {
+    font-size: 0.9375rem;
+    padding: 0.5rem 0.625rem;
+  }
+
+  .guestNote {
+    font-size: 0.75rem;
+    padding: 0.625rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .popupinner {
+    padding: 1.25rem;
+    width: 280px;
+    margin: 0 1rem;
+  }
+
+  .title {
+    font-size: 1.375rem;
+  }
+
+  .description {
+    font-size: 0.875rem;
+  }
+
+  .label {
+    font-size: 0.875rem;
+  }
+
+  .button, .buttonStart, .buttonBack {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .forminput {
+    font-size: 0.875rem;
+    padding: 0.5rem;
+  }
+
+  .guestNote {
+    font-size: 0.6875rem;
+    padding: 0.5rem;
+    margin: 0.75rem 0;
+  }
+
+  .buttongoogle {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
 }

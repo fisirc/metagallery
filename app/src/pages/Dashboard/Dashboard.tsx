@@ -4,6 +4,7 @@ import { Link, Route } from "wouter";
 import { Box, Button, Loader, Modal, ScrollArea, Text, Title, ActionIcon } from "@mantine/core";
 import { IconBrandGithub } from "@tabler/icons-react";
 import { NewGalleryForm } from "@/pages/Dashboard/components/NewGalleryForm";
+import { DashboardMobileMenu } from "@/pages/Dashboard/components/DashboardMobileMenu";
 import { useUser } from "@/stores/useUser";
 import styles from "./GalleryDashboard.module.css";
 import { LoadingScreen } from "@/components/Overlays/LoadingScreen";
@@ -89,19 +90,22 @@ export const TrashView = () => {
             <span className={styles.srOnly}>Papelera</span>
           </button>
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-            <ActionIcon
-              component="a"
-              href="https://github.com/fisirc/metagallery"
-              target="_blank"
-              rel="noopener noreferrer"
-              size="lg"
-              variant="default"
-              aria-label="GitHub repository"
-            >
-              <IconBrandGithub size={20} />
-            </ActionIcon>
-            <NewGalleryButton />
-            <UserButton />
+            <div className={styles.desktopActions}>
+              <ActionIcon
+                component="a"
+                href="https://github.com/fisirc/metagallery"
+                target="_blank"
+                rel="noopener noreferrer"
+                size="lg"
+                variant="default"
+                aria-label="GitHub repository"
+              >
+                <IconBrandGithub size={20} />
+              </ActionIcon>
+              <NewGalleryButton />
+              <UserButton />
+            </div>
+            <DashboardMobileMenu />
           </div>
         </div>
       </header>
@@ -359,19 +363,22 @@ export const GalleryDashboard = () => {
             <span className={styles.srOnly}>Dashboard</span>
           </button>
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-            <ActionIcon
-              component="a"
-              href="https://github.com/fisirc/metagallery"
-              target="_blank"
-              rel="noopener noreferrer"
-              size="lg"
-              variant="default"
-              aria-label="GitHub repository"
-            >
-              <IconBrandGithub size={20} />
-            </ActionIcon>
-            <NewGalleryButton />
-            <UserButton />
+            <div className={styles.desktopActions}>
+              <ActionIcon
+                component="a"
+                href="https://github.com/fisirc/metagallery"
+                target="_blank"
+                rel="noopener noreferrer"
+                size="lg"
+                variant="default"
+                aria-label="GitHub repository"
+              >
+                <IconBrandGithub size={20} />
+              </ActionIcon>
+              <NewGalleryButton />
+              <UserButton />
+            </div>
+            <DashboardMobileMenu />
           </div>
         </div>
       </header>

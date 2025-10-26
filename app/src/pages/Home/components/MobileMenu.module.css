@@ -1,0 +1,87 @@
+.burgerButton {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: var(--mantine-color-text);
+  transition: opacity 0.2s;
+}
+
+.burgerButton:hover {
+  opacity: 0.7;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.menuPanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 280px;
+  max-width: 80vw;
+  background-color: var(--mantine-color-body);
+  border-left: 1px solid var(--mantine-color-default-border);
+  z-index: 1000;
+  animation: slideIn 0.3s ease-in-out;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+}
+
+.menuContent {
+  padding: 4rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.menuItem {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 0.75rem;
+}
+
+.menuLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--mantine-color-dimmed);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Show burger menu on mobile */
+@media (max-width: 768px) {
+  .burgerButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

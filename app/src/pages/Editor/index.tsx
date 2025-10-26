@@ -7,12 +7,14 @@ import { GalleryCanvas2D } from './components/GalleryCanvas2D';
 import { BackToDashboarButton } from './components/BackToDashboarButton';
 import { MainButtons } from './components/MainButtons';
 import { EditorSidebar } from './components/ContentSidebar';
+import { EditorMobileMenu } from './components/EditorMobileMenu';
 import { DRAG_PORTAL_ID } from '@/constants';
 import { Gallery3D } from '../Gallery3D';
 import { StillerGallery } from '@/types';
 import { LoadingScreen } from '@/components/Overlays/LoadingScreen';
 import { useApi } from '@/hooks/useApi';
 import { useEditorStore } from '@/stores/useEditorStore';
+import styles from './Editor.module.css';
 
 export const Editor = ({ gallery }: { gallery: string }) => {
   const { response, isLoading } = useApi<StillerGallery>(`/gallery/${gallery}`);
@@ -45,28 +47,44 @@ export const Editor = ({ gallery }: { gallery: string }) => {
             />
           </div>
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '12px', paddingRight: '16px', }}>
-            <MainButtons
-              gallery={gallery}
-              isPreviewing={isPreviewingGallery}
-              onPreviewButton={() => {
-                setIsPreviewingGallery(true);
-              }}
-              onClosePreviewButton={() => {
-                setIsPreviewingGallery(false);
-              }}
+            <div className={styles.desktopActions}>
+              <MainButtons
+                gallery={gallery}
+                isPreviewing={isPreviewingGallery}
+                onPreviewButton={() => {
+                  setIsPreviewingGallery(true);
+                }}
+                onClosePreviewButton={() => {
+                  setIsPreviewingGallery(false);
+                }}
+              />
+              <ActionIcon
+                component="a"
+                href="https://github.com/fisirc/metagallery"
+                target="_blank"
+                rel="noopener noreferrer"
+                size="lg"
+                variant="default"
+                aria-label="GitHub repository"
+              >
+                <IconBrandGithub size={20} />
+              </ActionIcon>
+              <UserButton />
+            </div>
+            <EditorMobileMenu 
+              MainButtons={
+                <MainButtons
+                  gallery={gallery}
+                  isPreviewing={isPreviewingGallery}
+                  onPreviewButton={() => {
+                    setIsPreviewingGallery(true);
+                  }}
+                  onClosePreviewButton={() => {
+                    setIsPreviewingGallery(false);
+                  }}
+                />
+              }
             />
-            <ActionIcon
-              component="a"
-              href="https://github.com/fisirc/metagallery"
-              target="_blank"
-              rel="noopener noreferrer"
-              size="lg"
-              variant="default"
-              aria-label="GitHub repository"
-            >
-              <IconBrandGithub size={20} />
-            </ActionIcon>
-            <UserButton />
           </div>
         </div>
         <div style={{ display: isPreviewingGallery ? 'none' : 'flex', flexDirection: 'row', gap: '16px', minHeight: 'calc(100vh - 70px)', maxHeight: 'calc(100vh - 70px)', paddingLeft: '16px', paddingRight: '16px' }}>

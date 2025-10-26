@@ -1,0 +1,11 @@
+.desktopActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .desktopActions {
+    display: none;
+  }
+}

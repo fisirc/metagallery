@@ -5,27 +5,24 @@ import { Footer } from "@/components/Footer/Footer";
 import { Header } from "./components/Header";
 import { Group } from '@mantine/core';
 import { AppIcon } from "@/components/AppIcon";
+import { MobileMenu } from './components/MobileMenu';
+import styles from './Home.module.css';
 
 export const Home = () => (
   <>
     <main>
-      <div style={{
-        paddingTop: '1rem',
-        paddingBottom: '1rem',
-        justifyContent: 'space-between',
-        display: 'flex',
-        position: 'sticky',
-        zIndex: 1,
-        backgroundColor: 'var(--mantine-color-body)',
-        borderBottom: '1px solid var(--mantine-color-default-border)',
-        top: 0,
-      }}>
-        <Group ml={24}>
-          <AppIcon withText="Metagallery" size={36} />
+      <div className={styles.navbar}>
+        <Group ml={24} style={{ marginLeft: 'clamp(12px, 3vw, 24px)' }}>
+          <div className={styles.appIconContainer}>
+            <AppIcon withText="Metagallery" size={36} />
+          </div>
         </Group>
-        <Group mr={24}>
-          <Switcher />
-          <ColorThemeSwitcher />
+        <Group mr={24} gap={12} style={{ marginRight: 'clamp(12px, 3vw, 24px)', gap: 'clamp(8px, 2vw, 12px)' }}>
+          <div className={styles.desktopMenu}>
+            <Switcher />
+            <ColorThemeSwitcher />
+          </div>
+          <MobileMenu />
         </Group>
       </div>
       <Header />

@@ -35,10 +35,10 @@ export const ColorThemeSwitcher = () => {
       style={{ marginRight: '0.4rem' }}
     >
       <Select
-        placeholder="Select language"
         data={colorOptions}
         value={colorBlindness}
         leftSectionPointerEvents="none"
+        rightSectionPointerEvents="none"
         leftSection={<IconAccessible size="1.25rem" />}
         onChange={(value) => setColorBlindness(value as any)}
         styles={{

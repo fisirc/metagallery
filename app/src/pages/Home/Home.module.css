@@ -1,0 +1,57 @@
+.navbar {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  justify-content: space-between;
+  display: flex;
+  position: sticky;
+  z-index: 1;
+  background-color: var(--mantine-color-body);
+  border-bottom: 1px solid var(--mantine-color-default-border);
+  top: 0;
+}
+
+.appIconContainer {
+  display: flex;
+  align-items: center;
+}
+
+.desktopMenu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .desktopMenu {
+    display: none;
+  }
+
+  .appIconContainer img {
+    width: 28px !important;
+  }
+
+  .appIconContainer span {
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .appIconContainer img {
+    width: 24px !important;
+  }
+
+  .appIconContainer span {
+    font-size: 12px !important;
+    margin-left: 6px !important;
+  }
+}
